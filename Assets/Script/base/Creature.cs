@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using Unity.VisualScripting;
+using UnityEngine;
 
 
-public abstract class Creature
+public abstract class Creature : MonoBehaviour
 {
     // 玩家決定
     public float Size { get; set; }
@@ -33,7 +34,7 @@ public abstract class Creature
     public float Health { get; set; }
     public float Age { get; set; }
     public float ReproductionCooldown { get; set; }
-    // Start is called before the first frame update
+    public int ActionCooldown { get; set; }
 
     public Creature(CreatureAttributes creatureAttributes)
     {
@@ -66,12 +67,44 @@ public abstract class Creature
         Health = BaseHealth;
         Age = 0;
         ReproductionCooldown = 0;
+        ActionCooldown = 0;
     }
-    public void Update()
+    public void UpdateState()
     {
-        //回血、餓死、老死、繁殖冷卻、飽食度下降
+        //回血、餓死、老死、繁殖冷卻
         //回血
+        if(Health < BaseHealth)
+        {
+            Health += HealthRegeneration;
+        }
+        //餓死
+        Hunger -= HungerRate;
+        if (Hunger <= 0)
+        {
+            //Debug.Log("餓死");
+        }
+        //老死
+        Age += 1;
+        if (Age >= Lifespan)
+        {
+            //Debug.Log("老死");
+        }
+        //繁殖冷卻
+        if (ReproductionCooldown > 0)
+        {
+            ReproductionCooldown -= 1;
+        }
 
+        //行動冷卻
+        if (ActionCooldown > 0)
+        {
+            ActionCooldown -= 1;
+        }
+
+        if (ActionCooldown <= 0)
+        {
+            DoAction();
+        }
     }
     public void DoAction()
     {
