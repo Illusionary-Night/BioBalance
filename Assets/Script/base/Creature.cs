@@ -13,7 +13,7 @@ public abstract class Creature : MonoBehaviour
     public float BaseHealth { get; set; }
     public float ReproductionRate { get; set; }
     public float AttackPower { get; set; }
-    public float Lifespan { get; }
+    public float Lifespan { get; set;  }
     public float Variation { get; set; }
     public List<Creature> FoodList { get; set;  }       //新增食物列表
     public List<Creature> PredatorList { get; set;  }   //新增天敵列表
@@ -21,13 +21,13 @@ public abstract class Creature : MonoBehaviour
     public int[] SleepingCycle { get; set; }
 
     // 電腦計算
-    public float HungerRate { get; }
-    public float MaxHunger { get; }
-    public float ReproductionInterval { get; }
-    public float HealthRegeneration { get; }
+    public float HungerRate { get; set;  }
+    public float MaxHunger { get; set;  }
+    public float ReproductionInterval { get; set; }
+    public float HealthRegeneration { get; set; }
     public DietType Diet { get; set; }
     public BodyType Body { get; set; }
-    public int SleepTime { get; }
+    public int SleepTime { get; set; }
 
     // 當前狀態
     public float Hunger { get; set; }
@@ -36,7 +36,7 @@ public abstract class Creature : MonoBehaviour
     public float ReproductionCooldown { get; set; }
     public int ActionCooldown { get; set; }
 
-    public Creature(CreatureAttributes creatureAttributes)
+    public void Initialize(CreatureAttributes creatureAttributes)
     {
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
         //睡眠時間變異

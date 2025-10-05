@@ -14,6 +14,7 @@ public class Manager : MonoBehaviour
     void Start()
     {
         
+
     }
 
     // Update is called once per frame
@@ -24,6 +25,36 @@ public class Manager : MonoBehaviour
         {
             tickTimer -= tickInterval;
             OnTick(); // 觸發一個遊戲時間單位
+        }
+    }
+    private void Initialize()
+    {
+        CreatureAttributes new_species = new CreatureAttributes();
+        new_species.size = 1f;
+        new_species.speed = 1f;
+        new_species.base_health = 10f;
+        new_species.reproduction_rate = 0.1f;
+        new_species.attack_power = 2f;
+        new_species.lifespan = 100f;
+        new_species.variation = 0.1f;
+        new_species.sleeping_cycle = new int[] { 20, 6 };
+        new_species.Diet = DietType.Carnivore;
+        new_species.Body = BodyType.Medium;
+        new_species.food_list = new List<Creature>();
+        new_species.predator_list = new List<Creature>();
+        new_species.action_list = new List<Action>();
+        species = new List<CreatureAttributes>();
+        species.Add(new_species);
+        creatures = new List<Creature>();
+        meat = new List<GameObject>();
+        grass = new List<GameObject>();
+        // 初始化生物列表
+        for (int i = 0; i < 10; i++)   //生成10隻初始生物
+        {
+            GameObject creatureObject = new GameObject("Creature_" + i);
+            Creature creatureComponent = creatureObject.AddComponent<Creature>();
+            creatureComponent.Initialize(new_species);
+            AddCreature(creatureComponent);
         }
     }
     private void OnTick()
@@ -75,4 +106,5 @@ public class Manager : MonoBehaviour
     {
         creatures.Remove(dead_creature);
     }
+    
 }
