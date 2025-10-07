@@ -14,6 +14,7 @@ public static class ActionSystem
     }
 
     public static void Register()
+    {
         // 掃描所有繼承 ActionBase 的型別
         var actionTypes = typeof(ActionBase).Assembly.GetTypes()
             .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(ActionBase)));
@@ -25,7 +26,6 @@ public static class ActionSystem
             if (instanceField?.GetValue(null) is ActionBase action)
                 actions.Add(action.Type, action);
         }
-{
     }
 
     public static bool isConditionMet(Creature creature, ActionType actiontype)
@@ -52,6 +52,8 @@ public static class ActionSystem
 
 public abstract class ActionBase
 {
+    protected ActionBase() { }
+
     public abstract ActionType Type { get; }
     public abstract int Cooldown { get; }
 
