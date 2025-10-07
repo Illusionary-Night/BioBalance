@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using Unity.VisualScripting;
+//using Unity.VisualScripting;
+using UnityEngine;
 
 
-public abstract class Creature
+public abstract class Creature : MonoBehaviour
 {
     // 玩家決定
     public float Size { get; set; }
@@ -12,7 +13,7 @@ public abstract class Creature
     public float BaseHealth { get; set; }
     public float ReproductionRate { get; set; }
     public float AttackPower { get; set; }
-    public float Lifespan { get; }
+    public float Lifespan { get; set;  }
     public float Variation { get; set; }
     public List<Creature> FoodList { get; set;  }       //新增食物列表
     public List<Creature> PredatorList { get; set;  }   //新增天敵列表
@@ -20,22 +21,22 @@ public abstract class Creature
     public int[] SleepingCycle { get; set; }
 
     // 電腦計算
-    public float HungerRate { get; }
-    public float MaxHunger { get; }
-    public float ReproductionInterval { get; }
-    public float HealthRegeneration { get; }
+    public float HungerRate { get; set;  }
+    public float MaxHunger { get; set;  }
+    public float ReproductionInterval { get; set; }
+    public float HealthRegeneration { get; set; }
     public DietType Diet { get; set; }
     public BodyType Body { get; set; }
-    public int SleepTime { get; }
+    public int SleepTime { get; set; }
 
     // 當前狀態
     public float Hunger { get; set; }
     public float Health { get; set; }
     public float Age { get; set; }
     public float ReproductionCooldown { get; set; }
-    // Start is called before the first frame update
+    public int ActionCooldown { get; set; }
 
-    public Creature(CreatureAttributes creatureAttributes)
+    public void Initialize(CreatureAttributes creatureAttributes)
     {
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
         //睡眠時間變異
@@ -66,12 +67,44 @@ public abstract class Creature
         Health = BaseHealth;
         Age = 0;
         ReproductionCooldown = 0;
+        ActionCooldown = 0;
     }
-    public void Update()
+    public void UpdateState()
     {
-        //回血、餓死、老死、繁殖冷卻、飽食度下降
+        //回血、餓死、老死、繁殖冷卻
         //回血
+        if(Health < BaseHealth)
+        {
+            Health += HealthRegeneration;
+        }
+        //餓死
+        Hunger -= HungerRate;
+        if (Hunger <= 0)
+        {
+            //Debug.Log("餓死");
+        }
+        //老死
+        Age += 1;
+        if (Age >= Lifespan)
+        {
+            //Debug.Log("老死");
+        }
+        //繁殖冷卻
+        if (ReproductionCooldown > 0)
+        {
+            ReproductionCooldown -= 1;
+        }
 
+        //行動冷卻
+        if (ActionCooldown > 0)
+        {
+            ActionCooldown -= 1;
+        }
+
+        if (ActionCooldown <= 0)
+        {
+            DoAction();
+        }
     }
     public void DoAction()
     {

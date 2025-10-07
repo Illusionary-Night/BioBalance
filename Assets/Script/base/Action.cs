@@ -15,13 +15,13 @@ public static class ActionSystem
 
     public static void Register()
     {
-        // ±½´y©Ò¦³Ä~©Ó ActionBase ªº«¬§O
+        // æƒææ‰€æœ‰ç¹¼æ‰¿ ActionBase çš„å‹åˆ¥
         var actionTypes = typeof(ActionBase).Assembly.GetTypes()
             .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(ActionBase)));
 
         foreach (var type in actionTypes)
         {
-            // ±j¨î«Ø¥ß¸ÓÃş§Oªº Instance ÀRºAÄæ¦ì
+            // å¼·åˆ¶å»ºç«‹è©²é¡åˆ¥çš„ Instance éœæ…‹æ¬„ä½
             var instanceField = type.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
             if (instanceField?.GetValue(null) is ActionBase action)
                 actions.Add(action.Type, action);
