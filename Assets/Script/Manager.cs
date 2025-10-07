@@ -1,15 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
+using System.Linq;
+public interface Tickable
+{
+    void OnTick();
+}
 public class Manager : MonoBehaviour
 {
     private List<Creature> creatures;
     private List<GameObject> meat;
     private List<GameObject> grass;
+    private List<Tickable> tickables;
     private List<CreatureAttributes> species;
     public float tickInterval = 1f; // 每個遊戲單位時間 = 1 秒
-    private float tickTimer = 0f;
+    private float tickTimer = 0;
+    private int mixTickTime = 240000;
+    private int tickTime = 0;
 
     void Start()
     {
@@ -24,7 +32,12 @@ public class Manager : MonoBehaviour
         if (tickTimer >= tickInterval)
         {
             tickTimer -= tickInterval;
-            OnTick(); // 觸發一個遊戲時間單位
+            tickTime = (tickTime + 1) % mixTickTime;
+            // 在這裡處理每個遊戲時間單位的邏輯
+            foreach (var tickable in tickables)
+            {
+                tickable.OnTick();
+            }
         }
     }
     private void Initialize()
