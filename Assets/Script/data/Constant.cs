@@ -10,12 +10,24 @@ public enum BodyType
     Medium,
     Large
 }
+
 public enum DietType
 {
     Herbivore,  //草食
     Carnivore,  //肉食
     Omnivore    //雜食
 }
+
+public enum ActionType
+{
+    Move,
+    Eat,
+    Sleep,
+    Reproduce,
+    Attack,
+    Flee
+}
+
 public struct CreatureAttributes
 {
     public float size;
@@ -33,6 +45,7 @@ public struct CreatureAttributes
     public List<Action> action_list;
     
 }
+
 public static class AttributesCalculator{
     public static float CalculateHungerRate(float size, float speed, float attack_power)
     {
