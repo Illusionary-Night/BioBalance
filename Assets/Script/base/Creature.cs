@@ -19,7 +19,7 @@ public abstract class Creature : MonoBehaviour
     public List<Creature> PredatorList { get; set;  }   //新增天敵列表
     public List<Action> ActionList { get; set; }
     public int[] SleepingCycle { get; set; }
-
+    
     // 電腦計算
     public float HungerRate { get; set;  }
     public float MaxHunger { get; set;  }
