@@ -38,6 +38,11 @@ public static class ActionSystem
         return actions.TryGetValue(actiontype, out var f) ? f.GetWeight(creature) : 0f;
     }
 
+    public static int GetCooldown(Creature creature, ActionType actiontype)
+    {
+        return actions.TryGetValue(actiontype, out var f) ? f.Cooldown : 0;
+    }
+
     public static bool IsSuccess(Creature creature, ActionType actiontype)
     {
         return actions.TryGetValue(actiontype, out var f) && f.IsSuccess(creature);
