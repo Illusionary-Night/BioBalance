@@ -42,7 +42,7 @@ public struct CreatureAttributes
     public BodyType Body { get; set; }     //最終體型
     public List<Creature> food_list;       //新增食物列表
     public List<Creature> predator_list;   //新增天敵列表
-    public List<Action> action_list;
+    public List<ActionType> action_list;
     
 }
 

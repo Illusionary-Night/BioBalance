@@ -55,7 +55,7 @@ public class Manager : MonoBehaviour
         new_species.Body = BodyType.Medium;
         new_species.food_list = new List<Creature>();
         new_species.predator_list = new List<Creature>();
-        new_species.action_list = new List<Action>();
+        new_species.action_list = new List<ActionType>();
         species = new List<CreatureAttributes>();
         species.Add(new_species);
         creatures = new List<Creature>();
