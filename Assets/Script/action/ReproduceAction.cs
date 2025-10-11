@@ -30,7 +30,7 @@ public class ReproduceAction : ActionBase
 
     public override void Execute(Creature creature)
     {
-        GameObject creatureObject = new GameObject(creature.Species+"_" + );
+        GameObject creatureObject = new GameObject("е═кл "+creature.SpeciesID+"." + );
         Creature creatureComponent = creatureObject.AddComponent<Creature>();
         creatureComponent.Initialize(new_species);
         AddCreature(creatureComponent);
