@@ -3,22 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
-public interface Tickable
-{
-    void OnTick();
-}
+
 public class Manager : MonoBehaviour
 {
-    private List<Creature> creatures;
+    public static List<Species> species;
     private List<GameObject> meat;
     private List<GameObject> grass;
     private List<Tickable> tickables;
-    private List<CreatureAttributes> species;
     public float tickInterval = 1f; // 每個遊戲單位時間 = 1 秒
     private float tickTimer = 0;
     private int mixTickTime = 240000;
     private int tickTime = 0;
-
+    public Dictionary<int, Species> species_dictionary = new Dictionary<int, Species>();
     void Start()
     {
         
@@ -42,46 +38,43 @@ public class Manager : MonoBehaviour
     }
     private void Initialize()
     {
-        CreatureAttributes new_species = new CreatureAttributes();
-        new_species.size = 1f;
-        new_species.speed = 1f;
-        new_species.base_health = 10f;
-        new_species.reproduction_rate = 0.1f;
-        new_species.attack_power = 2f;
-        new_species.lifespan = 100f;
-        new_species.variation = 0.1f;
-        new_species.sleeping_cycle = new int[] { 20, 6 };
-        new_species.Diet = DietType.Carnivore;
-        new_species.Body = BodyType.Medium;
-        new_species.food_list = new List<Creature>();
-        new_species.predator_list = new List<Creature>();
-        new_species.action_list = new List<ActionType>();
-        species = new List<CreatureAttributes>();
-        species.Add(new_species);
-        creatures = new List<Creature>();
-        meat = new List<GameObject>();
-        grass = new List<GameObject>();
-        // 初始化生物列表
-        for (int i = 0; i < 10; i++)   //生成10隻初始生物
-        {
-            GameObject creatureObject = new GameObject("Creature_" + i);
-            Creature creatureComponent = creatureObject.AddComponent<Creature>();
-            creatureComponent.Initialize(new_species);
-            AddCreature(creatureComponent);
-        }
-    }
-    private void OnTick()
-    {
-        // 在這裡處理每個遊戲時間單位的邏輯
-        foreach (var creature in creatures)
-        {
-            // 更新生物的狀態與行為
-            creature.UpdateState();
-        }
     }
     private void PredatorUpdate(Creature new_creature)
     {
-        for (int i = 0; i < creatures.Count; i++)       //檢查現有生物列表
+        foreach (var each_species in species)
+        {
+            if (each_species.creatures.Count == 0)continue;
+            foreach (var each_prey_ID in each_species.creatures[0].PreyIDList)
+            {
+                if (each_prey_ID != new_creature.SpeciesID) continue;
+                bool is_duplicate = false;
+                foreach (var each_predator_ID in new_creature.PredatorIDList)
+                {
+                    if (each_predator_ID == each_species.attributes.species_ID) is_duplicate = true;
+                }
+                if (!is_duplicate) new_creature.PredatorIDList.Add(each_species.attributes.species_ID);
+            }
+        }
+        foreach (var each_species in species)
+        {
+            foreach (var each_prey_ID in new_creature.PreyIDList)
+            {
+                if (each_prey_ID != each_species.attributes.species_ID) continue;
+                bool is_duplicate = false;
+                foreach (var each_predator_ID in new_creature.PredatorIDList)
+                {
+                    if (each_predator_ID == each_creature.SpeciesID) is_duplicate = true;
+                }
+                if (!is_duplicate) new_creature.PredatorIDList.Add(each_creature.SpeciesID);
+            }
+            foreach (var each_creature in each_species.creatures)
+        }
+
+
+
+
+
+        for (int i = 0; i < species.Count; i++)       //檢查現有生物列表
         {
             for (int j = 0; j < creatures[i].FoodList.Count; j++)       //檢查現有生物的食物列表
             {

@@ -5,9 +5,10 @@ using System;
 using UnityEngine;
 
 
-public abstract class Creature : MonoBehaviour
+public abstract class Creature : MonoBehaviour, Tickable
 {
     // 玩家決定
+    public int SpeciesID { get; set; }
     public float Size { get; set; }
     public float Speed { get; set; }
     public float BaseHealth { get; set; }
@@ -15,11 +16,12 @@ public abstract class Creature : MonoBehaviour
     public float AttackPower { get; set; }
     public float Lifespan { get; set;  }
     public float Variation { get; set; }
-    public List<Creature> FoodList { get; set;  }       //新增食物列表
-    public List<Creature> PredatorList { get; set;  }   //新增天敵列表
+    public List<int> PreyIDList { get; set;  }       //新增食物列表
+    public List<int> PredatorIDList { get; set;  }   //新增天敵列表
     public List<ActionType> ActionList { get; set; }
     public int[] SleepingCycle { get; set; }
-    
+    public float PerceptionRange { get; set; }  // 感知範圍
+
     // 電腦計算
     public float HungerRate { get; set;  }
     public float MaxHunger { get; set;  }
@@ -51,10 +53,12 @@ public abstract class Creature : MonoBehaviour
         ReproductionRate = creatureAttributes.reproduction_rate + creatureAttributes.reproduction_rate * variationFactor();
         AttackPower = creatureAttributes.attack_power + creatureAttributes.attack_power * variationFactor();
         Lifespan = creatureAttributes.lifespan + creatureAttributes.lifespan * variationFactor();
+        PerceptionRange = creatureAttributes.perception_range + creatureAttributes.perception_range * variationFactor();
         //其他玩家屬性不變
+        SpeciesID = creatureAttributes.species_ID;
         Variation = creatureAttributes.variation;
-        FoodList = creatureAttributes.food_list;
-        PredatorList = creatureAttributes.predator_list;
+        PreyIDList = creatureAttributes.prey_ID_list;
+        PredatorIDList = creatureAttributes.predator_ID_list;
         ActionList = creatureAttributes.action_list;
         //計算衍生屬性
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
@@ -69,11 +73,65 @@ public abstract class Creature : MonoBehaviour
         ReproductionCooldown = 0;
         ActionCooldown = 0;
     }
-    public void UpdateState()
+    public void DoAction()
+    {
+        List<KeyValuePair<ActionType,float>> available_actions = new();
+        //每回合開始(每生物流程)	
+        //計算每個action的條件達成與否
+        //計算每個達成條件的action的權重
+        for (int i = 0; i < ActionList.Count; i++)
+        {
+            if (ActionSystem.IsConditionMet(this, ActionList[i]))
+            {
+                available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
+            }
+        }
+        //將條件達成的action進行權重排序
+        available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
+        for (int i = 0; i < available_actions.Count; i++)
+        {
+            //選擇權重最高
+            ActionType selectedAction = available_actions[0].Key;
+            //骰成功率
+            if (ActionSystem.IsSuccess(this,selectedAction))
+            {
+                ActionSystem.Execute(this, selectedAction);
+
+                return;
+            }
+            else
+            {
+                //失敗    找權重次高
+                available_actions.RemoveAt(0);
+            }
+
+        }
+    }
+    public CreatureAttributes ToCreatureAttribute()
+    {
+        CreatureAttributes attributes = new CreatureAttributes();
+        attributes.species_ID = SpeciesID;
+        attributes.size = Size;
+        attributes.base_health = BaseHealth;
+        attributes.speed = Speed;
+        attributes.attack_power = AttackPower;
+        attributes.reproduction_rate = ReproductionRate;
+        attributes.variation = Variation;
+        attributes.lifespan = Lifespan;
+        attributes.perception_range = PerceptionRange;
+        attributes.sleeping_cycle = SleepingCycle;
+        attributes.Diet = Diet;
+        attributes.Body = Body;
+        attributes.prey_ID_list = PreyIDList;
+        attributes.predator_ID_list = PredatorIDList;
+        attributes.action_list = ActionList;
+        return attributes;
+    }
+    public void OnTick()
     {
         //回血、餓死、老死、繁殖冷卻
         //回血
-        if(Health < BaseHealth)
+        if (Health < BaseHealth)
         {
             Health += HealthRegeneration;
         }
@@ -104,39 +162,6 @@ public abstract class Creature : MonoBehaviour
         if (ActionCooldown <= 0)
         {
             DoAction();
-        }
-    }
-    public void DoAction()
-    {
-        List<KeyValuePair<ActionType,float>> available_actions = new();
-        //每回合開始(每生物流程)	
-        //計算每個action的條件達成與否
-        //計算每個達成條件的action的權重
-        for (int i = 0; i < ActionList.Count; i++)
-        {
-            if (ActionSystem.IsConditionMet(this, ActionList[i]))
-            {
-                available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
-            }
-        }
-        //將條件達成的action進行權重排序
-        available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
-        for (int i = 0; i < available_actions.Count; i++)
-        {
-            //選擇權重最高
-            ActionType selectedAction = available_actions[0].Key;
-            //骰成功率
-            if (ActionSystem.IsSuccess(this,selectedAction))
-            {
-                ActionSystem.Execute(this, selectedAction);
-                return;
-            }
-            else
-            {
-                //失敗    找權重次高
-                available_actions.RemoveAt(0);
-            }
-
         }
     }
 }
