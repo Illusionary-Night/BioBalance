@@ -17,7 +17,7 @@ public abstract class Creature : MonoBehaviour
     public float Variation { get; set; }
     public List<Creature> FoodList { get; set;  }       //新增食物列表
     public List<Creature> PredatorList { get; set;  }   //新增天敵列表
-    public List<Action> ActionList { get; set; }
+    public List<ActionType> ActionList { get; set; }
     public int[] SleepingCycle { get; set; }
     
     // 電腦計算
@@ -108,15 +108,15 @@ public abstract class Creature : MonoBehaviour
     }
     public void DoAction()
     {
-        List<KeyValuePair<Action,float>> available_actions = new List<KeyValuePair<Action,float>>();
+        List<KeyValuePair<ActionType,float>> available_actions = new();
         //每回合開始(每生物流程)	
         //計算每個action的條件達成與否
         //計算每個達成條件的action的權重
         for (int i = 0; i < ActionList.Count; i++)
         {
-            if (ActionList[i].isConditionMet())
+            if (ActionSystem.IsConditionMet(this, ActionList[i]))
             {
-                available_actions.Add(new KeyValuePair<Action,float>(ActionList[i], ActionList[i].getWeight()));
+                available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
             }
         }
         //將條件達成的action進行權重排序
@@ -124,11 +124,11 @@ public abstract class Creature : MonoBehaviour
         for (int i = 0; i < available_actions.Count; i++)
         {
             //選擇權重最高
-            Action selectedAction = available_actions[0].Key;
+            ActionType selectedAction = available_actions[0].Key;
             //骰成功率
-            if (selectedAction.isSuccess())
+            if (ActionSystem.IsSuccess(this,selectedAction))
             {
-                selectedAction.execute(this);
+                ActionSystem.Execute(this, selectedAction);
                 return;
             }
             else
