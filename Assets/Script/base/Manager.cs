@@ -41,76 +41,60 @@ public class Manager : MonoBehaviour
     }
     private void PredatorUpdate(Creature new_creature)
     {
-        foreach (var each_species in species)
+        foreach (var each_species in species)   //新生物的天敵名單補充
         {
             if (each_species.creatures.Count == 0)continue;
             foreach (var each_prey_ID in each_species.creatures[0].PreyIDList)
             {
                 if (each_prey_ID != new_creature.SpeciesID) continue;
-                bool is_duplicate = false;
-                foreach (var each_predator_ID in new_creature.PredatorIDList)
-                {
-                    if (each_predator_ID == each_species.attributes.species_ID) is_duplicate = true;
-                }
-                if (!is_duplicate) new_creature.PredatorIDList.Add(each_species.attributes.species_ID);
+                new_creature.PredatorIDList.Add(each_species.attributes.species_ID);
             }
         }
-        foreach (var each_species in species)
+        foreach (var each_species in species)   //舊生物的天敵名單補充
         {
-            foreach (var each_prey_ID in new_creature.PreyIDList)
+            foreach(var each_creature in each_species.creatures)
             {
-                if (each_prey_ID != each_species.attributes.species_ID) continue;
-                bool is_duplicate = false;
-                foreach (var each_predator_ID in new_creature.PredatorIDList)
+                foreach(var each_prey_ID in new_creature.PreyIDList)
                 {
-                    if (each_predator_ID == each_creature.SpeciesID) is_duplicate = true;
-                }
-                if (!is_duplicate) new_creature.PredatorIDList.Add(each_creature.SpeciesID);
-            }
-            foreach (var each_creature in each_species.creatures)
-        }
-
-
-
-
-
-        for (int i = 0; i < species.Count; i++)       //檢查現有生物列表
-        {
-            for (int j = 0; j < creatures[i].FoodList.Count; j++)       //檢查現有生物的食物列表
-            {
-                if (creatures[i].FoodList[j].GetType() == (new_creature.GetType()))     // new_creature 是 creatures[i] 的食物
-                {
-                    // creatures[i] 會獵捕 new_creature
-                    if (!new_creature.PredatorList.Contains(creatures[i]))      //避免重複加入
+                    if (each_prey_ID != each_creature.SpeciesID) continue;
+                    bool is_duplicate = false;
+                    foreach (var each_predator_ID in each_creature.PredatorIDList)
                     {
-                        new_creature.PredatorList.Add(creatures[i]);        //加入天敵列表
+                        if(each_predator_ID == each_creature.SpeciesID)is_duplicate = true;
                     }
-                }
-            }
-        }
-        for (int i = 0; i < new_creature.FoodList.Count; i++)    //檢查 new_creature 的食物列表
-        {
-            for (int j = 0; j < creatures.Count; j++)            //檢查現有生物列表
-            {
-                if (creatures[j].GetType() == (new_creature.FoodList[i].GetType()))     // creatures[j] 是 new_creature 的食物
-                {
-                    // new_creature 會獵捕 creatures[j]
-                    if (!creatures[j].PredatorList.Contains(new_creature))      //避免重複加入
-                    {
-                        creatures[j].PredatorList.Add(new_creature);        //加入天敵列表
-                    }
+                    if(!is_duplicate)each_creature.PredatorIDList.Add(new_creature.SpeciesID);
                 }
             }
         }
     }
     private void AddCreature(Creature new_creature)
     {
-        creatures.Add(new_creature);
+        bool is_new_species = true;
+        foreach (var each_species in species)
+        {
+            if (each_species.attributes.species_ID == new_creature.SpeciesID)
+            {
+                is_new_species = false;
+                each_species.creatures.Add(new_creature);
+            }
+        }
+        if (is_new_species) {
+            Species new_species = new Species();
+            new_species.creatures.Add(new_creature);
+            new_species.attributes = new_creature.ToCreatureAttribute();
+            species.Add(new_species);
+        }
         PredatorUpdate(new_creature);
     }
     private void RemoveCreature(Creature dead_creature)
     {
-        creatures.Remove(dead_creature);
+        foreach(var each_species in species)
+        {
+            if (each_species.attributes.species_ID == dead_creature.SpeciesID)
+            {
+                each_species.creatures.Remove(dead_creature);
+            }
+        }
     }
     
 }
