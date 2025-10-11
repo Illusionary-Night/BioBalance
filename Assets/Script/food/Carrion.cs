@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Grass : Edible
+public class Carrion : Edible
 {
 	public override void Initialize(Vector2 position)
 	{
