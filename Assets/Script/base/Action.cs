@@ -28,22 +28,22 @@ public static class ActionSystem
         }
     }
 
-    public static bool isConditionMet(Creature creature, ActionType actiontype)
+    public static bool IsConditionMet(Creature creature, ActionType actiontype)
     {
         return actions.TryGetValue(actiontype, out var f) && f.IsConditionMet(creature);
     }
 
-    public static float getWeight(Creature creature, ActionType actiontype)
+    public static float GetWeight(Creature creature, ActionType actiontype)
     {
         return actions.TryGetValue(actiontype, out var f) ? f.GetWeight(creature) : 0f;
     }
 
-    public static bool isSuccess(Creature creature, ActionType actiontype)
+    public static bool IsSuccess(Creature creature, ActionType actiontype)
     {
         return actions.TryGetValue(actiontype, out var f) && f.IsSuccess(creature);
     }
 
-    public static void execute(Creature creature, ActionType actiontype)
+    public static void Execute(Creature creature, ActionType actiontype)
     {
         if (actions.TryGetValue(actiontype, out var f))
             f.Execute(creature);
