@@ -28,6 +28,11 @@ public enum ActionType
     Flee
 }
 
+public enum FoodType
+{
+    Plant,
+    Meat,
+}
 public struct CreatureAttributes
 {
     public int species_ID;
