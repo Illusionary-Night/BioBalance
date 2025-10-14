@@ -8,6 +8,7 @@ using UnityEngine;
 public abstract class Creature : MonoBehaviour, Tickable
 {
     // ª±®a¨M©w
+    public GameObject GameObject {  get; private set; }
     public int SpeciesID { get; set; }
     public float Size { get; set; }
     public float Speed { get; set; }

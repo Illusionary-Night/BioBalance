@@ -1,37 +1,41 @@
 using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
+using static UnityEngine.GraphicsBuffer;
 
 public static class Perception
 {
-    public static bool HasTarget(Creature creature, CreatureAttributes target)
+    public static bool HasTarget(Creature current_creature, int target_ID)
     {
-        if (creature == null) return false; 
-        if (target.species == null) return false;
-        foreach (var c in Manager.creatures)
+        foreach (var each_species in Manager.species)
         {
-            if(!target.species.Equals(c.Species)) continue; //不是目標物種
-            if (Vector2.Distance(creature.transform.position, c.transform.position) > creature.PerceptionRange) continue;   //超出感知範圍
-            return true;
+            if(target_ID!=each_species.attributes.species_ID) continue;
+            foreach(var each_creature in each_species.creatures){
+                float distance = Vector2.Distance(current_creature.transform.position, each_creature.transform.position);
+                if (distance > current_creature.PerceptionRange) continue;
+                return true;
+            }
         }
         return false;
     }
-    public static int CountTargetNumber(Creature creature, CreatureAttributes target)
+    public static int CountTargetNumber(Creature current_creature, int target_ID)
     {
         int count = 0;
-        if (creature == null) return 0;
-        if (target.species == null) return 0;
-        foreach (var c in Manager.creatures)
+        foreach (var each_species in Manager.species)
         {
-            if (!target.species.Equals(c.Species)) continue; //不是目標物種
-            if (Vector2.Distance(creature.transform.position, c.transform.position) > creature.PerceptionRange) continue;   //超出感知範圍
-            count++;
+            if (target_ID != each_species.attributes.species_ID) continue;
+            foreach (var each_creature in each_species.creatures)
+            {
+                float distance = Vector2.Distance(current_creature.transform.position, each_creature.transform.position);
+                if (distance > current_creature.PerceptionRange) continue;
+                count++;
+            }
         }
         return count;
     } 
-    public static bool HasTarget(Creature creature, List<CreatureAttributes> targetList)
+    public static bool HasTarget(Creature creature, List<int> target_ID_list)
     {
-        foreach (var target in targetList)
+        foreach (var target in target_ID_list)
         {
             if (HasTarget(creature, target)) return true;
         }
