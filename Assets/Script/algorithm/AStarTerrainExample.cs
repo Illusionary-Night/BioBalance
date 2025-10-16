@@ -45,7 +45,7 @@ public class AStarTerrainExample : MonoBehaviour
         Debug.Log("=== A* 路徑尋找測試 ===");
 
         // 測試不使用地形權重的路徑
-        var pathWithoutTerrain = AStar.FindPath(startPosition, goalPosition, IsBasicWalkable);
+        var pathWithoutTerrain = AStar.FindPath(startPosition, goalPosition);
         Debug.Log($"無地形權重路徑長度: {pathWithoutTerrain?.Count ?? 0}");
         if (pathWithoutTerrain != null)
         {
@@ -55,8 +55,7 @@ public class AStarTerrainExample : MonoBehaviour
         if (useTerrainWeights)
         {
             // 測試使用地形權重的路徑
-            var pathWithTerrain = AStar.FindPath(startPosition, goalPosition, 
-                terrainMap.IsWalkable, terrainMap.GetTerrainWeight);
+            var pathWithTerrain = AStar.FindPath(startPosition, goalPosition, terrainMap.GetTerrainWeight);
             
             Debug.Log($"有地形權重路徑長度: {pathWithTerrain?.Count ?? 0}");
             if (pathWithTerrain != null)
@@ -181,7 +180,7 @@ public static class AStarPerformanceComparison
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         for (int i = 0; i < iterations; i++)
         {
-            AStar.FindPath(start, goal, pos => terrainMap.IsWalkable(pos));
+            AStar.FindPath(start, goal);
         }
         stopwatch.Stop();
         Debug.Log($"無地形權重 {iterations} 次測試: {stopwatch.ElapsedMilliseconds}ms (平均: {stopwatch.ElapsedMilliseconds / (float)iterations:F3}ms)");
@@ -190,7 +189,7 @@ public static class AStarPerformanceComparison
         stopwatch.Restart();
         for (int i = 0; i < iterations; i++)
         {
-            AStar.FindPath(start, goal, terrainMap.IsWalkable, terrainMap.GetTerrainWeight);
+            AStar.FindPath(start, goal, terrainMap.GetTerrainWeight);
         }
         stopwatch.Stop();
         Debug.Log($"有地形權重 {iterations} 次測試: {stopwatch.ElapsedMilliseconds}ms (平均: {stopwatch.ElapsedMilliseconds / (float)iterations:F3}ms)");

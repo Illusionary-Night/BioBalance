@@ -26,15 +26,14 @@ public static class AStar
     private static readonly Dictionary<Vector2Int, Node> AllNodes = new Dictionary<Vector2Int, Node>();
     private static readonly List<Vector2Int> PathBuffer = new List<Vector2Int>();
 
-    // 原始版本：不考慮地形權重
-    public static List<Vector2Int> FindPath(Vector2Int start, Vector2Int goal, System.Func<Vector2Int, bool> isWalkable)
+    // 不考慮地形權重
+    public static List<Vector2Int> FindPath(Vector2Int start)
     {
-        return FindPath(start, goal, isWalkable, null);
+        return FindPath(start, goal, null);
     }
 
-    // 新版本：支援地形權重
+    // 支援地形權重
     public static List<Vector2Int> FindPath(Vector2Int start, Vector2Int goal, 
-        System.Func<Vector2Int, bool> isWalkable, 
         System.Func<Vector2Int, float> getTerrainWeight = null)
     {
         // 清理重用的集合
@@ -60,7 +59,7 @@ public static class AStar
             foreach (var direction in Directions)
             {
                 var neighborPos = currentNode.Position + direction;
-                if (!isWalkable(neighborPos) || ClosedSet.Contains(neighborPos))
+                if (ClosedSet.Contains(neighborPos))
                     continue;
 
                 // 計算基礎移動成本（直線或對角線）
