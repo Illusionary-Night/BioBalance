@@ -52,7 +52,7 @@ public class AStarPerformanceTest : MonoBehaviour
         // 暖身運行
         for (int i = 0; i < 10; i++)
         {
-            AStar.FindPath(start, goal, IsWalkable);
+            AStar.FindPath(start, goal);
         }
         
         // 正式測試
@@ -63,7 +63,7 @@ public class AStarPerformanceTest : MonoBehaviour
         
         for (int i = 0; i < testIterations; i++)
         {
-            var path = AStar.FindPath(start, goal, IsWalkable);
+            var path = AStar.FindPath(start, goal);
             if (path != null)
             {
                 successfulPaths++;
