@@ -8,42 +8,82 @@ using UnityEngine;
 public abstract class Creature : MonoBehaviour, Tickable
 {
     // 玩家決定
-    public GameObject GameObject {  get; private set; }
-    public int SpeciesID { get; set; }
-    public float Size { get; set; }
-    public float Speed { get; set; }
-    public float BaseHealth { get; set; }
-    public float ReproductionRate { get; set; }
-    public float AttackPower { get; set; }
-    public float Lifespan { get; set;  }
-    public float Variation { get; set; }
-    public List<int> PreyIDList { get; set;  }       //新增食物列表
-    public List<int> PredatorIDList { get; set;  }   //新增天敵列表
-    public List<ActionType> ActionList { get; set; }
-    public int[] SleepingCycle { get; set; }
-    public float PerceptionRange { get; set; }  // 感知範圍
+    [Header("=== 玩家決定 ===")]
+    public GameObject CreatureObject {  get; private set; }
+    [SerializeField] private int species_ID;
+    public int SpeciesID { get => species_ID; set => species_ID = value; }
+    [SerializeField] private float size;
+    public float Size { get => size; set => size = value; }
+    [SerializeField] private float speed;
+    public float Speed { get => speed; set => speed = value; }
+    [SerializeField] private float base_health; 
+    public float BaseHealth { get => base_health; set => base_health = value; }
+    [SerializeField] private float reproduction_rate;
+    public float ReproductionRate { get => reproduction_rate; set => reproduction_rate = value; }
+    [SerializeField] private float attack_power; 
+    public float AttackPower { get => attack_power; set => attack_power = value; }
+    [SerializeField] private float lifespan; 
+    public float Lifespan { get => lifespan; set => lifespan = value; }
+    [SerializeField] private float variation;
+    public float Variation { get => variation; set => variation = value; }
+    [SerializeField] private List<int> prey_ID_list = new List<int>();
+    public List<int> PreyIDList { get => prey_ID_list; set => prey_ID_list = value; }       //新增食物列表
+    [SerializeField] private List<int> predator_ID_list = new List<int>();
+    public List<int> PredatorIDList { get => predator_ID_list; set => predator_ID_list = value; }   //新增天敵列表
+    [SerializeField] private List<ActionType> action_list;
+    public List<ActionType> ActionList { get => action_list; set => action_list = value; }
+
+    [SerializeField] private int[] sleepingCycle;
+    public int[] SleepingCycle { get => sleepingCycle; set => sleepingCycle = value; }
+
+    [SerializeField] private float perceptionRange;  // 感知範圍
+    public float PerceptionRange { get => perceptionRange; set => perceptionRange = value; }
 
     // 電腦計算
-    public float HungerRate { get; set;  }
-    public float MaxHunger { get; set;  }
-    public float ReproductionInterval { get; set; }
-    public float HealthRegeneration { get; set; }
-    public DietType Diet { get; set; }
-    public BodyType Body { get; set; }
-    public int SleepTime { get; set; }
+    [Header("=== 電腦計算 ===")]
+    [SerializeField] private float hungerRate;
+    public float HungerRate { get => hungerRate; set => hungerRate = value; }
+
+    [SerializeField] private float maxHunger;
+    public float MaxHunger { get => maxHunger; set => maxHunger = value; }
+
+    [SerializeField] private float reproductionInterval;
+    public float ReproductionInterval { get => reproductionInterval; set => reproductionInterval = value; }
+
+    [SerializeField] private float healthRegeneration;
+    public float HealthRegeneration { get => healthRegeneration; set => healthRegeneration = value; }
+
+    [SerializeField] private DietType diet;
+    public DietType Diet { get => diet; set => diet = value; }
+
+    [SerializeField] private BodyType body;
+    public BodyType Body { get => body; set => body = value; }
+
+    [SerializeField] private int sleepTime;
+    public int SleepTime { get => sleepTime; set => sleepTime = value; }
 
     // 當前狀態
-    public float Hunger { get; set; }
-    public float Health { get; set; }
-    public float Age { get; set; }
-    public float ReproductionCooldown { get; set; }
-    public int ActionCooldown { get; set; }
+    [Header("=== 當前狀態 ===")]
+    [SerializeField] private float hunger;
+    public float Hunger { get => hunger; set => hunger = value; }
+
+    [SerializeField] private float health;
+    public float Health { get => health; set => health = value; }
+
+    [SerializeField] private float age;
+    public float Age { get => age; set => age = value; }
+
+    [SerializeField] private float reproductionCooldown;
+    public float ReproductionCooldown { get => reproductionCooldown; set => reproductionCooldown = value; }
+
+    [SerializeField] private int actionCooldown;
+    public int ActionCooldown { get => actionCooldown; set => actionCooldown = value; }
 
     public void Initialize(CreatureAttributes creatureAttributes)
     {
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
         //睡眠時間變異
-        int delta_sleep_time() => (int)(SleepTime * variationFactor());
+        int delta_sleep_time() => (int)((creatureAttributes.sleeping_cycle[1]-creatureAttributes.sleeping_cycle[0]) * variationFactor());
         SleepingCycle = new int[2];
         SleepingCycle[0] = creatureAttributes.sleeping_cycle[0] + delta_sleep_time();
         SleepingCycle[1] = creatureAttributes.sleeping_cycle[1] + delta_sleep_time();
@@ -58,15 +98,15 @@ public abstract class Creature : MonoBehaviour, Tickable
         //其他玩家屬性不變
         SpeciesID = creatureAttributes.species_ID;
         Variation = creatureAttributes.variation;
-        PreyIDList = creatureAttributes.prey_ID_list;
-        PredatorIDList = creatureAttributes.predator_ID_list;
-        ActionList = creatureAttributes.action_list;
+        PreyIDList = new List<int>(creatureAttributes.prey_ID_list);
+        PredatorIDList = new List<int>(creatureAttributes.predator_ID_list);
+        ActionList = new List<ActionType>(creatureAttributes.action_list);
         //計算衍生屬性
+        SleepTime = SleepingCycle[1] - SleepingCycle[0];
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
         MaxHunger = AttributesCalculator.CalculateMaxHunger(Size, BaseHealth, Diet);
         ReproductionInterval = AttributesCalculator.CalculateReproductionInterval(Size, BaseHealth);
         HealthRegeneration = AttributesCalculator.CalculateHealthRegeneration(BaseHealth, Size, SleepTime);
-        SleepTime = SleepingCycle[1] - SleepingCycle[0];
         //初始狀態
         Hunger = MaxHunger;
         Health = BaseHealth;
@@ -89,7 +129,7 @@ public abstract class Creature : MonoBehaviour, Tickable
         }
         //將條件達成的action進行權重排序
         available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
-        for (int i = 0; i < available_actions.Count; i++)
+        while (available_actions.Count > 0)
         {
             //選擇權重最高
             ActionType selectedAction = available_actions[0].Key;
@@ -136,6 +176,7 @@ public abstract class Creature : MonoBehaviour, Tickable
         {
             Health += HealthRegeneration;
         }
+        Health = Mathf.Min(Health, BaseHealth);
         //餓死
         Hunger -= HungerRate;
         if (Hunger <= 0)

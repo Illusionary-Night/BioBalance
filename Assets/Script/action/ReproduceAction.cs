@@ -40,7 +40,7 @@ public class ReproduceAction : ActionBase
                 creature_num=each_species.creatures.Count;
             }
         }
-        GameObject new_game_object = UnityEngine.Object.Instantiate(creature.GameObject);
+        GameObject new_game_object = UnityEngine.Object.Instantiate(creature.CreatureObject);
         new_game_object.name = "е═кл " + creature.SpeciesID + "." + creature_num;
         Creature new_creature = new_game_object.GetComponent<Creature>();
         new_creature.Initialize(creature.ToCreatureAttribute());
