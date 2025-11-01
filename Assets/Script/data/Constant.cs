@@ -76,3 +76,28 @@ public static class AttributesCalculator{
         return base_health * sleeping_time / size;
     }
 }
+
+// 地形類型定義
+public enum TerrainType
+{
+    Grass,      // 草地
+    Sand,       // 沙地
+    Rock,       // 俗頭，91度，是個斜坡
+    Swamp,      // 沼澤
+    Barrier,    // 障礙物，不可通行
+    Water,      // 水域
+    Lava,       // 熔岩
+    Ice         // 冰面
+}
+
+readonly Dictionary<TerrainType, float> DefaultTerrainCosts = new Dictionary<TerrainType, float>
+    {
+        { TerrainType.Grass, 1.0f },
+        { TerrainType.Sand, 1.5f },
+        { TerrainType.Rock, 10f },
+        { TerrainType.Swamp, 2.5f },
+        { TerrainType.Barrier, float.MaxValue }, // 不可通行
+        { TerrainType.Water, 2.5f }, // 不可通行
+        { TerrainType.Lava, 10.0f },
+        { TerrainType.Ice, 1.2f }
+    }
