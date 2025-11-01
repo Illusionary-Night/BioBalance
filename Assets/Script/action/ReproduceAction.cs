@@ -4,8 +4,7 @@ using static UnityEngine.UI.Image;
 
 public class ReproduceAction : ActionBase
 {
-    public static readonly ReproduceAction Instance = new ReproduceAction();
-    private ReproduceAction() { }
+    public ReproduceAction() { }
 
     public override ActionType Type => ActionType.Reproduce;
     public override int Cooldown => 5;
@@ -22,7 +21,7 @@ public class ReproduceAction : ActionBase
     public override float GetWeight(Creature creature)
     {
         //(1 / 偵查範圍內同類個體數 + 1) * 0.8
-        return (1 / (Perception.CountTargetNumber(creature,creature.SpeciesID)+1)) * 0.8f;
+        return (1f / (Perception.CountTargetNumber(creature,creature.SpeciesID)+1)) * 0.8f;
     }
 
     public override bool IsSuccess(Creature creature)
@@ -41,7 +40,7 @@ public class ReproduceAction : ActionBase
             }
         }
         GameObject new_game_object = UnityEngine.Object.Instantiate(creature.CreatureObject);
-        new_game_object.name = "生物 " + creature.SpeciesID + "." + creature_num;
+        new_game_object.name = "creature " + creature.SpeciesID + "." + creature_num;
         Creature new_creature = new_game_object.GetComponent<Creature>();
         new_creature.Initialize(creature.ToCreatureAttribute());
     }

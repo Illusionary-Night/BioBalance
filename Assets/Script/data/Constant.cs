@@ -31,7 +31,7 @@ public enum ActionType
 public enum FoodType
 {
     Plant,
-    Meat,
+    Meat
 }
 public struct CreatureAttributes
 {
