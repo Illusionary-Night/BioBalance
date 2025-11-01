@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using UnityEngine;
 
@@ -90,7 +91,9 @@ public enum TerrainType
     Ice         // 冰面
 }
 
-readonly Dictionary<TerrainType, float> DefaultTerrainCosts = new Dictionary<TerrainType, float>
+public static class DefaultTerrainCosts
+{
+    public static readonly Dictionary<TerrainType, float> TerrainCosts = new Dictionary<TerrainType, float>
     {
         { TerrainType.Grass, 1.0f },
         { TerrainType.Sand, 1.5f },
@@ -100,4 +103,5 @@ readonly Dictionary<TerrainType, float> DefaultTerrainCosts = new Dictionary<Ter
         { TerrainType.Water, 2.5f }, // 不可通行
         { TerrainType.Lava, 10.0f },
         { TerrainType.Ice, 1.2f }
-    }
+    };
+}

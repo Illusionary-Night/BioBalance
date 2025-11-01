@@ -5,7 +5,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public static class Perception
 {
-    public static bool HasTarget(Creature current_creature, int target_ID)
+    public static Creature HasTarget(Creature current_creature, int target_ID)
     {
         foreach (var each_species in Manager.species)
         {
@@ -13,10 +13,10 @@ public static class Perception
             foreach(var each_creature in each_species.creatures){
                 float distance = Vector2.Distance(current_creature.transform.position, each_creature.transform.position);
                 if (distance > current_creature.PerceptionRange) continue;
-                return true;
+                return each_creature;
             }
         }
-        return false;
+        return null;
     }
     public static int CountTargetNumber(Creature current_creature, int target_ID)
     {

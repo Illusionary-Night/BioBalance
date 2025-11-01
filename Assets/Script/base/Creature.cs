@@ -14,6 +14,8 @@ public abstract class Creature : MonoBehaviour, Tickable
     public int SpeciesID { get => species_ID; set => species_ID = value; }
     [SerializeField] private float size;
     public float Size { get => size; set => size = value; }
+    [SerializeField] private string _UUID;
+    public string UUID { get => _UUID; }
     [SerializeField] private float speed;
     public float Speed { get => speed; set => speed = value; }
     [SerializeField] private float base_health; 
@@ -79,8 +81,11 @@ public abstract class Creature : MonoBehaviour, Tickable
     [SerializeField] private int actionCooldown;
     public int ActionCooldown { get => actionCooldown; set => actionCooldown = value; }
 
-    public void Initialize(CreatureAttributes creatureAttributes)
+    public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
+        CreatureObject = creature_object;
+        //個體編號
+        _UUID = System.Guid.NewGuid().ToString();
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
         //睡眠時間變異
         int delta_sleep_time() => (int)((creatureAttributes.sleeping_cycle[1]-creatureAttributes.sleeping_cycle[0]) * variationFactor());
