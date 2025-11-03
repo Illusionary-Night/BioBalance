@@ -21,17 +21,17 @@ public class AStarTerrainExample : MonoBehaviour
 
     void SetupTerrainMap()
     {
-        terrainMap = new TerrainMap(TerrainType.Normal);
+        terrainMap = new TerrainMap(TerrainType.Grass);
         
         // 設定一些範例地形
         // 沙地區域
         terrainMap.SetTerrainArea(new Vector2Int(3, 3), new Vector2Int(6, 6), TerrainType.Sand);
         
         // 山地障礙
-        terrainMap.SetTerrainArea(new Vector2Int(7, 2), new Vector2Int(8, 8), TerrainType.Mountain);
+        //terrainMap.SetTerrainArea(new Vector2Int(7, 2), new Vector2Int(8, 8), TerrainType.Mountain);
         
         // 道路（快速通道）
-        terrainMap.SetTerrainArea(new Vector2Int(0, 5), new Vector2Int(12, 5), TerrainType.Road);
+        //terrainMap.SetTerrainArea(new Vector2Int(0, 5), new Vector2Int(12, 5), TerrainType.Road);
         
         // 沼澤區域（慢速）
         terrainMap.SetTerrainArea(new Vector2Int(2, 8), new Vector2Int(5, 10), TerrainType.Swamp);
@@ -148,13 +148,13 @@ public class AStarTerrainExample : MonoBehaviour
     {
         return terrain switch
         {
-            TerrainType.Normal => Color.white,
+            //TerrainType.Normal => Color.white,
             TerrainType.Grass => Color.green,
             TerrainType.Sand => Color.yellow,
-            TerrainType.Mountain => Color.gray,
+            //TerrainType.Mountain => Color.gray,
             TerrainType.Swamp => new Color(0.5f, 0.3f, 0.1f), // 棕色
-            TerrainType.Road => new Color(0.3f, 0.3f, 0.3f), // 深灰
-            TerrainType.HighwayRoad => Color.black,
+            //TerrainType.Road => new Color(0.3f, 0.3f, 0.3f), // 深灰
+            //TerrainType.HighwayRoad => Color.black,
             TerrainType.Water => Color.blue,
             TerrainType.Lava => Color.red,
             TerrainType.Ice => Color.cyan,

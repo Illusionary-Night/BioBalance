@@ -27,7 +27,7 @@ public static class AStar
     private static readonly List<Vector2Int> PathBuffer = new List<Vector2Int>();
 
     // 不考慮地形權重
-    public static List<Vector2Int> FindPath(Vector2Int start)
+    public static List<Vector2Int> FindPath(Vector2Int start, Vector2Int goal)
     {
         return FindPath(start, goal, null);
     }
