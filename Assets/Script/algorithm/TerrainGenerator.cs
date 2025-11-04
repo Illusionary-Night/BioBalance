@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine.Tilemaps;
 using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour
@@ -18,6 +19,10 @@ public class TerrainGenerator : MonoBehaviour
     public float lacunarity = 2.0f;
     public Vector2 noiseOffset; // 用於隨機"種子"
 
+    [Header("Dual-Grid System")]
+    [Tooltip("用於繪製 Debug 視覺的 Tilemap")]
+    public Tilemap debugDisplayTilemap;
+
     [Header("Terrain Thresholds")]
     [Tooltip("定義噪聲值如何映射到地形類型 (請按值從小到大排序)")]
     public List<TerrainThreshold> terrainThresholds;
@@ -25,9 +30,12 @@ public class TerrainGenerator : MonoBehaviour
     // 「定義層」(Data Layer) - 儲存所有地圖邏輯
     private TerrainMap definitionLayerMap;
 
- 
+    // 用於快速查找 TerrainType 對應的 TileBase
+    private Dictionary<TerrainType, TileBase> tileLookup;
+
+
     // 讓 AI 和 A* 尋路系統 獲取地圖數據層
- 
+
     public TerrainMap GetDefinitionMap()
     {
         return definitionLayerMap;
@@ -45,19 +53,56 @@ public class TerrainGenerator : MonoBehaviour
 
     void Awake()
     {
-        // 1. 產生隨機偏移 (種子)
+        // 1. 建立一個空的「定義層」
+        definitionLayerMap = new TerrainMap(TerrainType.Grass);
+
+        // 2. (新) 在程式碼中指定並載入 Tile 資產
+        LoadTilesFromResources();
+    }
+
+    void Start()
+    {
+        // 3. 產生隨機偏移 (種子)
         if (noiseOffset == Vector2.zero)
         {
             noiseOffset = new Vector2(Random.Range(-1000f, 1000f), Random.Range(-1000f, 1000f));
         }
 
-        // 2. 執行生成
-        GenerateMapData();
+        // 4. 執行生成
+        GenerateMap();
     }
 
+
+    void LoadTilesFromResources()
+    {
+        tileLookup = new Dictionary<TerrainType, TileBase>();
+
+        // 警告：Resources.Load() 速度較慢，只應在 Awake/Start 中呼叫
+        // 假設您的 Tile Assets 放在 "Assets/Resources/Tiles/" 資料夾中
+
+        // *** 這是您要求「在程式碼中指定」的地方 ***
+        // 路徑是相對於 "Resources" 資料夾的，且 "不能" 包含副檔名
+
+        tileLookup.Add(TerrainType.Grass, Resources.Load<TileBase>("Tiles/def_grass_0"));
+        tileLookup.Add(TerrainType.Water, Resources.Load<TileBase>("Tiles/def_water_0"));
+
+        // 您可以繼續為 Constant.cs 中其他的地形添加 Tile
+        // tileLookup.Add(TerrainType.Sand, Resources.Load<TileBase>("Tiles/def_sand_tile"));
+        // tileLookup.Add(TerrainType.Rock, Resources.Load<TileBase>("Tiles/def_rock_tile"));
+        // tileLookup.Add(TerrainType.Barrier, Resources.Load<TileBase>("Tiles/def_barrier_tile")); 
+
+        // 檢查是否有漏載入
+        foreach (var tilePair in tileLookup)
+        {
+            if (tilePair.Value == null)
+            {
+                Debug.LogError($"載入 Tile 失敗！找不到路徑：'Resources/Tiles/{tilePair.Key.ToString().ToLower()}_tile'");
+            }
+        }
+    }
     // 產生柏林噪聲並填充「定義層」
-  
-    public void GenerateMapData()
+
+    public void GenerateMap()
     {
         // 1. 建立一個空的「定義層」
         definitionLayerMap = new TerrainMap(TerrainType.Grass);
@@ -76,11 +121,22 @@ public class TerrainGenerator : MonoBehaviour
 
                 // 5. 儲存數據到「定義層」
                 definitionLayerMap.SetTerrain(pos, type);
+
+                // 6. (新增) 繪製 Tile 到「Debug 顯示層」
+                if (tileLookup.TryGetValue(type, out TileBase tile))
+                {
+                    if (tile != null) // 再次檢查，確保 tile 成功載入
+                    {
+                        // 直接 1:1 繪製，(0,0) 對應 (0,0)
+                        debugDisplayTilemap.SetTile(new Vector3Int(x, y, 0), tile);
+                    }
+                }
             }
         }
 
         Debug.Log("地圖定義層 (TerrainMap) 生成完畢。");
     }
+
 
     // 計算多層柏林噪聲以增加細節
     private float GetPerlinNoiseValue(int x, int y)

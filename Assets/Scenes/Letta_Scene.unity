@@ -155,7 +155,12 @@ MonoBehaviour:
   persistence: 0.5
   lacunarity: 2
   noiseOffset: {x: 0, y: 0}
-  terrainThresholds: []
+  debugDisplayTilemap: {fileID: 0}
+  terrainThresholds:
+  - threshold: 0.5
+    terrain: 5
+  - threshold: 1
+    terrain: 0
 --- !u!4 &240307629
 Transform:
   m_ObjectHideFlags: 0
