@@ -104,4 +104,5 @@ public static class DefaultTerrainCosts
         { TerrainType.Lava, 10.0f },
         { TerrainType.Ice, 1.2f }
     };
+
 }
