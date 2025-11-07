@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour
 {
+    public static TerrainGenerator Instance { get; private set; }
+
     [Header("Map Dimensions")]
     public int mapWidth = 100;
     public int mapHeight = 100;
@@ -53,6 +55,16 @@ public class TerrainGenerator : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            // 如果場景中已經存在一個實例，則銷毀這個重複的
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            // 否則，將自己設定為這個靜態實例
+            Instance = this;
+        }
         // 1. 建立一個空的「定義層」
         definitionLayerMap = new TerrainMap(TerrainType.Grass);
 
