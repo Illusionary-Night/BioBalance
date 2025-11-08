@@ -16,7 +16,7 @@ public class MoveAction : ActionBase
 	public override float GetWeight(Creature creature)
 	{
 		// 根據飢餓值決定移動權重，飢餓值越高，移動權重越高
-		return (creature.Hunger / creature.MaxHunger) / Perception.CountTargetNumber(creature, creature.SpeciesID);
+		return (creature.Hunger / creature.MaxHunger) / Perception.Creatures.CountTargetNumber(creature, creature.SpeciesID);
 	}
 
 	public override bool IsSuccess(Creature creature)
