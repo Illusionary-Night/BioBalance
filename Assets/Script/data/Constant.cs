@@ -12,13 +12,6 @@ public enum BodyType
     Large
 }
 
-public enum DietType
-{
-    Herbivore,  //草食
-    Carnivore,  //肉食
-    Omnivore    //雜食
-}
-
 public enum ActionType
 {
     Move,
@@ -32,7 +25,8 @@ public enum ActionType
 public enum FoodType
 {
     Plant,
-    Meat
+    Meat,
+    Carrion
 }
 [System.Serializable]
 public struct CreatureAttributes
@@ -47,7 +41,7 @@ public struct CreatureAttributes
     public float variation;
     public float perception_range;
     public int[] sleeping_cycle;
-    public DietType Diet { get; set; }
+    public List<FoodType> FoodTypes;
     public BodyType Body { get; set; }     //最終體型
     public List<int> prey_ID_list;       //新增食物列表
     public List<int> predator_ID_list;   //新增天敵列表
@@ -64,9 +58,12 @@ public static class AttributesCalculator{
     {
         return size * speed + attack_power;
     }
-    public static float CalculateMaxHunger(float size, float base_health, DietType diet)
+    public static float CalculateMaxHunger(float size, float base_health, List<FoodType> foods)
     {
-        float dietFactor = new float[] { 0.8f, 1.2f, 1.0f }[(int)diet];
+        float dietFactor = 1.0f;
+        if (foods.Contains(FoodType.Plant) && (foods.Contains(FoodType.Meat) || foods.Contains(FoodType.Carrion))) dietFactor = 1.0f;
+        else if (foods.Contains(FoodType.Meat) || foods.Contains(FoodType.Carrion)) dietFactor = 1.2f;
+        else if (foods.Contains(FoodType.Plant)) dietFactor = 0.8f;
         return size * base_health * dietFactor;
     }
     public static float CalculateReproductionInterval(float size, float base_health)
