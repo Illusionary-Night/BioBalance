@@ -14,7 +14,7 @@ public class Manager : MonoBehaviour
     private float tickTimer = 0;
     private int mixTickTime = 240000;
     private int tickTime = 0;
-    public Dictionary<int, Species> species_dictionary = new Dictionary<int, Species>();
+    public static Dictionary<int, Species> species_dictionary = new Dictionary<int, Species>();
     void Start()
     {
         
@@ -83,6 +83,7 @@ public class Manager : MonoBehaviour
             new_species.creatures.Add(new_creature);
             new_species.attributes = new_creature.ToCreatureAttribute();
             species.Add(new_species);
+            species_dictionary.Add(new_species.attributes.species_ID, new_species);
         }
         PredatorUpdate(new_creature);
     }
