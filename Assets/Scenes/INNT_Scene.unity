@@ -161,13 +161,16 @@ MonoBehaviour:
   prey_ID_list: 
   predator_ID_list: 
   action_list: 
-  sleepingCycle: 
+  sleeping_head: 0
+  SleepingHead: 0
+  sleeping_tail: 0
+  SleepingTail: 0
   perceptionRange: 0
   hungerRate: 0
   maxHunger: 0
   reproductionInterval: 0
   healthRegeneration: 0
-  diet: 0
+  foodTypes: 
   body: 0
   sleepTime: 0
   hunger: 0
@@ -394,7 +397,9 @@ MonoBehaviour:
     lifespan: 0
     variation: 0
     perception_range: 0
-    sleeping_cycle: 
+    sleeping_head: 0
+    sleeping_tail: 0
+    FoodTypes: 
     prey_ID_list: 
     predator_ID_list: 
     action_list: 

@@ -37,10 +37,8 @@ public class Creature : MonoBehaviour, Tickable
     [SerializeField] private int sleeping_head;
     public int SleepingHead;
 
-
-    [SerializeField] private int[] sleeping_cycle;
-    public int[] SleepingCycle;
-
+    [SerializeField] private int sleeping_tail;
+    public int SleepingTail;
 
 
     [SerializeField] private float perceptionRange;  // 感知範圍
@@ -92,10 +90,9 @@ public class Creature : MonoBehaviour, Tickable
         _UUID = System.Guid.NewGuid().ToString();
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
         //睡眠時間變異
-        int delta_sleep_time() => (int)((creatureAttributes.sleeping_cycle[1]-creatureAttributes.sleeping_cycle[0]) * variationFactor());
-        SleepingCycle = new int[2];
-        SleepingCycle[0] = creatureAttributes.sleeping_cycle[0] + delta_sleep_time();
-        SleepingCycle[1] = creatureAttributes.sleeping_cycle[1] + delta_sleep_time();
+        int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail-creatureAttributes.sleeping_head) * variationFactor());
+        SleepingHead = creatureAttributes.sleeping_head + delta_sleep_time();
+        SleepingTail = creatureAttributes.sleeping_tail + delta_sleep_time();
         //其他玩家屬性變異
         Size = creatureAttributes.size + creatureAttributes.size * variationFactor();
         Speed = creatureAttributes.speed + creatureAttributes.speed * variationFactor();
@@ -111,7 +108,7 @@ public class Creature : MonoBehaviour, Tickable
         PredatorIDList = new List<int>(creatureAttributes.predator_ID_list);
         ActionList = new List<ActionType>(creatureAttributes.action_list);
         //計算衍生屬性
-        SleepTime = SleepingCycle[1] - SleepingCycle[0];
+        SleepTime = SleepingTail - SleepingHead;
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
         MaxHunger = AttributesCalculator.CalculateMaxHunger(Size, BaseHealth, FoodTypes);
         ReproductionInterval = AttributesCalculator.CalculateReproductionInterval(Size, BaseHealth);
@@ -169,7 +166,8 @@ public class Creature : MonoBehaviour, Tickable
         attributes.variation = Variation;
         attributes.lifespan = Lifespan;
         attributes.perception_range = PerceptionRange;
-        attributes.sleeping_cycle = SleepingCycle;
+        attributes.sleeping_head = SleepingHead;
+        attributes.sleeping_tail = SleepingTail;
         attributes.FoodTypes = FoodTypes;
         attributes.Body = Body;
         attributes.prey_ID_list = PreyIDList;
