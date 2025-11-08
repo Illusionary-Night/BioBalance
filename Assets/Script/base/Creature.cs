@@ -54,8 +54,8 @@ public class Creature : MonoBehaviour, Tickable
     [SerializeField] private float healthRegeneration;
     public float HealthRegeneration { get => healthRegeneration; set => healthRegeneration = value; }
 
-    [SerializeField] private DietType diet;
-    public DietType Diet { get => diet; set => diet = value; }
+    [SerializeField] private List<FoodType> foodTypes;
+    public List<FoodType> FoodTypes { get => foodTypes; set => foodTypes = value; }
 
     [SerializeField] private BodyType body;
     public BodyType Body { get => body; set => body = value; }
@@ -82,7 +82,10 @@ public class Creature : MonoBehaviour, Tickable
 
     public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
+<<<<<<< HEAD
         Debug.Log("initialize");
+=======
+>>>>>>> main
         //個體編號
         _UUID = System.Guid.NewGuid().ToString();
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
@@ -108,7 +111,7 @@ public class Creature : MonoBehaviour, Tickable
         //計算衍生屬性
         SleepTime = SleepingCycle[1] - SleepingCycle[0];
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
-        MaxHunger = AttributesCalculator.CalculateMaxHunger(Size, BaseHealth, Diet);
+        MaxHunger = AttributesCalculator.CalculateMaxHunger(Size, BaseHealth, FoodTypes);
         ReproductionInterval = AttributesCalculator.CalculateReproductionInterval(Size, BaseHealth);
         HealthRegeneration = AttributesCalculator.CalculateHealthRegeneration(BaseHealth, Size, SleepTime);
         //初始狀態
@@ -165,7 +168,7 @@ public class Creature : MonoBehaviour, Tickable
         attributes.lifespan = Lifespan;
         attributes.perception_range = PerceptionRange;
         attributes.sleeping_cycle = SleepingCycle;
-        attributes.Diet = Diet;
+        attributes.FoodTypes = FoodTypes;
         attributes.Body = Body;
         attributes.prey_ID_list = PreyIDList;
         attributes.predator_ID_list = PredatorIDList;
