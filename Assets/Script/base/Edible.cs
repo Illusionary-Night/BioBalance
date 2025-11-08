@@ -3,20 +3,22 @@ using UnityEngine;
 // Abstract base class for all edible objects
 public abstract class Edible : MonoBehaviour, Tickable
 {
+    // Unique identifier for the edible object
+    public string UUID { get; protected set; }
     // The remaining lifespan of the object (tick)
-    public int lifeSpan { get; protected set; }
+    public abstract int LifeSpan { get; protected set; }
 
     // The amount of hunger this object restores when eaten.
-    public float nutritionalValue { get; protected set; }
+    public abstract float NutritionalValue { get; }
 
     // The category of this food (e.g., Plant or Meat).
-    public FoodType Type { get; protected set; }
+    public abstract FoodType Type { get; }
 
     // This method is called once per tick by the Manager.
     public virtual void OnTick()
     {
-        lifeSpan--;
-        if (lifeSpan <= 0)
+        LifeSpan--;
+        if (LifeSpan <= 0)
         {
             Destroy(this.gameObject);
         }
@@ -27,5 +29,9 @@ public abstract class Edible : MonoBehaviour, Tickable
         Destroy(this.gameObject);
     }
 
-    public abstract void Initialize(Vector2 position);
+    public void Initialize(Vector2Int position)
+    {
+        this.UUID = System.Guid.NewGuid().ToString();
+        this.transform.position = (Vector3Int)position;
+    }
 }
