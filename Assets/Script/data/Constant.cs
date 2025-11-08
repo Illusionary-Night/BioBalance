@@ -34,6 +34,7 @@ public enum FoodType
     Plant,
     Meat
 }
+[System.Serializable]
 public struct CreatureAttributes
 {
     public int species_ID;

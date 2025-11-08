@@ -6,7 +6,7 @@ using System.Linq;
 
 public class Manager : MonoBehaviour
 {
-    public static List<Species> species;
+    [SerializeField] public static List<Species> species;
     private List<GameObject> meat;
     private List<GameObject> grass;
     private List<Tickable> tickables;
@@ -17,7 +17,6 @@ public class Manager : MonoBehaviour
     public static Dictionary<int, Species> species_dictionary = new Dictionary<int, Species>();
     void Start()
     {
-        
 
     }
 

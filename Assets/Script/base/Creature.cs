@@ -5,11 +5,10 @@ using System;
 using UnityEngine;
 
 
-public abstract class Creature : MonoBehaviour, Tickable
+public class Creature : MonoBehaviour, Tickable
 {
     // 玩家決定
     [Header("=== 玩家決定 ===")]
-    public GameObject CreatureObject {  get; private set; }
     [SerializeField] private int species_ID;
     public int SpeciesID { get => species_ID; set => species_ID = value; }
     [SerializeField] private float size;
@@ -35,8 +34,10 @@ public abstract class Creature : MonoBehaviour, Tickable
     [SerializeField] private List<ActionType> action_list;
     public List<ActionType> ActionList { get => action_list; set => action_list = value; }
 
-    [SerializeField] private int[] sleepingCycle;
-    public int[] SleepingCycle { get => sleepingCycle; set => sleepingCycle = value; }
+    [SerializeField] private int sleeping_head;
+    public int SleepingHead
+
+    [SerializeField]
 
     [SerializeField] private float perceptionRange;  // 感知範圍
     public float PerceptionRange { get => perceptionRange; set => perceptionRange = value; }
@@ -83,7 +84,7 @@ public abstract class Creature : MonoBehaviour, Tickable
 
     public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
-        CreatureObject = creature_object;
+        Debug.Log("initialize");
         //個體編號
         _UUID = System.Guid.NewGuid().ToString();
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
@@ -210,5 +211,46 @@ public abstract class Creature : MonoBehaviour, Tickable
         {
             DoAction();
         }
+    }
+    // 巢狀類別：專門負責移動邏輯
+    private class Movement
+    {
+        private Creature owner;
+        private Queue<Vector2Int> path = new();
+
+        //public Movement(Creature owner)
+        //{
+        //    this.owner = owner;
+        //}
+
+        //public void SetPath(IEnumerable<Vector2Int> newPath)
+        //{
+        //    path = new Queue<Vector2Int>(newPath);
+        //}
+
+        //public void Update()
+        //{
+        //    if (path.Count == 0) return;
+
+        //    var next = path.Peek();
+        //    owner.Position = next;
+        //    path.Dequeue();
+        //}
+        //private bool TempTransformPosition(List<Vector2Int> path)
+        //{
+        //    // 在這裡添加位置轉換的邏輯
+        //    return true;
+        //}
+        //private Vector2Int GetCurrentPosition()
+        //{
+        //    Vector3 position3D = owner.gameObject.transform.position;
+
+        //}
+        // 導航 輸入目標座標 權重圖
+        //private void navigation(Vector2Int destination, TerrainMap map)
+        //{
+        //    List<Vector2Int> path = AStar.FindPath(currentPosition, newPosition, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
+        //}
+
     }
 }
