@@ -2,11 +2,7 @@ using UnityEngine;
 
 public class Carrion : Edible
 {
-	public override void Initialize(Vector2 position)
-	{
-		this.lifeSpan = 300;
-		this.nutritionalValue = 5f;
-		this.transform.position = position;
-		this.Type = FoodType.Meat;
-	}
+    public override int LifeSpan { get; protected set; } = 100;
+    public override float NutritionalValue => 20f;
+	public override FoodType Type => FoodType.Carrion;
 }
