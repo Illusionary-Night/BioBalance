@@ -34,10 +34,8 @@ public class Creature : MonoBehaviour, Tickable
     [SerializeField] private List<ActionType> action_list;
     public List<ActionType> ActionList { get => action_list; set => action_list = value; }
 
-    [SerializeField] private int sleeping_head;
-    public int SleepingHead
-
-    [SerializeField]
+    [SerializeField] private int[] sleepingCycle;
+    public int[] SleepingCycle { get => sleepingCycle; set => sleepingCycle = value; }
 
     [SerializeField] private float perceptionRange;  // ·Pª¾½d³ò
     public float PerceptionRange { get => perceptionRange; set => perceptionRange = value; }
