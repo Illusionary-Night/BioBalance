@@ -35,9 +35,13 @@ public class Creature : MonoBehaviour, Tickable
     public List<ActionType> ActionList { get => action_list; set => action_list = value; }
 
     [SerializeField] private int sleeping_head;
-    public int SleepingHead
+    public int SleepingHead;
 
-    [SerializeField]
+
+    [SerializeField] private int[] sleeping_cycle;
+    public int[] SleepingCycle;
+
+
 
     [SerializeField] private float perceptionRange;  // 感知範圍
     public float PerceptionRange { get => perceptionRange; set => perceptionRange = value; }
@@ -84,10 +88,6 @@ public class Creature : MonoBehaviour, Tickable
 
     public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
-<<<<<<< HEAD
-        Debug.Log("initialize");
-=======
->>>>>>> main
         //個體編號
         _UUID = System.Guid.NewGuid().ToString();
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);

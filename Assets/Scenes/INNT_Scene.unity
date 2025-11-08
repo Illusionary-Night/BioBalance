@@ -381,10 +381,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1645334812}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb2ce46e25bdd9043bcd3d8680969eb6, type: 3}
+  m_Script: {fileID: 11500000, guid: b0667220e6d63c246abee32ea2c17189, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestManager
-  tickInterval: 1
+  m_EditorClassIdentifier: Assembly-CSharp::TestRunner
+  CreatureAttributes:
+    species_ID: 12
+    size: 0
+    speed: 0
+    base_health: 0
+    reproduction_rate: 0
+    attack_power: 0
+    lifespan: 0
+    variation: 0
+    perception_range: 0
+    sleeping_cycle: 
+    prey_ID_list: 
+    predator_ID_list: 
+    action_list: 
+  CreatureObject: {fileID: 805884277}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
