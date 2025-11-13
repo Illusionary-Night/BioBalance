@@ -24,6 +24,8 @@ public abstract class Edible : MonoBehaviour, Tickable
         }
     }
 
+    
+
     public virtual void Eaten()
     {
         Destroy(this.gameObject);
