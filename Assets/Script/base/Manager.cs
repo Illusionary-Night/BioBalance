@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
-    public static event System.Action OnTick;
+
     public static List<Species> species;
     public static List<Edible> FoodItems;
+    private readonly List<Tickable> tickables;
     public float tickInterval = 1f / 30; // 每個遊戲單位時間 (秒)
     private float tickTimer = 0;
     private int mixTickTime = 240000;
@@ -25,7 +26,10 @@ public class Manager : MonoBehaviour
             tickTimer -= tickInterval;
             tickTime = (tickTime + 1) % mixTickTime;
             // 在這裡處理每個遊戲時間單位的邏輯
-            OnTick?.Invoke();
+            foreach (var tickable in tickables)
+            {
+                tickable.OnTick();
+            }
         }
     }
     private void Initialize()

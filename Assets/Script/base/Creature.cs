@@ -5,7 +5,7 @@ using System;
 using UnityEngine;
 
 
-public class Creature : MonoBehaviour, ITickable
+public class Creature : MonoBehaviour, Tickable
 {
     // 玩家決定
     [Header("=== 玩家決定 ===")]
@@ -175,10 +175,6 @@ public class Creature : MonoBehaviour, ITickable
         attributes.action_list = ActionList;
         return attributes;
     }
-    public void OnEnable()
-    {
-        Manager.OnTick += OnTick;
-    }
     public void OnTick()
     {
         //回血、餓死、老死、繁殖冷卻
@@ -216,10 +212,6 @@ public class Creature : MonoBehaviour, ITickable
         {
             DoAction();
         }
-    }
-    public void OnDisable()
-    {
-        Manager.OnTick -= OnTick;
     }
     // 巢狀類別：專門負責移動邏輯
     private class Movement
