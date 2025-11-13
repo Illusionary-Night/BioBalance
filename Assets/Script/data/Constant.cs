@@ -28,6 +28,7 @@ public enum FoodType
     Meat,
     Carrion
 }
+[System.Serializable]
 public struct CreatureAttributes
 {
     public int species_ID;
@@ -39,7 +40,8 @@ public struct CreatureAttributes
     public float lifespan;
     public float variation;
     public float perception_range;
-    public int[] sleeping_cycle;
+    public int sleeping_head;
+    public int sleeping_tail;
     public List<FoodType> FoodTypes;
     public BodyType Body { get; set; }     //最終體型
     public List<int> prey_ID_list;       //新增食物列表

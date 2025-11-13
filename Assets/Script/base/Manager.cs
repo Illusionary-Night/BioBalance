@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
+
     public static List<Species> species;
     public static List<Edible> FoodItems;
     private readonly List<Tickable> tickables;
@@ -13,7 +14,6 @@ public class Manager : MonoBehaviour
 
     void Start()
     {
-        
 
     }
 
