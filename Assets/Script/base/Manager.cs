@@ -1,15 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Linq;
 
 public class Manager : MonoBehaviour
 {
 
     public static List<Species> species;
     public static List<Edible> FoodItems;
-    private List<Tickable> tickables;
+    private readonly List<Tickable> tickables;
     public float tickInterval = 1f / 30; // 每個遊戲單位時間 (秒)
     private float tickTimer = 0;
     private int mixTickTime = 240000;
