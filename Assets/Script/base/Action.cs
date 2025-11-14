@@ -12,6 +12,7 @@ public static class ActionSystem
     static ActionSystem()
     {
         ActionSystem.Register();
+        Debug.Log("actions.Count "+actions.Count);
     }
 
     public static void Register()
@@ -55,6 +56,8 @@ public static class ActionSystem
 
     public static bool IsConditionMet(Creature creature, ActionType actiontype)
     {
+
+        Debug.Log("Condition " + (actions.TryGetValue(actiontype, out var g)&& g.IsConditionMet(creature)));
         return actions.TryGetValue(actiontype, out var f) && f.IsConditionMet(creature);
     }
 
