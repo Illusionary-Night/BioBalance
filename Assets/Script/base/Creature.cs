@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System;
 //using Unity.VisualScripting;
 using UnityEngine;
+using System.Linq;
 
 
 public class Creature : MonoBehaviour, ITickable
 {
+    private Movement movement;
     // 玩家決定
     [Header("=== 玩家決定 ===")]
     [SerializeField] private int species_ID;
@@ -119,20 +121,29 @@ public class Creature : MonoBehaviour, ITickable
         Age = 0;
         ReproductionCooldown = 0;
         ActionCooldown = 0;
+        //角色物件調適
+        transform.localScale = new Vector3(size * constantData.NORMALSIZE, size * constantData.NORMALSIZE, 1f);
+        movement = new Movement(this);
     }
     public void DoAction()
     {
+        Debug.Log("DoAction");
         List<KeyValuePair<ActionType,float>> available_actions = new();
         //每回合開始(每生物流程)	
         //計算每個action的條件達成與否
         //計算每個達成條件的action的權重
+        Debug.Log("ActionListCount "+ActionList.Count);
         for (int i = 0; i < ActionList.Count; i++)
         {
+            Debug.Log("ActionList[i] "+ ActionList[i]);
+            //Debug.Log
             if (ActionSystem.IsConditionMet(this, ActionList[i]))
             {
+                Debug.Log(ActionList[i]);
                 available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
             }
         }
+        Debug.Log(available_actions.Count);
         //將條件達成的action進行權重排序
         available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
         while (available_actions.Count > 0)
@@ -143,7 +154,7 @@ public class Creature : MonoBehaviour, ITickable
             if (ActionSystem.IsSuccess(this,selectedAction))
             {
                 ActionSystem.Execute(this, selectedAction);
-
+                ActionCooldown = ActionSystem.GetCooldown(this, selectedAction);
                 return;
             }
             else
@@ -225,41 +236,118 @@ public class Creature : MonoBehaviour, ITickable
     private class Movement
     {
         private Creature owner;
-        private Queue<Vector2Int> path = new();
+        private Rigidbody2D rb;                 // 優先使用物理剛體
+        private Vector2Int Destination;         // 格座目標（整數格）
+        private List<Vector2> path = null;      // 導航後的世界座標點 (連續)
+        private int currentPathIndex = 0;
+        public float speed = 3f;                // 單位：格/秒或世界單位/秒
+        private float stuckThreshold = 0.2f;    // 偵測被擠走/卡住的容忍距離
+        private int stuckLimitTicks = 6;        // 超過幾次就重新導航
+        private int stuckCounter = 0;
+        private Vector2 lastRecordedPosition;
+        private bool awake;
 
-        //public Movement(Creature owner)
-        //{
-        //    this.owner = owner;
-        //}
+        public Movement(Creature owner)
+        {
+            this.owner = owner;
+            this.rb = owner.GetComponent<Rigidbody2D>(); // 可能為 null
+                                                         // 初始化 lastRecordedPosition 為真實位置（權威）
+            lastRecordedPosition = GetAuthoritativePosition();
+            awake = false;
+        }
 
-        //public void SetPath(IEnumerable<Vector2Int> newPath)
-        //{
-        //    path = new Queue<Vector2Int>(newPath);
-        //}
+        // 設定目的地（格座）
+        public void SetDestination(Vector2Int destination)
+        {
+            Debug.Log("SetDestination");
+            Destination = destination;
+            awake = true;
+            Navigate();
+        }
 
-        //public void Update()
-        //{
-        //    if (path.Count == 0) return;
+        // 每個 FixedUpdate 呼叫（物理步）
+        public void FixedTick()
+        {
+            if (!awake) return;
+            //先讀取這一回合開始時的真實位置
+            Vector2 actualPos = GetAuthoritativePosition();
 
-        //    var next = path.Peek();
-        //    owner.Position = next;
-        //    path.Dequeue();
-        //}
-        //private bool TempTransformPosition(List<Vector2Int> path)
-        //{
-        //    // 在這裡添加位置轉換的邏輯
-        //    return true;
-        //}
-        //private Vector2Int GetCurrentPosition()
-        //{
-        //    Vector3 position3D = owner.gameObject.transform.position;
+            //判斷上回合移動是否生效（是否卡住/被擠開）
+            if (Vector2.Distance(actualPos, lastRecordedPosition) < 0.01f)
+                stuckCounter++;
+            else
+                stuckCounter = 0;
 
-        //}
-        // 導航 輸入目標座標 權重圖
-        //private void navigation(Vector2Int destination, TerrainMap map)
-        //{
-        //    List<Vector2Int> path = AStar.FindPath(currentPosition, newPosition, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
-        //}
+            //若卡住太多次則重導航
+            if (stuckCounter >= stuckLimitTicks)
+            {
+                stuckCounter = 0;
+                Navigate();
+            }
 
+            //執行新的 MovePosition()（輸入指令，結果下次才會反映）
+            if (path != null && currentPathIndex < path.Count)
+            {
+                Vector2 target = path[currentPathIndex];
+                Vector2 nextPos = Vector2.MoveTowards(actualPos, target, speed * Time.fixedDeltaTime);
+                rb.MovePosition(nextPos);
+
+                if (Vector2.Distance(actualPos, target) < 0.05f)
+                    currentPathIndex++;
+            }
+
+            //記錄這回合「預期應該走完後」的位置（供下一回合比較）
+            lastRecordedPosition = actualPos;
+        }
+
+        // 導航（呼叫你的 A* 或其它尋路系統）
+        public void Navigate()
+        {
+            Debug.Log("Navigate");
+            Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
+            Vector2Int goal = Destination;
+
+            // 假設 AStar.FindPath 回傳 List<Vector2Int> 或 null
+            // 使用 A* 演算法尋找路徑
+            List<Vector2Int> rawPath = AStar.FindPath(start, goal, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
+            if (rawPath == null || rawPath.Count == 0)
+            {
+                path = null;
+                currentPathIndex = 0;
+                return;
+            }
+
+            // 把格子座標轉成世界座標 (中心點)，視你的格子系統可能需要偏移
+            path = rawPath.Select(v => new Vector2(v.x, v.y)).ToList();
+            currentPathIndex = 0;
+        }
+
+        // 取得當前經過物理系統修正後的整數格座標（四捨五入）
+        public Vector2Int TempGetCurrentPosition()
+        {
+            Vector2 actual = GetAuthoritativePosition();
+            return Vector2Int.RoundToInt(actual);
+        }
+
+        // 取得物理/Transform 的權威位置
+        private Vector2 GetAuthoritativePosition()
+        {
+            if (rb != null) return rb.position;
+            return owner.transform.position;
+        }
+    }
+    public void MoveTo(Vector2Int destination)
+    {
+        movement.SetDestination(destination);
+    }
+
+    public void ForceNavigate()
+    {
+        movement.Navigate();
+    }
+
+    public Vector2Int GetRoundedPosition()
+    {
+        return movement.TempGetCurrentPosition();
     }
 }
