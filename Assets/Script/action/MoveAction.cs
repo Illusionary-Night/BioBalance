@@ -4,8 +4,8 @@ using UnityEngine;
 public class MoveAction : ActionBase
 {
 	public override ActionType Type => ActionType.Move;
-	public override int Cooldown => 5;
-	[SerializeField] private static readonly int MoveDistance = 5;
+	public override int Cooldown => 100;
+	[SerializeField] private static readonly int MoveDistance = 100;
 
     public override bool IsConditionMet(Creature creature)
 	{

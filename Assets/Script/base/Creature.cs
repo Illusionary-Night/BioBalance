@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Linq;
 
 
-public class Creature : MonoBehaviour, Tickable
+public class Creature : MonoBehaviour
 {
     private Movement movement;
     // 玩家決定
@@ -154,7 +154,7 @@ public class Creature : MonoBehaviour, Tickable
             if (ActionSystem.IsSuccess(this,selectedAction))
             {
                 ActionSystem.Execute(this, selectedAction);
-
+                ActionCooldown = ActionSystem.GetCooldown(this, selectedAction);
                 return;
             }
             else
