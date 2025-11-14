@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Linq;
 
 
-public class Creature : MonoBehaviour
+public class Creature : MonoBehaviour, ITickable
 {
     private Movement movement;
     // 玩家決定
@@ -186,6 +186,10 @@ public class Creature : MonoBehaviour
         attributes.action_list = ActionList;
         return attributes;
     }
+    public void OnEnable()
+    {
+        Manager.OnTick += OnTick;
+    }
     public void OnTick()
     {
         //回血、餓死、老死、繁殖冷卻
@@ -224,6 +228,10 @@ public class Creature : MonoBehaviour
             DoAction();
         }
         movement.FixedTick();
+    }
+    public void OnDisable()
+    {
+        Manager.OnTick -= OnTick;
     }
     // 巢狀類別：專門負責移動邏輯
     private class Movement
