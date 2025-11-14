@@ -5,6 +5,13 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using UnityEngine;
 
+
+public class constantData : MonoBehaviour
+{
+    public const int NORMALSIZE = 1;
+}
+
+
 public enum BodyType
 {
     Small,
@@ -47,7 +54,6 @@ public struct CreatureAttributes
     public List<int> prey_ID_list;       //新增食物列表
     public List<int> predator_ID_list;   //新增天敵列表
     public List<ActionType> action_list;
-    
 }
 public struct Species
 {

@@ -22,17 +22,16 @@ class EatAction : ActionBase
     }
     public override void Execute(Creature creature)
     {
+        
         List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.FoodTypes);
         if (edibleTargets.Count > 0)
         {
             Edible food = edibleTargets[0];
             //TODO: 走過去
-            this.TempMove(Vector2Int.RoundToInt(food.transform.position));
+            creature.MoveTo(Vector2Int.RoundToInt(food.transform.position));
             //TODO: Corutine 等待走過去
             food.Eaten();
             creature.Hunger = Mathf.Min(creature.Hunger + food.NutritionalValue, creature.MaxHunger);
         }
     }
-
-    private void TempMove(Vector2Int goal) { }
 }

@@ -1,14 +1,16 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System;
 //using Unity.VisualScripting;
 using UnityEngine;
+using System.Linq;
 
 
-public class Creature : MonoBehaviour, ITickable
+public class Creature : MonoBehaviour, Tickable
 {
-    // ª±®a¨M©w
-    [Header("=== ª±®a¨M©w ===")]
+    private Movement movement;
+    // ç©å®¶æ±ºå®š
+    [Header("=== ç©å®¶æ±ºå®š ===")]
     [SerializeField] private int species_ID;
     public int SpeciesID { get => species_ID; set => species_ID = value; }
     [SerializeField] private float size;
@@ -28,9 +30,9 @@ public class Creature : MonoBehaviour, ITickable
     [SerializeField] private float variation;
     public float Variation { get => variation; set => variation = value; }
     [SerializeField] private List<int> prey_ID_list = new List<int>();
-    public List<int> PreyIDList { get => prey_ID_list; set => prey_ID_list = value; }       //·s¼W­¹ª«¦Cªí
+    public List<int> PreyIDList { get => prey_ID_list; set => prey_ID_list = value; }       //æ–°å¢é£Ÿç‰©åˆ—è¡¨
     [SerializeField] private List<int> predator_ID_list = new List<int>();
-    public List<int> PredatorIDList { get => predator_ID_list; set => predator_ID_list = value; }   //·s¼W¤Ñ¼Ä¦Cªí
+    public List<int> PredatorIDList { get => predator_ID_list; set => predator_ID_list = value; }   //æ–°å¢å¤©æ•µåˆ—è¡¨
     [SerializeField] private List<ActionType> action_list;
     public List<ActionType> ActionList { get => action_list; set => action_list = value; }
 
@@ -41,11 +43,11 @@ public class Creature : MonoBehaviour, ITickable
     public int SleepingTail;
 
 
-    [SerializeField] private float perceptionRange;  // ·Pª¾½d³ò
+    [SerializeField] private float perceptionRange;  // æ„ŸçŸ¥ç¯„åœ
     public float PerceptionRange { get => perceptionRange; set => perceptionRange = value; }
 
-    // ¹q¸£­pºâ
-    [Header("=== ¹q¸£­pºâ ===")]
+    // é›»è…¦è¨ˆç®—
+    [Header("=== é›»è…¦è¨ˆç®— ===")]
     [SerializeField] private float hungerRate;
     public float HungerRate { get => hungerRate; set => hungerRate = value; }
 
@@ -67,8 +69,8 @@ public class Creature : MonoBehaviour, ITickable
     [SerializeField] private int sleepTime;
     public int SleepTime { get => sleepTime; set => sleepTime = value; }
 
-    // ·í«eª¬ºA
-    [Header("=== ·í«eª¬ºA ===")]
+    // ç•¶å‰ç‹€æ…‹
+    [Header("=== ç•¶å‰ç‹€æ…‹ ===")]
     [SerializeField] private float hunger;
     public float Hunger { get => hunger; set => hunger = value; }
 
@@ -86,14 +88,14 @@ public class Creature : MonoBehaviour, ITickable
 
     public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
-        //­ÓÅé½s¸¹
+        //å€‹é«”ç·¨è™Ÿ
         _UUID = System.Guid.NewGuid().ToString();
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
-        //ºÎ¯v®É¶¡ÅÜ²§
+        //ç¡çœ æ™‚é–“è®Šç•°
         int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail-creatureAttributes.sleeping_head) * variationFactor());
         SleepingHead = creatureAttributes.sleeping_head + delta_sleep_time();
         SleepingTail = creatureAttributes.sleeping_tail + delta_sleep_time();
-        //¨ä¥Lª±®aÄİ©ÊÅÜ²§
+        //å…¶ä»–ç©å®¶å±¬æ€§è®Šç•°
         Size = creatureAttributes.size + creatureAttributes.size * variationFactor();
         Speed = creatureAttributes.speed + creatureAttributes.speed * variationFactor();
         BaseHealth = creatureAttributes.base_health + creatureAttributes.base_health * variationFactor();
@@ -101,45 +103,54 @@ public class Creature : MonoBehaviour, ITickable
         AttackPower = creatureAttributes.attack_power + creatureAttributes.attack_power * variationFactor();
         Lifespan = creatureAttributes.lifespan + creatureAttributes.lifespan * variationFactor();
         PerceptionRange = creatureAttributes.perception_range + creatureAttributes.perception_range * variationFactor();
-        //¨ä¥Lª±®aÄİ©Ê¤£ÅÜ
+        //å…¶ä»–ç©å®¶å±¬æ€§ä¸è®Š
         SpeciesID = creatureAttributes.species_ID;
         Variation = creatureAttributes.variation;
         PreyIDList = new List<int>(creatureAttributes.prey_ID_list);
         PredatorIDList = new List<int>(creatureAttributes.predator_ID_list);
         ActionList = new List<ActionType>(creatureAttributes.action_list);
-        //­pºâ­l¥ÍÄİ©Ê
+        //è¨ˆç®—è¡ç”Ÿå±¬æ€§
         SleepTime = SleepingTail - SleepingHead;
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
         MaxHunger = AttributesCalculator.CalculateMaxHunger(Size, BaseHealth, FoodTypes);
         ReproductionInterval = AttributesCalculator.CalculateReproductionInterval(Size, BaseHealth);
         HealthRegeneration = AttributesCalculator.CalculateHealthRegeneration(BaseHealth, Size, SleepTime);
-        //ªì©lª¬ºA
+        //åˆå§‹ç‹€æ…‹
         Hunger = MaxHunger;
         Health = BaseHealth;
         Age = 0;
         ReproductionCooldown = 0;
         ActionCooldown = 0;
+        //è§’è‰²ç‰©ä»¶èª¿é©
+        transform.localScale = new Vector3(size * constantData.NORMALSIZE, size * constantData.NORMALSIZE, 1f);
+        movement = new Movement(this);
     }
     public void DoAction()
     {
+        Debug.Log("DoAction");
         List<KeyValuePair<ActionType,float>> available_actions = new();
-        //¨C¦^¦X¶}©l(¨C¥Íª«¬yµ{)	
-        //­pºâ¨C­Óactionªº±ø¥ó¹F¦¨»P§_
-        //­pºâ¨C­Ó¹F¦¨±ø¥óªºactionªºÅv­«
+        //æ¯å›åˆé–‹å§‹(æ¯ç”Ÿç‰©æµç¨‹)	
+        //è¨ˆç®—æ¯å€‹actionçš„æ¢ä»¶é”æˆèˆ‡å¦
+        //è¨ˆç®—æ¯å€‹é”æˆæ¢ä»¶çš„actionçš„æ¬Šé‡
+        Debug.Log("ActionListCount "+ActionList.Count);
         for (int i = 0; i < ActionList.Count; i++)
         {
+            Debug.Log("ActionList[i] "+ ActionList[i]);
+            //Debug.Log
             if (ActionSystem.IsConditionMet(this, ActionList[i]))
             {
+                Debug.Log(ActionList[i]);
                 available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
             }
         }
-        //±N±ø¥ó¹F¦¨ªºaction¶i¦æÅv­«±Æ§Ç
+        Debug.Log(available_actions.Count);
+        //å°‡æ¢ä»¶é”æˆçš„actioné€²è¡Œæ¬Šé‡æ’åº
         available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
         while (available_actions.Count > 0)
         {
-            //¿ï¾ÜÅv­«³Ì°ª
+            //é¸æ“‡æ¬Šé‡æœ€é«˜
             ActionType selectedAction = available_actions[0].Key;
-            //»ë¦¨¥\²v
+            //éª°æˆåŠŸç‡
             if (ActionSystem.IsSuccess(this,selectedAction))
             {
                 ActionSystem.Execute(this, selectedAction);
@@ -148,7 +159,7 @@ public class Creature : MonoBehaviour, ITickable
             }
             else
             {
-                //¥¢±Ñ    §äÅv­«¦¸°ª
+                //å¤±æ•—    æ‰¾æ¬Šé‡æ¬¡é«˜
                 available_actions.RemoveAt(0);
             }
 
@@ -175,38 +186,34 @@ public class Creature : MonoBehaviour, ITickable
         attributes.action_list = ActionList;
         return attributes;
     }
-    public void OnEnable()
-    {
-        Manager.OnTick += OnTick;
-    }
     public void OnTick()
     {
-        //¦^¦å¡B¾j¦º¡B¦Ñ¦º¡BÁc´Ş§N«o
-        //¦^¦å
+        //å›è¡€ã€é¤“æ­»ã€è€æ­»ã€ç¹æ®–å†·å»
+        //å›è¡€
         if (Health < BaseHealth)
         {
             Health += HealthRegeneration;
         }
         Health = Mathf.Min(Health, BaseHealth);
-        //¾j¦º
+        //é¤“æ­»
         Hunger -= HungerRate;
         if (Hunger <= 0)
         {
-            //Debug.Log("¾j¦º");
+            //Debug.Log("é¤“æ­»");
         }
-        //¦Ñ¦º
+        //è€æ­»
         Age += 1;
         if (Age >= Lifespan)
         {
-            //Debug.Log("¦Ñ¦º");
+            //Debug.Log("è€æ­»");
         }
-        //Ác´Ş§N«o
+        //ç¹æ®–å†·å»
         if (ReproductionCooldown > 0)
         {
             ReproductionCooldown -= 1;
         }
 
-        //¦æ°Ê§N«o
+        //è¡Œå‹•å†·å»
         if (ActionCooldown > 0)
         {
             ActionCooldown -= 1;
@@ -216,50 +223,124 @@ public class Creature : MonoBehaviour, ITickable
         {
             DoAction();
         }
+        movement.FixedTick();
     }
-    public void OnDisable()
-    {
-        Manager.OnTick -= OnTick;
-    }
-    // ±_ª¬Ãş§O¡G±Mªù­t³d²¾°ÊÅŞ¿è
+    // å·¢ç‹€é¡åˆ¥ï¼šå°ˆé–€è² è²¬ç§»å‹•é‚è¼¯
     private class Movement
     {
         private Creature owner;
-        private Queue<Vector2Int> path = new();
+        private Rigidbody2D rb;                 // å„ªå…ˆä½¿ç”¨ç‰©ç†å‰›é«”
+        private Vector2Int Destination;         // æ ¼åº§ç›®æ¨™ï¼ˆæ•´æ•¸æ ¼ï¼‰
+        private List<Vector2> path = null;      // å°èˆªå¾Œçš„ä¸–ç•Œåº§æ¨™é» (é€£çºŒ)
+        private int currentPathIndex = 0;
+        public float speed = 3f;                // å–®ä½ï¼šæ ¼/ç§’æˆ–ä¸–ç•Œå–®ä½/ç§’
+        private float stuckThreshold = 0.2f;    // åµæ¸¬è¢«æ“ èµ°/å¡ä½çš„å®¹å¿è·é›¢
+        private int stuckLimitTicks = 6;        // è¶…éå¹¾æ¬¡å°±é‡æ–°å°èˆª
+        private int stuckCounter = 0;
+        private Vector2 lastRecordedPosition;
+        private bool awake;
 
-        //public Movement(Creature owner)
-        //{
-        //    this.owner = owner;
-        //}
+        public Movement(Creature owner)
+        {
+            this.owner = owner;
+            this.rb = owner.GetComponent<Rigidbody2D>(); // å¯èƒ½ç‚º null
+                                                         // åˆå§‹åŒ– lastRecordedPosition ç‚ºçœŸå¯¦ä½ç½®ï¼ˆæ¬Šå¨ï¼‰
+            lastRecordedPosition = GetAuthoritativePosition();
+            awake = false;
+        }
 
-        //public void SetPath(IEnumerable<Vector2Int> newPath)
-        //{
-        //    path = new Queue<Vector2Int>(newPath);
-        //}
+        // è¨­å®šç›®çš„åœ°ï¼ˆæ ¼åº§ï¼‰
+        public void SetDestination(Vector2Int destination)
+        {
+            Debug.Log("SetDestination");
+            Destination = destination;
+            awake = true;
+            Navigate();
+        }
 
-        //public void Update()
-        //{
-        //    if (path.Count == 0) return;
+        // æ¯å€‹ FixedUpdate å‘¼å«ï¼ˆç‰©ç†æ­¥ï¼‰
+        public void FixedTick()
+        {
+            if (!awake) return;
+            //å…ˆè®€å–é€™ä¸€å›åˆé–‹å§‹æ™‚çš„çœŸå¯¦ä½ç½®
+            Vector2 actualPos = GetAuthoritativePosition();
 
-        //    var next = path.Peek();
-        //    owner.Position = next;
-        //    path.Dequeue();
-        //}
-        //private bool TempTransformPosition(List<Vector2Int> path)
-        //{
-        //    // ¦b³o¸Ì²K¥[¦ì¸mÂà´«ªºÅŞ¿è
-        //    return true;
-        //}
-        //private Vector2Int GetCurrentPosition()
-        //{
-        //    Vector3 position3D = owner.gameObject.transform.position;
+            //åˆ¤æ–·ä¸Šå›åˆç§»å‹•æ˜¯å¦ç”Ÿæ•ˆï¼ˆæ˜¯å¦å¡ä½/è¢«æ“ é–‹ï¼‰
+            if (Vector2.Distance(actualPos, lastRecordedPosition) < 0.01f)
+                stuckCounter++;
+            else
+                stuckCounter = 0;
 
-        //}
-        // ¾É¯è ¿é¤J¥Ø¼Ğ®y¼Ğ Åv­«¹Ï
-        //private void navigation(Vector2Int destination, TerrainMap map)
-        //{
-        //    List<Vector2Int> path = AStar.FindPath(currentPosition, newPosition, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
-        //}
+            //è‹¥å¡ä½å¤ªå¤šæ¬¡å‰‡é‡å°èˆª
+            if (stuckCounter >= stuckLimitTicks)
+            {
+                stuckCounter = 0;
+                Navigate();
+            }
 
+            //åŸ·è¡Œæ–°çš„ MovePosition()ï¼ˆè¼¸å…¥æŒ‡ä»¤ï¼Œçµæœä¸‹æ¬¡æ‰æœƒåæ˜ ï¼‰
+            if (path != null && currentPathIndex < path.Count)
+            {
+                Vector2 target = path[currentPathIndex];
+                Vector2 nextPos = Vector2.MoveTowards(actualPos, target, speed * Time.fixedDeltaTime);
+                rb.MovePosition(nextPos);
+
+                if (Vector2.Distance(actualPos, target) < 0.05f)
+                    currentPathIndex++;
+            }
+
+            //è¨˜éŒ„é€™å›åˆã€Œé æœŸæ‡‰è©²èµ°å®Œå¾Œã€çš„ä½ç½®ï¼ˆä¾›ä¸‹ä¸€å›åˆæ¯”è¼ƒï¼‰
+            lastRecordedPosition = actualPos;
+        }
+
+        // å°èˆªï¼ˆå‘¼å«ä½ çš„ A* æˆ–å…¶å®ƒå°‹è·¯ç³»çµ±ï¼‰
+        public void Navigate()
+        {
+            Debug.Log("Navigate");
+            Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
+            Vector2Int goal = Destination;
+
+            // å‡è¨­ AStar.FindPath å›å‚³ List<Vector2Int> æˆ– null
+            // ä½¿ç”¨ A* æ¼”ç®—æ³•å°‹æ‰¾è·¯å¾‘
+            List<Vector2Int> rawPath = AStar.FindPath(start, goal, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
+            if (rawPath == null || rawPath.Count == 0)
+            {
+                path = null;
+                currentPathIndex = 0;
+                return;
+            }
+
+            // æŠŠæ ¼å­åº§æ¨™è½‰æˆä¸–ç•Œåº§æ¨™ (ä¸­å¿ƒé»)ï¼Œè¦–ä½ çš„æ ¼å­ç³»çµ±å¯èƒ½éœ€è¦åç§»
+            path = rawPath.Select(v => new Vector2(v.x, v.y)).ToList();
+            currentPathIndex = 0;
+        }
+
+        // å–å¾—ç•¶å‰ç¶“éç‰©ç†ç³»çµ±ä¿®æ­£å¾Œçš„æ•´æ•¸æ ¼åº§æ¨™ï¼ˆå››æ¨äº”å…¥ï¼‰
+        public Vector2Int TempGetCurrentPosition()
+        {
+            Vector2 actual = GetAuthoritativePosition();
+            return Vector2Int.RoundToInt(actual);
+        }
+
+        // å–å¾—ç‰©ç†/Transform çš„æ¬Šå¨ä½ç½®
+        private Vector2 GetAuthoritativePosition()
+        {
+            if (rb != null) return rb.position;
+            return owner.transform.position;
+        }
+    }
+    public void MoveTo(Vector2Int destination)
+    {
+        movement.SetDestination(destination);
+    }
+
+    public void ForceNavigate()
+    {
+        movement.Navigate();
+    }
+
+    public Vector2Int GetRoundedPosition()
+    {
+        return movement.TempGetCurrentPosition();
     }
 }
