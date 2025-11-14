@@ -7,6 +7,7 @@ public static class Perception
 {
     public static class Creatures
     {
+        // Returns the first target creature found within perception range, or null if none found
         public static Creature HasTarget(Creature current_creature, int target_ID)
         {
             foreach (var each_species in Manager.species)
@@ -21,6 +22,7 @@ public static class Perception
             }
             return null;
         }
+        // Returns true if any target creature from the list is found within perception range
         public static bool HasTarget(Creature creature, List<int> target_ID_list)
         {
             foreach (var target in target_ID_list)
@@ -29,7 +31,7 @@ public static class Perception
             }
             return false;
         }
-
+        // Counts the number of target creatures with the specified ID within perception range
         public static int CountTargetNumber(Creature current_creature, int target_ID)
         {
             int count = 0;
@@ -45,7 +47,7 @@ public static class Perception
             }
             return count;
         }
-
+        // Counts the total number of target creatures from the list of IDs within perception range
         public static int CountTarget(Creature current_creature, List<int> target_ID_list)
         {
             int count = 0;
@@ -55,7 +57,7 @@ public static class Perception
             }
             return count;
         }
-
+        // Retrieves a sorted list of all target creatures with the specified ID within perception range
         public static List<Creature> GetAllTargets(Creature current_creature, int target_ID)
         {
             List<Creature> targetsUUID = new();
@@ -72,7 +74,7 @@ public static class Perception
             targetsUUID.Sort();
             return targetsUUID;
         }
-
+        // Retrieves a sorted list of all target creatures from the list of IDs within perception range
         public static List<Creature> GetAllTargets(Creature current_creature, List<int> target_ID_list)
         {
             List<Creature> targets = new();
@@ -87,6 +89,7 @@ public static class Perception
 
     public class Items
     {
+        // Checks if there is at least one food item of the specified type within perception range
         public static bool HasTarget(Creature creature, FoodType food_type)
         {
             foreach (var each_dropped_item in Manager.FoodItems)
@@ -98,7 +101,7 @@ public static class Perception
             }
             return false;
         }
-
+        // Checks if there is at least one food item from the list of types within perception range
         public static bool HasTarget(Creature creature, List<FoodType> food_type_list)
         {
             foreach (var food_type in food_type_list)
@@ -107,7 +110,7 @@ public static class Perception
             }
             return false;
         }
-
+        // Counts the number of food items of the specified type within perception range
         public static int CountTargetNumber(Creature creature, FoodType food_type)
         {
             int count = 0;
@@ -120,7 +123,7 @@ public static class Perception
             }
             return count;
         }
-
+        // Counts the total number of food items from the list of types within perception range
         public static int CountTarget(Creature creature, List<FoodType> food_type_list)
         {
             int count = 0;
@@ -130,7 +133,7 @@ public static class Perception
             }
             return count;
         }
-
+        // Retrieves a list of all food items of the specified type within perception range
         public static List<Edible> GetAllTargets(Creature creature, FoodType food_type)
         {
             List<Edible> targets = new();
@@ -143,7 +146,7 @@ public static class Perception
             }
             return targets;
         }
-
+        // Retrieves a sorted list of all food items from the list of types within perception range
         public static List<Edible> GetAllTargets(Creature creature, List<FoodType> food_type_list)
         {
             List<Edible> targets = new();
