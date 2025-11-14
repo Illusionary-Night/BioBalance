@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System.Reflection;
+using System;
 
 public static class ActionSystem
 {
@@ -21,11 +22,35 @@ public static class ActionSystem
 
         foreach (var type in actionTypes)
         {
-            // 強制建立該類別的 Instance 靜態欄位
-            var instanceField = type.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
-            if (instanceField?.GetValue(null) is ActionBase action)
-                actions.Add(action.Type, action);
+            try
+            {
+                // 首先嘗試尋找 Instance 靜態欄位
+                var instanceField = type.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
+                ActionBase action = null;
+
+                if (instanceField?.GetValue(null) is ActionBase staticAction)
+                {
+                    action = staticAction;
+                }
+                else
+                {
+                    // 如果沒有 Instance 欄位，動態創建實例
+                    action = (ActionBase)Activator.CreateInstance(type);
+                }
+
+                if (action != null)
+                {
+                    actions[action.Type] = action;
+                    Debug.Log($"Registered action: {type.Name} for ActionType.{action.Type}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to register action {type.Name}: {ex.Message}");
+            }
         }
+
+        Debug.Log($"Total registered actions: {actions.Count}");
     }
 
     public static bool IsConditionMet(Creature creature, ActionType actiontype)
@@ -52,6 +77,16 @@ public static class ActionSystem
     {
         if (actions.TryGetValue(actiontype, out var f))
             f.Execute(creature);
+    }
+
+    // 偵錯方法：顯示所有已註冊的動作
+    public static void DebugRegisteredActions()
+    {
+        Debug.Log("=== Registered Actions ===");
+        foreach (var kvp in actions)
+        {
+            Debug.Log($"ActionType.{kvp.Key} -> {kvp.Value.GetType().Name}");
+        }
     }
 }
 
