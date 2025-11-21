@@ -55,6 +55,7 @@ public struct CreatureAttributes
     public List<int> predator_ID_list;   //新增天敵列表
     public List<ActionType> action_list;
 }
+[System.Serializable]
 public struct Species
 {
     public CreatureAttributes attributes;

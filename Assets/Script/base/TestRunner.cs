@@ -8,7 +8,7 @@ public class TestRunner : MonoBehaviour
     private Creature creature;
     void Start()
     {
-        ActionSystem.Register();
+        //ActionSystem.Register();
         CreatureObject.GetComponent<Creature>().Initialize(CreatureAttributes,CreatureObject);
         creature = CreatureObject.GetComponent<Creature>();
     }
@@ -32,9 +32,9 @@ public class TestRunner : MonoBehaviour
     }
 
     // 物理步驟
-    void FixedUpdate()
-    {
-        if (creature != null)
-            creature.OnTick(); // <- 呼叫 Movement.FixedTick() 內部
-    }
+    //void FixedUpdate()
+    //{
+    //    if (creature != null)
+    //        creature.OnTick(); // <- 呼叫 Movement.FixedTick() 內部
+    //}
 }

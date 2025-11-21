@@ -6,7 +6,8 @@ using UnityEngine;
 using System.Linq;
 
 
-public class Creature : MonoBehaviour, Tickable
+
+public class Creature : MonoBehaviour, ITickable
 {
     private Movement movement;
     // 玩家決定
@@ -124,15 +125,16 @@ public class Creature : MonoBehaviour, Tickable
         //角色物件調適
         transform.localScale = new Vector3(size * constantData.NORMALSIZE, size * constantData.NORMALSIZE, 1f);
         movement = new Movement(this);
+        OnEnable();
     }
     public void DoAction()
     {
-        Debug.Log("DoAction");
+        //Debug.Log("DoAction");
         List<KeyValuePair<ActionType,float>> available_actions = new();
         //每回合開始(每生物流程)	
         //計算每個action的條件達成與否
         //計算每個達成條件的action的權重
-        Debug.Log("ActionListCount "+ActionList.Count);
+        //Debug.Log("ActionListCount "+ActionList.Count);
         for (int i = 0; i < ActionList.Count; i++)
         {
             Debug.Log("ActionList[i] "+ ActionList[i]);
@@ -143,7 +145,7 @@ public class Creature : MonoBehaviour, Tickable
                 available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
             }
         }
-        Debug.Log(available_actions.Count);
+        //Debug.Log(available_actions.Count);
         //將條件達成的action進行權重排序
         available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
         while (available_actions.Count > 0)
@@ -186,6 +188,20 @@ public class Creature : MonoBehaviour, Tickable
         attributes.action_list = ActionList;
         return attributes;
     }
+    public void OnEnable()
+    {
+        Manager.OnTick += OnTick;
+    }
+    public void OnDisable()
+    {
+        Manager.OnTick -= OnTick;
+    }
+    public void Die()
+    {
+        OnDisable();
+        Manager.Instance.UnregisterCreature(this);
+        Destroy(gameObject);
+    }
     public void OnTick()
     {
         //回血、餓死、老死、繁殖冷卻
@@ -196,16 +212,16 @@ public class Creature : MonoBehaviour, Tickable
         }
         Health = Mathf.Min(Health, BaseHealth);
         //餓死
-        Hunger -= HungerRate;
-        if (Hunger <= 0)
-        {
-            //Debug.Log("餓死");
-        }
+        //Hunger -= HungerRate;
+        //if (Hunger <= 0)
+        //{
+        //    Die();
+        //}
         //老死
         Age += 1;
         if (Age >= Lifespan)
         {
-            //Debug.Log("老死");
+            Die();
         }
         //繁殖冷卻
         if (ReproductionCooldown > 0)
@@ -252,7 +268,7 @@ public class Creature : MonoBehaviour, Tickable
         // 設定目的地（格座）
         public void SetDestination(Vector2Int destination)
         {
-            Debug.Log("SetDestination");
+            //Debug.Log("SetDestination");
             Destination = destination;
             awake = true;
             Navigate();
@@ -296,7 +312,7 @@ public class Creature : MonoBehaviour, Tickable
         // 導航（呼叫你的 A* 或其它尋路系統）
         public void Navigate()
         {
-            Debug.Log("Navigate");
+            //Debug.Log("Navigate");
             Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
             Vector2Int goal = Destination;
 

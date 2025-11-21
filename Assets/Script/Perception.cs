@@ -9,7 +9,7 @@ public static class Perception
     {
         public static Creature HasTarget(Creature current_creature, int target_ID)
         {
-            foreach (var each_species in Manager.species)
+            foreach (var each_species in Manager.Instance.Species)
             {
                 if (target_ID != each_species.attributes.species_ID) continue;
                 foreach (var each_creature in each_species.creatures)
@@ -33,7 +33,7 @@ public static class Perception
         public static int CountTargetNumber(Creature current_creature, int target_ID)
         {
             int count = 0;
-            foreach (var each_species in Manager.species)
+            foreach (var each_species in Manager.Instance.Species)
             {
                 if (target_ID != each_species.attributes.species_ID) continue;
                 foreach (var each_creature in each_species.creatures)
@@ -59,7 +59,7 @@ public static class Perception
         public static List<Creature> GetAllTargets(Creature current_creature, int target_ID)
         {
             List<Creature> targetsUUID = new();
-            foreach (var each_species in Manager.species)
+            foreach (var each_species in Manager.Instance.Species)
             {
                 if (target_ID != each_species.attributes.species_ID) continue;
                 foreach (var each_creature in each_species.creatures)

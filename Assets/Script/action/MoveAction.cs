@@ -22,7 +22,7 @@ public class MoveAction : ActionBase
 
 	public override bool IsSuccess(Creature creature)
 	{
-		return true;
+		//return true;
         // 1/2 機率成功移動
         return Random.Range(0, 2) == 0;
 	}
