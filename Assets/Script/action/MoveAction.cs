@@ -38,18 +38,6 @@ public class MoveAction : ActionBase
 
         // 呼叫Creature自行導航地點
 		creature.MoveTo(newPosition);
+		creature.ActionCooldown = Cooldown;
     }
-
-
-    //TODO: 移動相關的輔助方法
- //   private bool TempTransformPosition(List<Vector2Int> path)
-	//{
-	//	// 在這裡添加位置轉換的邏輯
-	//	return true;
-	//}
-	//private Vector2Int TempGetCurrentPosition()
-	//{
-	//	// 在這裡添加獲取當前位置的邏輯
-	//	return new Vector2Int(0, 0);
- //   }
 }

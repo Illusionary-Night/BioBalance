@@ -50,5 +50,6 @@ public class ReproduceAction : ActionBase
         new_game_object.name = "creature " + creature.SpeciesID + "." + creature_num;
         Creature new_creature = new_game_object.GetComponent<Creature>();
         new_creature.Initialize(creature.ToCreatureAttribute(), new_game_object);
+        creature.ActionCooldown = Cooldown;
     }
 }

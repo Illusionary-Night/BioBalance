@@ -619,7 +619,7 @@ MonoBehaviour:
   terrainThresholds:
   - threshold: 0.7
     terrain: 5
-  - threshold: 0.9999
+  - threshold: 0.99
     terrain: 0
   - threshold: 1
     terrain: 2
