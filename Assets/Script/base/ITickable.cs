@@ -1,5 +1,5 @@
 using UnityEngine;
-public interface Tickable
+public interface ITickable
 {
     void OnTick();
 }

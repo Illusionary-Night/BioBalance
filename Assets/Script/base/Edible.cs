@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // Abstract base class for all edible objects
-public abstract class Edible : MonoBehaviour, Tickable
+public abstract class Edible : MonoBehaviour, ITickable
 {
     // Unique identifier for the edible object
     public string UUID { get; protected set; }
