@@ -8,15 +8,15 @@ public class TestRunner : MonoBehaviour
     private Creature creature;
     void Start()
     {
-        //ActionSystem.Register();
-        CreatureObject.GetComponent<Creature>().Initialize(CreatureAttributes,CreatureObject);
+        ActionSystem.DebugRegisteredActions();
+        CreatureObject.GetComponent<Creature>().Initialize(CreatureAttributes, CreatureObject);
         creature = CreatureObject.GetComponent<Creature>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // ·Æ¹«¥ªÁä¡G³]©w¥Øªº¦a
+        // ï¿½Æ¹ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½]ï¿½wï¿½Øªï¿½ï¿½a
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -24,17 +24,17 @@ public class TestRunner : MonoBehaviour
             creature.MoveTo(dest);
         }
 
-        // «öªÅ¥ÕÁä¡G­«·s¾É¯è
+        // ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½Gï¿½ï¿½ï¿½sï¿½É¯ï¿½
         if (Input.GetKeyDown(KeyCode.Space))
         {
             creature.ForceNavigate();
         }
     }
 
-    // ª«²z¨BÆJ
+    // ï¿½ï¿½ï¿½zï¿½Bï¿½J
     //void FixedUpdate()
     //{
     //    if (creature != null)
-    //        creature.OnTick(); // <- ©I¥s Movement.FixedTick() ¤º³¡
+    //        creature.OnTick(); // <- ï¿½Iï¿½s Movement.FixedTick() ï¿½ï¿½ï¿½ï¿½
     //}
 }

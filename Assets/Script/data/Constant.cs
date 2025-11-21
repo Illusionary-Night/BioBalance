@@ -59,7 +59,7 @@ public struct CreatureAttributes
 public struct Species
 {
     public CreatureAttributes attributes;
-    public List<Creature>creatures;
+    public List<Creature> creatures;
 }
 public static class AttributesCalculator{
     public static float CalculateHungerRate(float size, float speed, float attack_power)

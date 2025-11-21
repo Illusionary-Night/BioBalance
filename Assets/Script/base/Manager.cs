@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Linq;
 
 public class Manager : MonoBehaviour
 {
@@ -11,7 +8,7 @@ public class Manager : MonoBehaviour
     public List<Species> Species => species;
     public static event System.Action OnTick;
     public static List<Edible> FoodItems;
-    public float tickInterval = 1f / 30; // ¨C­Ó¹CÀ¸³æ¦ì®É¶¡ (¬í)
+    public float tickInterval = 1f / 30; // ï¿½Cï¿½Ó¹Cï¿½ï¿½ï¿½ï¿½ï¿½É¶ï¿½ (ï¿½ï¿½)
     private float tick_timer = 0;
     private int mixTickTime = 240000;
     [SerializeField] public int TickTime;
@@ -22,7 +19,7 @@ public class Manager : MonoBehaviour
     }
     private void Awake()
     {
-        //  ?²æ­¢?´æ™¯?‡æ?å¾Œé?è¤‡å»ºç«?Manager
+        //  ?ï¿½æ­¢?ï¿½æ™¯?ï¿½ï¿½?å¾Œï¿½?è¤‡å»ºï¿½?Manager
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -41,7 +38,7 @@ public class Manager : MonoBehaviour
         {
             tick_timer -= tickInterval;
             TickTime = (TickTime + 1) % mixTickTime;
-            // ¦b³o¸Ì³B²z¨C­Ó¹CÀ¸®É¶¡³æ¦ìªºÅŞ¿è
+            // ï¿½bï¿½oï¿½Ì³Bï¿½zï¿½Cï¿½Ó¹Cï¿½ï¿½ï¿½É¶ï¿½ï¿½ï¿½ìªºï¿½Ş¿ï¿½
             OnTick?.Invoke();
         }
     }
@@ -51,28 +48,28 @@ public class Manager : MonoBehaviour
     }
     private void PredatorUpdate(Creature new_creature)
     {
-        foreach (var each_species in species)   //?°ç??©ç?å¤©æ•µ?å–®è£œå?
+        foreach (var each_species in species)   //?ï¿½ï¿½??ï¿½ï¿½?å¤©æ•µ?ï¿½å–®è£œï¿½?
         {
-            if (each_species.creatures.Count == 0)continue;
+            if (each_species.creatures.Count == 0) continue;
             foreach (var each_prey_ID in each_species.creatures[0].PreyIDList)
             {
                 if (each_prey_ID != new_creature.SpeciesID) continue;
                 new_creature.PredatorIDList.Add(each_species.attributes.species_ID);
             }
         }
-        foreach (var each_species in species)   //?Šç??©ç?å¤©æ•µ?å–®è£œå?
+        foreach (var each_species in species)   //?ï¿½ï¿½??ï¿½ï¿½?å¤©æ•µ?ï¿½å–®è£œï¿½?
         {
-            foreach(var each_creature in each_species.creatures)
+            foreach (var each_creature in each_species.creatures)
             {
-                foreach(var each_prey_ID in new_creature.PreyIDList)
+                foreach (var each_prey_ID in new_creature.PreyIDList)
                 {
                     if (each_prey_ID != each_creature.SpeciesID) continue;
                     bool is_duplicate = false;
                     foreach (var each_predator_ID in each_creature.PredatorIDList)
                     {
-                        if(each_predator_ID == each_creature.SpeciesID)is_duplicate = true;
+                        if (each_predator_ID == each_creature.SpeciesID) is_duplicate = true;
                     }
-                    if(!is_duplicate)each_creature.PredatorIDList.Add(new_creature.SpeciesID);
+                    if (!is_duplicate) each_creature.PredatorIDList.Add(new_creature.SpeciesID);
                 }
             }
         }
@@ -88,7 +85,8 @@ public class Manager : MonoBehaviour
                 each_species.creatures.Add(new_creature);
             }
         }
-        if (is_new_species) {
+        if (is_new_species)
+        {
             Species new_species = new();
             new_species.creatures = new();
             new_species.creatures.Add(new_creature);
@@ -99,7 +97,7 @@ public class Manager : MonoBehaviour
     }
     public void UnregisterCreature(Creature dead_creature)
     {
-        foreach(var each_species in species)
+        foreach (var each_species in species)
         {
             if (each_species.attributes.species_ID == dead_creature.SpeciesID)
             {
@@ -107,5 +105,5 @@ public class Manager : MonoBehaviour
             }
         }
     }
-    
+
 }

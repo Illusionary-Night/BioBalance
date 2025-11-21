@@ -12,38 +12,38 @@ public class ReproduceAction : ActionBase
     public override bool IsConditionMet(Creature creature)
     {
         //return true;
-        if (creature.Age < creature.Lifespan * 0.2f) return false;    // ¦~ÄÖ¥¼¹F20%
-        //if (creature.Hunger <= creature.MaxHunger * 0.5f) return false; // °§¾j­È§C©ó50%
-        if (creature.ReproductionCooldown > 0) return false; // Ác´Ş§N«o¤¤
-        //if (Perception.HasTarget(creature, creature.PredatorIDList)) return false; // ªşªñ¦³¼Ä¤H
+        if (creature.Age < creature.Lifespan * 0.2f) return false;    // ï¿½~ï¿½Ö¥ï¿½ï¿½F20%
+        //if (creature.Hunger <= creature.MaxHunger * 0.5f) return false; // ï¿½ï¿½ï¿½jï¿½È§Cï¿½ï¿½50%
+        if (creature.ReproductionCooldown > 0) return false; // ï¿½cï¿½Ş§Nï¿½oï¿½ï¿½
+        //if (Perception.HasTarget(creature, creature.PredatorIDList)) return false; // ï¿½ï¿½ï¿½ñ¦³¼Ä¤H
         return true;
     }
 
     public override float GetWeight(Creature creature)
     {
         return 1;
-        //(1 / °»¬d½d³ò¤º¦PÃş­ÓÅé¼Æ + 1) * 0.8
+        //(1 / åµæŸ¥ç¯„åœå…§åŒé¡å€‹é«”æ•¸ + 1) * 0.8
         //return (1f / (Perception.CountTargetNumber(creature,creature.SpeciesID)+1)) * 0.8f;
     }
 
     public override bool IsSuccess(Creature creature)
     {
         return true;
-        //return Random.value < 0.6f; // 60% ¦¨¥\²v
+        //return Random.value < 0.6f; // 60% æˆåŠŸç‡
     }
 
     public override void Execute(Creature creature)
     {
         Debug.Log("ReproduceAction");
-        int creature_num=0;
+        int creature_num = 0;
         Debug.Log("Manager.Instance = " + (Manager.Instance == null));
         Debug.Log("Manager.Instance.Species = " + (Manager.Instance?.Species == null));
         Manager.Instance.RegisterCreature(creature);
         foreach (var each_species in Manager.Instance.Species)
         {
-            if(each_species.attributes.species_ID == creature.SpeciesID)
+            if (each_species.attributes.species_ID == creature.SpeciesID)
             {
-                creature_num=each_species.creatures.Count-1;
+                creature_num = each_species.creatures.Count - 1;
             }
         }
         GameObject new_game_object = UnityEngine.Object.Instantiate(creature.gameObject);

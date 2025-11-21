@@ -6,7 +6,6 @@ using UnityEngine;
 using System.Linq;
 
 
-
 public class Creature : MonoBehaviour, ITickable
 {
     private Movement movement;
