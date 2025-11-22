@@ -713,6 +713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Manager
   species: []
+  meat_prefab: {fileID: 7038034673047084268, guid: 34a0aa7f67c6f8a4daeab71a831a20d9, type: 3}
   tickInterval: 0.033333335
   TickTime: 0
 --- !u!1660057539 &9223372036854775807

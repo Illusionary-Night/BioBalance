@@ -11,6 +11,8 @@ public class Manager : MonoBehaviour
     public Dictionary<Vector2Int, Edible> FoodItems => fooditems;
     public static event System.Action OnTick;
     public float tickInterval = 1f / 30; // 30 ticks per second
+    [SerializeField] private GameObject meat_prefab;
+    public GameObject MeatPrefab => meat_prefab;
     private float tick_timer = 0;
     private int mixTickTime = 240000;
     [SerializeField] public int TickTime;
@@ -155,7 +157,7 @@ public class Manager : MonoBehaviour
                 Mathf.RoundToInt(radius * Mathf.Cos(angle * Mathf.Deg2Rad)),
                 Mathf.RoundToInt(radius * Mathf.Sin(angle * Mathf.Deg2Rad))
             );
-            if (!used_position.Contains(new_position))   
+            if (!used_position.Contains(new_position))
             {
                 used_position.Add(new_position);
                 position_.Add(new_position);
