@@ -107,8 +107,4 @@ public class Manager : MonoBehaviour
             }
         }
     }
-    //public GameObject GetMeatPrefab()
-    //{
-    //    return meat_prefab;
-    //}
 }
