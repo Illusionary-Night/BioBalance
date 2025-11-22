@@ -260,7 +260,7 @@ public class Creature : MonoBehaviour, ITickable
         {
             DoAction();
         }
-        movement.FixedTick();
+        movement.MoveOnTick();
     }
     // 巢狀類別：專門負責移動邏輯
     private class Movement
@@ -270,7 +270,6 @@ public class Creature : MonoBehaviour, ITickable
         private Vector2Int Destination;         // 格座目標（整數格）
         private List<Vector2> path = null;      // 導航後的世界座標點 (連續)
         private int currentPathIndex = 0;
-        public float speed = 3f;                // 單位：格/秒或世界單位/秒
         private float stuckThreshold = 0.2f;    // 偵測被擠走/卡住的容忍距離
         private int stuckLimitTicks = 6;        // 超過幾次就重新導航
         private int stuckCounter = 0;
@@ -295,8 +294,7 @@ public class Creature : MonoBehaviour, ITickable
             Navigate();
         }
 
-        // 每個 FixedUpdate 呼叫（物理步）
-        public void FixedTick()
+        public void MoveOnTick()
         {
             if (!awake) return;
             //先讀取這一回合開始時的真實位置
@@ -319,7 +317,7 @@ public class Creature : MonoBehaviour, ITickable
             if (path != null && currentPathIndex < path.Count)
             {
                 Vector2 target = path[currentPathIndex];
-                Vector2 nextPos = Vector2.MoveTowards(actualPos, target, speed * Time.fixedDeltaTime);
+                Vector2 nextPos = Vector2.MoveTowards(actualPos, target, owner.Speed * Time.fixedDeltaTime);
                 rb.MovePosition(nextPos);
 
                 // --- 新增轉向 ---
@@ -329,6 +327,8 @@ public class Creature : MonoBehaviour, ITickable
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                     owner.transform.rotation = Quaternion.Euler(0, 0, angle);
                 }
+
+
                 if (Vector2.Distance(actualPos, target) < 0.05f)
                     currentPathIndex++;
             }

@@ -159,7 +159,11 @@ public static class Perception
             {
                 targets.AddRange(GetAllTargets(creature, food_type));
             }
-            targets.Sort();
+            targets.Sort((x, y) => {
+                float distanceX = Vector2.Distance(creature.transform.position, x.transform.position);
+                float distanceY = Vector2.Distance(creature.transform.position, y.transform.position);
+                return distanceX.CompareTo(distanceY);
+            });
             return targets;
         }
     }

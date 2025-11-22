@@ -688,16 +688,16 @@ MonoBehaviour:
   CreatureAttributes:
     species_ID: 1
     size: 1
-    speed: 10
+    speed: 50
     base_health: 100
-    reproduction_rate: 20
+    reproduction_rate: 200
     attack_power: 1
     lifespan: 100000
     variation: 0.01
-    perception_range: 1
+    perception_range: 20
     sleeping_head: 1
     sleeping_tail: 5
-    FoodTypes: 0000000001000000
+    foodTypes: 00000000
     prey_ID_list: 
     predator_ID_list: 
     action_list: 01000000

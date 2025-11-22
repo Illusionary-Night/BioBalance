@@ -4,7 +4,7 @@ using UnityEngine;
 class EatAction : ActionBase
 {
     public override ActionType Type => ActionType.Eat;
-    public override int Cooldown => 3;
+    public override int Cooldown => 300;
     public override bool IsConditionMet(Creature creature)
     {
         Debug.Log("has target: "+Perception.Items.HasTarget(creature, creature.FoodTypes));
