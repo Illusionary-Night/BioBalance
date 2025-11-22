@@ -133,6 +133,7 @@ public class Manager : MonoBehaviour
         foreach (var pos in random_positions)
         {
             if (fooditems.ContainsKey(pos)) continue;
+            if (TerrainGenerator.Instance.GetDefinitionMap().GetTerrain(pos) != TerrainType.Grass) continue;
             // Spawn food item
             GameObject food_item_prefab = Resources.Load<GameObject>("Prefabs/Edible/Grass");
             GameObject food_item_object = Instantiate(food_item_prefab);
