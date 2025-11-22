@@ -1,16 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Manager : MonoBehaviour
 {
     public static Manager Instance { get; private set; }
-    [SerializeField] private List<Species> species;
+    [SerializeField] private readonly List<Species> species = new();
+    [SerializeField] private readonly Dictionary<Vector2Int, Edible> fooditems = new();
     public List<Species> Species => species;
+    public Dictionary<Vector2Int, Edible> FoodItems => fooditems;
+    public static event System.Action OnTick;
+    public float tickInterval = 1f / 30; // 30 ticks per second
     [SerializeField] private GameObject meat_prefab;
     public GameObject MeatPrefab => meat_prefab;
-    public static event System.Action OnTick;
-    public static List<Edible> FoodItems;
-    public float tickInterval = 1f / 30;
     private float tick_timer = 0;
     private int mixTickTime = 240000;
     [SerializeField] public int TickTime;
@@ -21,7 +23,7 @@ public class Manager : MonoBehaviour
     }
     private void Awake()
     {
-        //  ?�止?�景?��?後�?複建�?Manager
+        // One instance only
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -30,7 +32,6 @@ public class Manager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        species = new List<Species>();
     }
     // Update is called once per frame
     void Update()
@@ -40,7 +41,7 @@ public class Manager : MonoBehaviour
         {
             tick_timer -= tickInterval;
             TickTime = (TickTime + 1) % mixTickTime;
-            // �b�o�̳B�z�C�ӹC���ɶ���쪺�޿�
+            // Trigger event
             OnTick?.Invoke();
         }
     }
@@ -48,9 +49,18 @@ public class Manager : MonoBehaviour
     {
         TickTime = 0;
     }
+
+    private void OnEnable()
+    {
+        OnTick += SpawnEdible;
+    }
+    private void OnDisable()
+    {
+        OnTick -= SpawnEdible;
+    }
     private void PredatorUpdate(Creature new_creature)
     {
-        foreach (var each_species in species)   //?��??��?天敵?�單補�?
+        foreach (var each_species in species)
         {
             if (each_species.creatures.Count == 0) continue;
             foreach (var each_prey_ID in each_species.creatures[0].PreyIDList)
@@ -59,7 +69,7 @@ public class Manager : MonoBehaviour
                 new_creature.PredatorIDList.Add(each_species.attributes.species_ID);
             }
         }
-        foreach (var each_species in species)   //?��??��?天敵?�單補�?
+        foreach (var each_species in species)
         {
             foreach (var each_creature in each_species.creatures)
             {
@@ -106,5 +116,54 @@ public class Manager : MonoBehaviour
                 each_species.creatures.Remove(dead_creature);
             }
         }
+    }
+    // spawn the edible item
+    private void SpawnEdible()
+    {
+        //TODO: Const of max food items and map size
+        // Limit the number of food items
+        if (fooditems.Count > 120) return;
+
+        Vector2Int position = new Vector2Int(
+            Random.Range(-50, 50),
+            Random.Range(-50, 50)
+        );
+        // Check if position is occupied
+        if (fooditems.ContainsKey(position)) return;
+        // Check terrain type
+        var random_positions = GetRandomPosition(position, 3, Random.Range(1, 5));
+        foreach (var pos in random_positions)
+        {
+            if (fooditems.ContainsKey(pos)) continue;
+            // Spawn food item
+            GameObject food_item_prefab = Resources.Load<GameObject>("Prefabs/Edible/Grass");
+            GameObject food_item_object = Instantiate(food_item_prefab);
+            Edible food_item = food_item_object.GetComponent<Edible>();
+            food_item.Initialize(pos);
+        }
+
+    }
+
+    private List<Vector2Int> GetRandomPosition(Vector2Int position, int r, int n)
+    {
+        List<Vector2Int> position_ = new();
+        HashSet<Vector2Int> used_position = new();
+        uint tries = 0;
+        while (position_.Count < n && tries < n * 10)
+        {
+            float angle = Random.Range(0f, 360f);
+            float radius = Random.Range(0f, r);
+            Vector2Int new_position = position + new Vector2Int(
+                Mathf.RoundToInt(radius * Mathf.Cos(angle * Mathf.Deg2Rad)),
+                Mathf.RoundToInt(radius * Mathf.Sin(angle * Mathf.Deg2Rad))
+            );
+            if (!used_position.Contains(new_position))
+            {
+                used_position.Add(new_position);
+                position_.Add(new_position);
+            }
+            tries++;
+        }
+        return position_;
     }
 }
