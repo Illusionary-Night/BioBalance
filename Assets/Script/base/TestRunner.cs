@@ -8,7 +8,7 @@ public class TestRunner : MonoBehaviour
     private Creature creature;
     void Start()
     {
-        ActionSystem.DebugRegisteredActions();
+        //ActionSystem.DebugRegisteredActions();
         CreatureObject.GetComponent<Creature>().Initialize(CreatureAttributes, CreatureObject);
         creature = CreatureObject.GetComponent<Creature>();
     }

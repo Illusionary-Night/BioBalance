@@ -21,9 +21,9 @@ public class ReproduceAction : ActionBase
 
     public override float GetWeight(Creature creature)
     {
-        return 1;
+        //return 1;
         //(1 / 偵查範圍內同類個體數 + 1) * 0.8
-        //return (1f / (Perception.CountTargetNumber(creature,creature.SpeciesID)+1)) * 0.8f;
+        return (1f / (Perception.Creatures.CountTargetNumber(creature, creature.SpeciesID) + 1)) * 0.8f;
     }
 
     public override bool IsSuccess(Creature creature)
@@ -34,10 +34,10 @@ public class ReproduceAction : ActionBase
 
     public override void Execute(Creature creature)
     {
-        Debug.Log("ReproduceAction");
+        //Debug.Log("ReproduceAction");
         int creature_num = 0;
-        Debug.Log("Manager.Instance = " + (Manager.Instance == null));
-        Debug.Log("Manager.Instance.Species = " + (Manager.Instance?.Species == null));
+        //Debug.Log("Manager.Instance = " + (Manager.Instance == null));
+        //Debug.Log("Manager.Instance.Species = " + (Manager.Instance?.Species == null));
         Manager.Instance.RegisterCreature(creature);
         foreach (var each_species in Manager.Instance.Species)
         {
@@ -50,6 +50,7 @@ public class ReproduceAction : ActionBase
         new_game_object.name = "creature " + creature.SpeciesID + "." + creature_num;
         Creature new_creature = new_game_object.GetComponent<Creature>();
         new_creature.Initialize(creature.ToCreatureAttribute(), new_game_object);
-        creature.ActionCooldown = Cooldown;
+        //creature.ActionCooldown = Cooldown;
+        creature.ReproductionCooldown = Cooldown;
     }
 }

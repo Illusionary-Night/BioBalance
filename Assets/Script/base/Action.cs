@@ -12,7 +12,7 @@ public static class ActionSystem
     static ActionSystem()
     {
         ActionSystem.Register();
-        Debug.Log("actions.Count "+actions.Count);
+        //Debug.Log("actions.Count "+actions.Count);
     }
 
     public static void Register()
@@ -42,7 +42,7 @@ public static class ActionSystem
                 if (action != null)
                 {
                     actions[action.Type] = action;
-                    Debug.Log($"Registered action: {type.Name} for ActionType.{action.Type}");
+                    //Debug.Log($"Registered action: {type.Name} for ActionType.{action.Type}");
                 }
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ public static class ActionSystem
     public static bool IsConditionMet(Creature creature, ActionType actiontype)
     {
 
-        Debug.Log("Condition " + (actions.TryGetValue(actiontype, out var g)&& g.IsConditionMet(creature)));
+        //Debug.Log("Condition " + (actions.TryGetValue(actiontype, out var g)&& g.IsConditionMet(creature)));
         return actions.TryGetValue(actiontype, out var f) && f.IsConditionMet(creature);
     }
 

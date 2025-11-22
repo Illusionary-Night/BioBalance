@@ -351,6 +351,8 @@ MonoBehaviour:
   age: 0
   reproductionCooldown: 0
   actionCooldown: 0
+  currentAction: 0
+  weightedActionList: 
 --- !u!212 &805884279
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -397,13 +399,13 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 6284983787455898880, guid: 8b1ceb78aa8b5d74d9c5cf0d9370b8e9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 5.5117188, y: 5.4492188}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -418,7 +420,7 @@ Transform:
   m_GameObject: {fileID: 805884277}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 250, y: 250, z: 0}
+  m_LocalPosition: {x: 251.53, y: 250.34, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -432,14 +434,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 805884277}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -485,8 +487,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Offset: {x: 0.028297424, y: 0.007080078}
+  m_Radius: 2.6434555
 --- !u!1 &929660739
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,20 +687,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TestRunner
   CreatureAttributes:
     species_ID: 1
-    size: 5
+    size: 1
     speed: 10
     base_health: 100
-    reproduction_rate: 1
+    reproduction_rate: 20
     attack_power: 1
-    lifespan: 1000
+    lifespan: 100000
     variation: 0.01
     perception_range: 1
     sleeping_head: 1
     sleeping_tail: 5
-    FoodTypes: 
+    FoodTypes: 0000000001000000
     prey_ID_list: 
     predator_ID_list: 
-    action_list: 0000000003000000
+    action_list: 01000000
   CreatureObject: {fileID: 805884277}
 --- !u!114 &1645334815
 MonoBehaviour:
@@ -712,9 +714,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4502c7a75c432c849af7ec6b497d512f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Manager
-  species: []
-  meat_prefab: {fileID: 7038034673047084268, guid: 34a0aa7f67c6f8a4daeab71a831a20d9, type: 3}
   tickInterval: 0.033333335
+  meat_prefab: {fileID: 7038034673047084268, guid: 34a0aa7f67c6f8a4daeab71a831a20d9, type: 3}
   TickTime: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

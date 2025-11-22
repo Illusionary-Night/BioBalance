@@ -6,8 +6,8 @@ public class Manager : MonoBehaviour
 {
     public static Manager Instance { get; private set; }
     [SerializeField] private readonly List<Species> species = new();
-    [SerializeField] private readonly Dictionary<Vector2Int, Edible> fooditems = new();
     public List<Species> Species => species;
+    [SerializeField] private readonly Dictionary<Vector2Int, Edible> fooditems = new();
     public Dictionary<Vector2Int, Edible> FoodItems => fooditems;
     public static event System.Action OnTick;
     public float tickInterval = 1f / 30; // 30 ticks per second
@@ -120,13 +120,14 @@ public class Manager : MonoBehaviour
     // spawn the edible item
     private void SpawnEdible()
     {
+        //Debug.Log("grass num: "+FoodItems.Count);
         //TODO: Const of max food items and map size
         // Limit the number of food items
         if (fooditems.Count > 120) return;
 
         Vector2Int position = new Vector2Int(
-            Random.Range(-50, 50),
-            Random.Range(-50, 50)
+            Random.Range(200, 300),
+            Random.Range(200, 300)
         );
         // Check if position is occupied
         if (fooditems.ContainsKey(position)) return;

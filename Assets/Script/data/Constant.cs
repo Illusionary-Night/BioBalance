@@ -49,7 +49,7 @@ public struct CreatureAttributes
     public float perception_range;
     public int sleeping_head;
     public int sleeping_tail;
-    public List<FoodType> FoodTypes;
+    public List<FoodType> foodTypes;
     public BodyType Body { get; set; }     //最終體型
     public List<int> prey_ID_list;       //新增食物列表
     public List<int> predator_ID_list;   //新增天敵列表
@@ -64,7 +64,7 @@ public struct Species
 public static class AttributesCalculator{
     public static float CalculateHungerRate(float size, float speed, float attack_power)
     {
-        return size * speed + attack_power;
+        return (size * speed + attack_power)/50;
     }
     public static float CalculateMaxHunger(float size, float base_health, List<FoodType> foods)
     {

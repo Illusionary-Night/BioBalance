@@ -86,6 +86,10 @@ public class Creature : MonoBehaviour, ITickable
     [SerializeField] private int actionCooldown;
     public int ActionCooldown { get => actionCooldown; set => actionCooldown = value; }
 
+    [SerializeField] private ActionType currentAction;//not use, only show state
+
+    [SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
+
     public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
         //個體編號
@@ -109,6 +113,7 @@ public class Creature : MonoBehaviour, ITickable
         PreyIDList = new List<int>(creatureAttributes.prey_ID_list);
         PredatorIDList = new List<int>(creatureAttributes.predator_ID_list);
         ActionList = new List<ActionType>(creatureAttributes.action_list);
+        FoodTypes = creatureAttributes.foodTypes; 
         //計算衍生屬性
         SleepTime = SleepingTail - SleepingHead;
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
@@ -136,17 +141,20 @@ public class Creature : MonoBehaviour, ITickable
         //Debug.Log("ActionListCount "+ActionList.Count);
         for (int i = 0; i < ActionList.Count; i++)
         {
-            Debug.Log("ActionList[i] "+ ActionList[i]);
+            //Debug.Log("ActionList[i] "+ ActionList[i]);
             //Debug.Log
             if (ActionSystem.IsConditionMet(this, ActionList[i]))
             {
-                Debug.Log(ActionList[i]);
+                //Debug.Log(ActionList[i]);
                 available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
             }
         }
         //Debug.Log(available_actions.Count);
         //將條件達成的action進行權重排序
         available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
+        //show weighted result in weightedActionList
+        weightedActionList.Clear();
+        for(int i=0;i < available_actions.Count; i++)weightedActionList.Add(available_actions[i].Key);
         while (available_actions.Count > 0)
         {
             //選擇權重最高
@@ -154,6 +162,7 @@ public class Creature : MonoBehaviour, ITickable
             //骰成功率
             if (ActionSystem.IsSuccess(this,selectedAction))
             {
+                currentAction = selectedAction;
                 ActionSystem.Execute(this, selectedAction);
 
                 return;
@@ -180,7 +189,7 @@ public class Creature : MonoBehaviour, ITickable
         attributes.perception_range = PerceptionRange;
         attributes.sleeping_head = SleepingHead;
         attributes.sleeping_tail = SleepingTail;
-        attributes.FoodTypes = FoodTypes;
+        attributes.foodTypes = FoodTypes;
         attributes.Body = Body;
         attributes.prey_ID_list = PreyIDList;
         attributes.predator_ID_list = PredatorIDList;
@@ -313,6 +322,13 @@ public class Creature : MonoBehaviour, ITickable
                 Vector2 nextPos = Vector2.MoveTowards(actualPos, target, speed * Time.fixedDeltaTime);
                 rb.MovePosition(nextPos);
 
+                // --- 新增轉向 ---
+                Vector2 direction = (target - actualPos).normalized;
+                if (direction.sqrMagnitude > 0.001f) // 避免零向量
+                {
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    owner.transform.rotation = Quaternion.Euler(0, 0, angle);
+                }
                 if (Vector2.Distance(actualPos, target) < 0.05f)
                     currentPathIndex++;
             }
