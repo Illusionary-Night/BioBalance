@@ -197,6 +197,19 @@ public class Creature : MonoBehaviour, ITickable
     }
     public void Die()
     {
+        Debug.LogWarning("Using Manager instance from: " + Manager.Instance.gameObject.name);
+        Debug.LogWarning("MeatPrefab is: " + Manager.Instance.MeatPrefab);
+
+        if (Manager.Instance.MeatPrefab != null)
+        {
+            Instantiate(Manager.Instance.MeatPrefab, transform.position, Quaternion.identity)
+                .GetComponent<Edible>()
+                .Initialize(Vector2Int.RoundToInt(transform.position));
+        }
+        else
+        {
+            Debug.LogWarning("MeatPrefab is null");
+        }
         OnDisable();
         Manager.Instance.UnregisterCreature(this);
         Destroy(gameObject);

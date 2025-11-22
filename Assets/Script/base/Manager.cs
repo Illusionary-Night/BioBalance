@@ -6,9 +6,11 @@ public class Manager : MonoBehaviour
     public static Manager Instance { get; private set; }
     [SerializeField] private List<Species> species;
     public List<Species> Species => species;
+    [SerializeField] private GameObject meat_prefab;
+    public GameObject MeatPrefab => meat_prefab;
     public static event System.Action OnTick;
     public static List<Edible> FoodItems;
-    public float tickInterval = 1f / 30; // �C�ӹC�����ɶ� (��)
+    public float tickInterval = 1f / 30;
     private float tick_timer = 0;
     private int mixTickTime = 240000;
     [SerializeField] public int TickTime;
@@ -105,5 +107,8 @@ public class Manager : MonoBehaviour
             }
         }
     }
-
+    //public GameObject GetMeatPrefab()
+    //{
+    //    return meat_prefab;
+    //}
 }
