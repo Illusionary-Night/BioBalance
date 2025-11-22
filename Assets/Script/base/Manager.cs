@@ -101,6 +101,7 @@ public class Manager : MonoBehaviour
         if (is_new_species)
         {
             itsSpecies = new();
+            itsSpecies.creatures = new();
             itsSpecies.attributes = new_creature.ToCreatureAttribute();
             species.Add(itsSpecies);
         }

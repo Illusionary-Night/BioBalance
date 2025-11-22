@@ -621,10 +621,8 @@ MonoBehaviour:
   terrainThresholds:
   - threshold: 0.7
     terrain: 5
-  - threshold: 0.99
-    terrain: 0
   - threshold: 1
-    terrain: 2
+    terrain: 0
 --- !u!4 &1144150595
 Transform:
   m_ObjectHideFlags: 0
@@ -694,13 +692,13 @@ MonoBehaviour:
     attack_power: 1
     lifespan: 1000
     variation: 0.01
-    perception_range: 2000
+    perception_range: 20
     sleeping_head: 1
     sleeping_tail: 5
     foodTypes: 00000000
     prey_ID_list: 
     predator_ID_list: 
-    action_list: 0000000003000000
+    action_list: 000000000300000001000000
   CreatureObject: {fileID: 805884277}
 --- !u!114 &1645334815
 MonoBehaviour:
