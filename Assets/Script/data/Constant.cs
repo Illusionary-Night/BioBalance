@@ -31,7 +31,7 @@ public enum ActionType
 
 public enum FoodType
 {
-    Plant,
+    Grass,
     Meat,
     Carrion
 }
@@ -69,9 +69,9 @@ public static class AttributesCalculator{
     public static float CalculateMaxHunger(float size, float base_health, List<FoodType> foods)
     {
         float dietFactor = 1.0f;
-        if (foods.Contains(FoodType.Plant) && (foods.Contains(FoodType.Meat) || foods.Contains(FoodType.Carrion))) dietFactor = 1.0f;
+        if (foods.Contains(FoodType.Grass) && (foods.Contains(FoodType.Meat) || foods.Contains(FoodType.Carrion))) dietFactor = 1.0f;
         else if (foods.Contains(FoodType.Meat) || foods.Contains(FoodType.Carrion)) dietFactor = 1.2f;
-        else if (foods.Contains(FoodType.Plant)) dietFactor = 0.8f;
+        else if (foods.Contains(FoodType.Grass)) dietFactor = 0.8f;
         return size * base_health * dietFactor;
     }
     public static float CalculateReproductionInterval(float size, float base_health)

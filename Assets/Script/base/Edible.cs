@@ -42,7 +42,13 @@ public abstract class Edible : MonoBehaviour, ITickable
 
     public void Initialize(Vector2Int position)
     {
-        this.UUID = System.Guid.NewGuid().ToString();
-        this.transform.position = (Vector3Int)position;
+        UUID = System.Guid.NewGuid().ToString();
+        transform.position = (Vector3Int)position;
+        Manager.Instance.FoodItems[position] = this;
+    }
+
+    private void OnDestroy()
+    {
+        Manager.Instance.FoodItems.Remove(Vector2Int.RoundToInt((Vector2)transform.position));
     }
 }

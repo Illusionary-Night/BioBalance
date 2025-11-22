@@ -92,7 +92,7 @@ public static class Perception
         // Checks if there is at least one food item of the specified type within perception range
         public static bool HasTarget(Creature creature, FoodType food_type)
         {
-            foreach (var each_dropped_item in Manager.FoodItems)
+            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
                 if (distance > creature.PerceptionRange) continue;
@@ -114,7 +114,7 @@ public static class Perception
         public static int CountTargetNumber(Creature creature, FoodType food_type)
         {
             int count = 0;
-            foreach (var each_dropped_item in Manager.FoodItems)
+            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
                 if (distance > creature.PerceptionRange) continue;
@@ -137,7 +137,7 @@ public static class Perception
         public static List<Edible> GetAllTargets(Creature creature, FoodType food_type)
         {
             List<Edible> targets = new();
-            foreach (var each_dropped_item in Manager.FoodItems)
+            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
                 if (distance > creature.PerceptionRange) continue;
