@@ -21,9 +21,9 @@ public class ReproduceAction : ActionBase
 
     public override float GetWeight(Creature creature)
     {
-        //return 1;
+        return 1;
         //(1 / 偵查範圍內同類個體數 + 1) * 0.8
-        return (1f / (Perception.Creatures.CountTargetNumber(creature, creature.SpeciesID) + 1)) * 0.8f;
+        //return (1f / (Perception.Creatures.CountTargetNumber(creature, creature.SpeciesID) + 1));
     }
 
     public override bool IsSuccess(Creature creature)

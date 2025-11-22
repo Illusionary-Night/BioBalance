@@ -88,34 +88,36 @@ public class Manager : MonoBehaviour
     }
     public void RegisterCreature(Creature new_creature)
     {
+        Species itsSpecies = new();
         bool is_new_species = true;
         foreach (var each_species in species)
         {
             if (each_species.attributes.species_ID == new_creature.SpeciesID)
             {
                 is_new_species = false;
-                each_species.creatures.Add(new_creature);
+                itsSpecies = each_species;
             }
         }
         if (is_new_species)
         {
-            Species new_species = new();
-            new_species.creatures = new();
-            new_species.creatures.Add(new_creature);
-            new_species.attributes = new_creature.ToCreatureAttribute();
-            species.Add(new_species);
+            itsSpecies = new();
+            itsSpecies.attributes = new_creature.ToCreatureAttribute();
+            species.Add(itsSpecies);
         }
+        itsSpecies.creatures.Add(new_creature);
         //PredatorUpdate(new_creature);
     }
     public void UnregisterCreature(Creature dead_creature)
     {
+        Species itsSpecies = new();
         foreach (var each_species in species)
         {
             if (each_species.attributes.species_ID == dead_creature.SpeciesID)
             {
-                each_species.creatures.Remove(dead_creature);
+                itsSpecies = each_species;
             }
         }
+        itsSpecies.creatures.Remove(dead_creature);
     }
     // spawn the edible item
     private void SpawnEdible()
