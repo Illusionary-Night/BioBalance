@@ -26,7 +26,7 @@ public class FleeAction : ActionBase
         return Random.value < 0.6f; // 60% 成功率
     }
 
-    public override void Execute(Creature creature)
+    public override void Execute(Creature creature, ActionContext context = null)
     {
         //// 前提有一個能跑動的範圍距離
         //Vector2Int currentPosition = this.TempGetCurrentPosition(creature);

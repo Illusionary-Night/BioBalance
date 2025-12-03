@@ -27,7 +27,7 @@ public class MoveAction : ActionBase
         return Random.Range(0, 2) == 0;
 	}
 
-	public override void Execute(Creature creature)
+	public override void Execute(Creature creature, ActionContext context = null)
 	{
         //Debug.Log("move");
         // 隨機移動到鄰近位置

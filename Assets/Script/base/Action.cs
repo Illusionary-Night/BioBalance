@@ -7,17 +7,15 @@ using System;
 
 public static class ActionSystem
 {
-    private static readonly Dictionary<ActionType, ActionBase> actions = new();
+    private static readonly Dictionary<ActionType, ActionBase> actions = new Dictionary<ActionType, ActionBase>();
 
     static ActionSystem()
     {
         ActionSystem.Register();
-        //Debug.Log("actions.Count "+actions.Count);
     }
 
     public static void Register()
     {
-        // 掃描所有繼承 ActionBase 的型別
         var actionTypes = typeof(ActionBase).Assembly.GetTypes()
             .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(ActionBase)));
 
@@ -25,7 +23,6 @@ public static class ActionSystem
         {
             try
             {
-                // 首先嘗試尋找 Instance 靜態欄位
                 var instanceField = type.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
                 ActionBase action = null;
 
@@ -35,14 +32,12 @@ public static class ActionSystem
                 }
                 else
                 {
-                    // 如果沒有 Instance 欄位，動態創建實例
                     action = (ActionBase)Activator.CreateInstance(type);
                 }
 
                 if (action != null)
                 {
                     actions[action.Type] = action;
-                    //Debug.Log($"Registered action: {type.Name} for ActionType.{action.Type}");
                 }
             }
             catch (Exception ex)
@@ -56,8 +51,6 @@ public static class ActionSystem
 
     public static bool IsConditionMet(Creature creature, ActionType actiontype)
     {
-
-        //Debug.Log("Condition " + (actions.TryGetValue(actiontype, out var g)&& g.IsConditionMet(creature)));
         return actions.TryGetValue(actiontype, out var f) && f.IsConditionMet(creature);
     }
 
@@ -76,20 +69,10 @@ public static class ActionSystem
         return actions.TryGetValue(actiontype, out var f) && f.IsSuccess(creature);
     }
 
-    public static void Execute(Creature creature, ActionType actiontype)
+    public static void Execute(Creature creature, ActionType actiontype, ActionContext context = null)
     {
         if (actions.TryGetValue(actiontype, out var f))
-            f.Execute(creature);
-    }
-
-    // 偵錯方法：顯示所有已註冊的動作
-    public static void DebugRegisteredActions()
-    {
-        Debug.Log("=== Registered Actions ===");
-        foreach (var kvp in actions)
-        {
-            Debug.Log($"ActionType.{kvp.Key} -> {kvp.Value.GetType().Name}");
-        }
+            f.Execute(creature, context);
     }
 }
 
@@ -103,7 +86,9 @@ public abstract class ActionBase
     public abstract bool IsConditionMet(Creature creature);
     public abstract float GetWeight(Creature creature);
     public abstract bool IsSuccess(Creature creature);
-    public abstract void Execute(Creature creature);
+    
+    // 新增 context 參數
+    public abstract void Execute(Creature creature, ActionContext context = null);
 }
 
 
