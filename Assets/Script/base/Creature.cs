@@ -31,13 +31,13 @@ public class Creature : MonoBehaviour, ITickable
     public string UUID { get => _UUID; }
     [SerializeField] private float speed;
     public float Speed { get => speed; set => speed = value; }
-    [SerializeField] private float base_health; 
+    [SerializeField] private float base_health;
     public float BaseHealth { get => base_health; set => base_health = value; }
     [SerializeField] private float reproduction_rate;
     public float ReproductionRate { get => reproduction_rate; set => reproduction_rate = value; }
-    [SerializeField] private float attack_power; 
+    [SerializeField] private float attack_power;
     public float AttackPower { get => attack_power; set => attack_power = value; }
-    [SerializeField] private float lifespan; 
+    [SerializeField] private float lifespan;
     public float Lifespan { get => lifespan; set => lifespan = value; }
     [SerializeField] private float variation;
     public float Variation { get => variation; set => variation = value; }
@@ -100,13 +100,13 @@ public class Creature : MonoBehaviour, ITickable
 
     //[SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
 
-    public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
+    public void Initialize(CreatureAttributes creatureAttributes, GameObject creature_object)
     {
         //個體編號
         _UUID = System.Guid.NewGuid().ToString();
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
         //睡眠時間變異
-        int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail-creatureAttributes.sleeping_head) * variationFactor());
+        int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail - creatureAttributes.sleeping_head) * variationFactor());
         SleepingHead = creatureAttributes.sleeping_head + delta_sleep_time();
         SleepingTail = creatureAttributes.sleeping_tail + delta_sleep_time();
         //其他玩家屬性變異
@@ -123,7 +123,7 @@ public class Creature : MonoBehaviour, ITickable
         PreyIDList = new List<int>(creatureAttributes.prey_ID_list);
         PredatorIDList = new List<int>(creatureAttributes.predator_ID_list);
         ActionList = new List<ActionType>(creatureAttributes.action_list);
-        FoodTypes = creatureAttributes.foodTypes; 
+        FoodTypes = creatureAttributes.foodTypes;
         //計算衍生屬性
         SleepTime = SleepingTail - SleepingHead;
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
@@ -141,7 +141,7 @@ public class Creature : MonoBehaviour, ITickable
         movement = new Movement(this);
         // 初始化狀態機
         actionStateMachine = new ActionStateMachine(this);
-        
+
         OnEnable();
     }
     public void DoAction()
@@ -278,33 +278,31 @@ public class Creature : MonoBehaviour, ITickable
         public void MoveOnTick()
         {
             if (!awake) return;
+
+            // 這一回合開始的真實位置
             Vector2 actualPos = GetAuthoritativePosition();
+            Vector2 expectedPos = actualPos;
 
-            if (Vector2.Distance(actualPos, lastRecordedPosition) < 0.01f)
-                stuckCounter++;
-            else
-                stuckCounter = 0;
-
-            if (stuckCounter >= stuckLimitTicks)
-            {
-                stuckCounter = 0;
-                Navigate();
-            }
-
+            //移動
             if (path != null && currentPathIndex < path.Count)
             {
                 Vector2 target = path[currentPathIndex];
+
+                // 計算下一個位置
                 Vector2 nextPos = Vector2.MoveTowards(actualPos, target, owner.Speed * Time.fixedDeltaTime);
                 rb.MovePosition(nextPos);
+                expectedPos = nextPos;  // 記起來
 
-                Vector2 direction = (target - actualPos).normalized;
-                if (direction.sqrMagnitude > 0.001f)
+                // 修正：方向應該根據 nextPos，而不是 actualPos
+                Vector2 direction = (nextPos - actualPos).normalized;
+                if (direction.sqrMagnitude > 0.0001f)
                 {
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                     owner.transform.rotation = Quaternion.Euler(0, 0, angle);
                 }
 
-                if (Vector2.Distance(actualPos, target) < 0.05f)
+                // 判斷是否抵達目標
+                if (Vector2.Distance(nextPos, target) < 0.05f)
                     currentPathIndex++;
             }
             else if (awake && path != null && currentPathIndex >= path.Count)
@@ -318,8 +316,10 @@ public class Creature : MonoBehaviour, ITickable
                 }
             }
 
-            lastRecordedPosition = actualPos;
+            // 正確做法：記錄「預期」的移動位置
+            lastRecordedPosition = expectedPos;
         }
+
 
         // 導航（呼叫你的 A* 或其它尋路系統）
         public void Navigate()
