@@ -9,6 +9,18 @@ using System.Linq;
 public class Creature : MonoBehaviour, ITickable
 {
     private Movement movement;
+    private ActionStateMachine actionStateMachine;
+
+    // 移動完成事件
+    public event System.Action<Vector2Int> OnMovementComplete;
+
+    // 當前狀態
+    [SerializeField] private ActionType currentAction;
+    public ActionType CurrentAction { get => currentAction; set => currentAction = value; }
+
+    [SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
+    public List<ActionType> WeightedActionList => weightedActionList;
+
     // 玩家決定
     [Header("=== 玩家決定 ===")]
     [SerializeField] private int species_ID;
@@ -86,9 +98,7 @@ public class Creature : MonoBehaviour, ITickable
     [SerializeField] private int actionCooldown;
     public int ActionCooldown { get => actionCooldown; set => actionCooldown = value; }
 
-    [SerializeField] private ActionType currentAction;//not use, only show state
-
-    [SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
+    //[SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
 
     public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
@@ -129,51 +139,22 @@ public class Creature : MonoBehaviour, ITickable
         //角色物件調適
         transform.localScale = new Vector3(size * constantData.NORMALSIZE, size * constantData.NORMALSIZE, 1f);
         movement = new Movement(this);
+        // 初始化狀態機
+        actionStateMachine = new ActionStateMachine(this);
+        
         OnEnable();
     }
     public void DoAction()
     {
-        //Debug.Log("DoAction");
-        List<KeyValuePair<ActionType,float>> available_actions = new();
-        //每回合開始(每生物流程)	
-        //計算每個action的條件達成與否
-        //計算每個達成條件的action的權重
-        //Debug.Log("ActionListCount "+ActionList.Count);
-        for (int i = 0; i < ActionList.Count; i++)
-        {
-            //Debug.Log("ActionList[i] "+ ActionList[i]);
-            //Debug.Log
-            if (ActionSystem.IsConditionMet(this, ActionList[i]))
-            {
-                //Debug.Log(ActionList[i]);
-                available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
-            }
-        }
-        //Debug.Log(available_actions.Count);
-        //將條件達成的action進行權重排序
-        available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
-        //show weighted result in weightedActionList
-        weightedActionList.Clear();
-        for(int i=0;i < available_actions.Count; i++)weightedActionList.Add(available_actions[i].Key);
-        while (available_actions.Count > 0)
-        {
-            //選擇權重最高
-            ActionType selectedAction = available_actions[0].Key;
-            //骰成功率
-            if (ActionSystem.IsSuccess(this,selectedAction))
-            {
-                currentAction = selectedAction;
-                ActionSystem.Execute(this, selectedAction);
-
-                return;
-            }
-            else
-            {
-                //失敗    找權重次高
-                available_actions.RemoveAt(0);
-            }
-
-        }
+        // 委派給狀態機處理
+        actionStateMachine.EvaluateAndExecute();
+    }
+    /// <summary>
+    /// 取得狀態機實例（供 Action 使用）
+    /// </summary>
+    public ActionStateMachine GetStateMachine()
+    {
+        return actionStateMachine;
     }
     public CreatureAttributes ToCreatureAttribute()
     {
@@ -262,7 +243,7 @@ public class Creature : MonoBehaviour, ITickable
         }
         movement.MoveOnTick();
     }
-    // 巢狀類別：專門負責移動邏輯
+    // 巢狀類別：Movement
     private class Movement
     {
         private Creature owner;
@@ -297,43 +278,46 @@ public class Creature : MonoBehaviour, ITickable
         public void MoveOnTick()
         {
             if (!awake) return;
-            //先讀取這一回合開始時的真實位置
             Vector2 actualPos = GetAuthoritativePosition();
 
-            //判斷上回合移動是否生效（是否卡住/被擠開）
             if (Vector2.Distance(actualPos, lastRecordedPosition) < 0.01f)
                 stuckCounter++;
             else
                 stuckCounter = 0;
 
-            //若卡住太多次則重導航
             if (stuckCounter >= stuckLimitTicks)
             {
                 stuckCounter = 0;
                 Navigate();
             }
 
-            //執行新的 MovePosition()（輸入指令，結果下次才會反映）
             if (path != null && currentPathIndex < path.Count)
             {
                 Vector2 target = path[currentPathIndex];
                 Vector2 nextPos = Vector2.MoveTowards(actualPos, target, owner.Speed * Time.fixedDeltaTime);
                 rb.MovePosition(nextPos);
 
-                // --- 新增轉向 ---
                 Vector2 direction = (target - actualPos).normalized;
-                if (direction.sqrMagnitude > 0.001f) // 避免零向量
+                if (direction.sqrMagnitude > 0.001f)
                 {
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                     owner.transform.rotation = Quaternion.Euler(0, 0, angle);
                 }
 
-
                 if (Vector2.Distance(actualPos, target) < 0.05f)
                     currentPathIndex++;
             }
+            else if (awake && path != null && currentPathIndex >= path.Count)
+            {
+                // 路徑走完，檢查是否到達目的地
+                Vector2Int currentPos = TempGetCurrentPosition();
+                if (currentPos == Destination)
+                {
+                    awake = false;
+                    owner.OnMovementComplete?.Invoke(Destination);
+                }
+            }
 
-            //記錄這回合「預期應該走完後」的位置（供下一回合比較）
             lastRecordedPosition = actualPos;
         }
 
