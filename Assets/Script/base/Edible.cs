@@ -1,31 +1,55 @@
+using System.Xml.Serialization;
 using UnityEngine;
 
 // Abstract base class for all edible objects
-public abstract class Edible : MonoBehaviour, Tickable
+public abstract class Edible : MonoBehaviour, ITickable
 {
+    // Unique identifier for the edible object
+    public string UUID { get; protected set; }
     // The remaining lifespan of the object (tick)
-    public int lifeSpan { get; protected set; }
+    public abstract int LifeSpan { get; protected set; }
 
     // The amount of hunger this object restores when eaten.
-    public float nutritionalValue { get; protected set; }
+    public abstract float NutritionalValue { get; }
 
     // The category of this food (e.g., Plant or Meat).
-    public FoodType Type { get; protected set; }
+    public abstract FoodType Type { get; }
+
+    public void OnEnable()
+    {
+        Manager.OnTick += OnTick;
+    }
 
     // This method is called once per tick by the Manager.
     public virtual void OnTick()
     {
-        lifeSpan--;
-        if (lifeSpan <= 0)
+        LifeSpan--;
+        if (LifeSpan <= 0)
         {
             Destroy(this.gameObject);
         }
     }
 
+    public void OnDisable()
+    {
+        Manager.OnTick -= OnTick;
+    }
+
     public virtual void Eaten()
     {
+        Debug.Log("eaten");
         Destroy(this.gameObject);
     }
 
-    public abstract void Initialize(Vector2 position);
+    public void Initialize(Vector2Int position)
+    {
+        UUID = System.Guid.NewGuid().ToString();
+        transform.position = (Vector3Int)position;
+        Manager.Instance.FoodItems[position] = this;
+    }
+
+    private void OnDestroy()
+    {
+        Manager.Instance.FoodItems.Remove(Vector2Int.RoundToInt((Vector2)transform.position));
+    }
 }

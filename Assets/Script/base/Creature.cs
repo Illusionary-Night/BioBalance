@@ -1,15 +1,28 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System;
 //using Unity.VisualScripting;
 using UnityEngine;
+using System.Linq;
 
 
-public abstract class Creature : MonoBehaviour, Tickable
+public class Creature : MonoBehaviour, ITickable
 {
-    // ª±®a¨M©w
-    [Header("=== ª±®a¨M©w ===")]
-    public GameObject CreatureObject {  get; private set; }
+    private Movement movement;
+    private ActionStateMachine actionStateMachine;
+
+    // ç§»å‹•å®Œæˆäº‹ä»¶
+    public event System.Action<Vector2Int> OnMovementComplete;
+
+    // ç•¶å‰ç‹€æ…‹
+    [SerializeField] private ActionType currentAction;
+    public ActionType CurrentAction { get => currentAction; set => currentAction = value; }
+
+    [SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
+    public List<ActionType> WeightedActionList => weightedActionList;
+
+    // ç©å®¶æ±ºå®š
+    [Header("=== ç©å®¶æ±ºå®š ===")]
     [SerializeField] private int species_ID;
     public int SpeciesID { get => species_ID; set => species_ID = value; }
     [SerializeField] private float size;
@@ -29,20 +42,24 @@ public abstract class Creature : MonoBehaviour, Tickable
     [SerializeField] private float variation;
     public float Variation { get => variation; set => variation = value; }
     [SerializeField] private List<int> prey_ID_list = new List<int>();
-    public List<int> PreyIDList { get => prey_ID_list; set => prey_ID_list = value; }       //·s¼W­¹ª«¦Cªí
+    public List<int> PreyIDList { get => prey_ID_list; set => prey_ID_list = value; }       //æ–°å¢é£Ÿç‰©åˆ—è¡¨
     [SerializeField] private List<int> predator_ID_list = new List<int>();
-    public List<int> PredatorIDList { get => predator_ID_list; set => predator_ID_list = value; }   //·s¼W¤Ñ¼Ä¦Cªí
+    public List<int> PredatorIDList { get => predator_ID_list; set => predator_ID_list = value; }   //æ–°å¢å¤©æ•µåˆ—è¡¨
     [SerializeField] private List<ActionType> action_list;
     public List<ActionType> ActionList { get => action_list; set => action_list = value; }
 
-    [SerializeField] private int[] sleepingCycle;
-    public int[] SleepingCycle { get => sleepingCycle; set => sleepingCycle = value; }
+    [SerializeField] private int sleeping_head;
+    public int SleepingHead;
 
-    [SerializeField] private float perceptionRange;  // ·Pª¾½d³ò
+    [SerializeField] private int sleeping_tail;
+    public int SleepingTail;
+
+
+    [SerializeField] private float perceptionRange;  // æ„ŸçŸ¥ç¯„åœ
     public float PerceptionRange { get => perceptionRange; set => perceptionRange = value; }
 
-    // ¹q¸£­pºâ
-    [Header("=== ¹q¸£­pºâ ===")]
+    // é›»è…¦è¨ˆç®—
+    [Header("=== é›»è…¦è¨ˆç®— ===")]
     [SerializeField] private float hungerRate;
     public float HungerRate { get => hungerRate; set => hungerRate = value; }
 
@@ -55,8 +72,8 @@ public abstract class Creature : MonoBehaviour, Tickable
     [SerializeField] private float healthRegeneration;
     public float HealthRegeneration { get => healthRegeneration; set => healthRegeneration = value; }
 
-    [SerializeField] private DietType diet;
-    public DietType Diet { get => diet; set => diet = value; }
+    [SerializeField] private List<FoodType> foodTypes;
+    public List<FoodType> FoodTypes { get => foodTypes; set => foodTypes = value; }
 
     [SerializeField] private BodyType body;
     public BodyType Body { get => body; set => body = value; }
@@ -64,8 +81,8 @@ public abstract class Creature : MonoBehaviour, Tickable
     [SerializeField] private int sleepTime;
     public int SleepTime { get => sleepTime; set => sleepTime = value; }
 
-    // ·í«eª¬ºA
-    [Header("=== ·í«eª¬ºA ===")]
+    // ç•¶å‰ç‹€æ…‹
+    [Header("=== ç•¶å‰ç‹€æ…‹ ===")]
     [SerializeField] private float hunger;
     public float Hunger { get => hunger; set => hunger = value; }
 
@@ -81,18 +98,18 @@ public abstract class Creature : MonoBehaviour, Tickable
     [SerializeField] private int actionCooldown;
     public int ActionCooldown { get => actionCooldown; set => actionCooldown = value; }
 
+    //[SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
+
     public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
-        CreatureObject = creature_object;
-        //­ÓÅé½s¸¹
+        //å€‹é«”ç·¨è™Ÿ
         _UUID = System.Guid.NewGuid().ToString();
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
-        //ºÎ¯v®É¶¡ÅÜ²§
-        int delta_sleep_time() => (int)((creatureAttributes.sleeping_cycle[1]-creatureAttributes.sleeping_cycle[0]) * variationFactor());
-        SleepingCycle = new int[2];
-        SleepingCycle[0] = creatureAttributes.sleeping_cycle[0] + delta_sleep_time();
-        SleepingCycle[1] = creatureAttributes.sleeping_cycle[1] + delta_sleep_time();
-        //¨ä¥Lª±®aÄİ©ÊÅÜ²§
+        //ç¡çœ æ™‚é–“è®Šç•°
+        int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail-creatureAttributes.sleeping_head) * variationFactor());
+        SleepingHead = creatureAttributes.sleeping_head + delta_sleep_time();
+        SleepingTail = creatureAttributes.sleeping_tail + delta_sleep_time();
+        //å…¶ä»–ç©å®¶å±¬æ€§è®Šç•°
         Size = creatureAttributes.size + creatureAttributes.size * variationFactor();
         Speed = creatureAttributes.speed + creatureAttributes.speed * variationFactor();
         BaseHealth = creatureAttributes.base_health + creatureAttributes.base_health * variationFactor();
@@ -100,58 +117,44 @@ public abstract class Creature : MonoBehaviour, Tickable
         AttackPower = creatureAttributes.attack_power + creatureAttributes.attack_power * variationFactor();
         Lifespan = creatureAttributes.lifespan + creatureAttributes.lifespan * variationFactor();
         PerceptionRange = creatureAttributes.perception_range + creatureAttributes.perception_range * variationFactor();
-        //¨ä¥Lª±®aÄİ©Ê¤£ÅÜ
+        //å…¶ä»–ç©å®¶å±¬æ€§ä¸è®Š
         SpeciesID = creatureAttributes.species_ID;
         Variation = creatureAttributes.variation;
         PreyIDList = new List<int>(creatureAttributes.prey_ID_list);
         PredatorIDList = new List<int>(creatureAttributes.predator_ID_list);
         ActionList = new List<ActionType>(creatureAttributes.action_list);
-        //­pºâ­l¥ÍÄİ©Ê
-        SleepTime = SleepingCycle[1] - SleepingCycle[0];
+        FoodTypes = creatureAttributes.foodTypes; 
+        //è¨ˆç®—è¡ç”Ÿå±¬æ€§
+        SleepTime = SleepingTail - SleepingHead;
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
-        MaxHunger = AttributesCalculator.CalculateMaxHunger(Size, BaseHealth, Diet);
+        MaxHunger = AttributesCalculator.CalculateMaxHunger(Size, BaseHealth, FoodTypes);
         ReproductionInterval = AttributesCalculator.CalculateReproductionInterval(Size, BaseHealth);
         HealthRegeneration = AttributesCalculator.CalculateHealthRegeneration(BaseHealth, Size, SleepTime);
-        //ªì©lª¬ºA
+        //åˆå§‹ç‹€æ…‹
         Hunger = MaxHunger;
         Health = BaseHealth;
         Age = 0;
         ReproductionCooldown = 0;
         ActionCooldown = 0;
+        //è§’è‰²ç‰©ä»¶èª¿é©
+        transform.localScale = new Vector3(size * constantData.NORMALSIZE, size * constantData.NORMALSIZE, 1f);
+        movement = new Movement(this);
+        // åˆå§‹åŒ–ç‹€æ…‹æ©Ÿ
+        actionStateMachine = new ActionStateMachine(this);
+        
+        OnEnable();
     }
     public void DoAction()
     {
-        List<KeyValuePair<ActionType,float>> available_actions = new();
-        //¨C¦^¦X¶}©l(¨C¥Íª«¬yµ{)	
-        //­pºâ¨C­Óactionªº±ø¥ó¹F¦¨»P§_
-        //­pºâ¨C­Ó¹F¦¨±ø¥óªºactionªºÅv­«
-        for (int i = 0; i < ActionList.Count; i++)
-        {
-            if (ActionSystem.IsConditionMet(this, ActionList[i]))
-            {
-                available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
-            }
-        }
-        //±N±ø¥ó¹F¦¨ªºaction¶i¦æÅv­«±Æ§Ç
-        available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
-        while (available_actions.Count > 0)
-        {
-            //¿ï¾ÜÅv­«³Ì°ª
-            ActionType selectedAction = available_actions[0].Key;
-            //»ë¦¨¥\²v
-            if (ActionSystem.IsSuccess(this,selectedAction))
-            {
-                ActionSystem.Execute(this, selectedAction);
-
-                return;
-            }
-            else
-            {
-                //¥¢±Ñ    §äÅv­«¦¸°ª
-                available_actions.RemoveAt(0);
-            }
-
-        }
+        // å§”æ´¾çµ¦ç‹€æ…‹æ©Ÿè™•ç†
+        actionStateMachine.EvaluateAndExecute();
+    }
+    /// <summary>
+    /// å–å¾—ç‹€æ…‹æ©Ÿå¯¦ä¾‹ï¼ˆä¾› Action ä½¿ç”¨ï¼‰
+    /// </summary>
+    public ActionStateMachine GetStateMachine()
+    {
+        return actionStateMachine;
     }
     public CreatureAttributes ToCreatureAttribute()
     {
@@ -165,42 +168,70 @@ public abstract class Creature : MonoBehaviour, Tickable
         attributes.variation = Variation;
         attributes.lifespan = Lifespan;
         attributes.perception_range = PerceptionRange;
-        attributes.sleeping_cycle = SleepingCycle;
-        attributes.Diet = Diet;
+        attributes.sleeping_head = SleepingHead;
+        attributes.sleeping_tail = SleepingTail;
+        attributes.foodTypes = FoodTypes;
         attributes.Body = Body;
         attributes.prey_ID_list = PreyIDList;
         attributes.predator_ID_list = PredatorIDList;
         attributes.action_list = ActionList;
         return attributes;
     }
+    public void OnEnable()
+    {
+        Manager.OnTick += OnTick;
+    }
+    public void OnDisable()
+    {
+        Manager.OnTick -= OnTick;
+    }
+    public void Die()
+    {
+        Debug.LogWarning("Using Manager instance from: " + Manager.Instance.gameObject.name);
+        Debug.LogWarning("MeatPrefab is: " + Manager.Instance.MeatPrefab);
+
+        if (Manager.Instance.MeatPrefab != null)
+        {
+            Instantiate(Manager.Instance.MeatPrefab, transform.position, Quaternion.identity)
+                .GetComponent<Edible>()
+                .Initialize(Vector2Int.RoundToInt(transform.position));
+        }
+        else
+        {
+            Debug.LogWarning("MeatPrefab is null");
+        }
+        OnDisable();
+        Manager.Instance.UnregisterCreature(this);
+        Destroy(gameObject);
+    }
     public void OnTick()
     {
-        //¦^¦å¡B¾j¦º¡B¦Ñ¦º¡BÁc´Ş§N«o
-        //¦^¦å
+        //å›è¡€ã€é¤“æ­»ã€è€æ­»ã€ç¹æ®–å†·å»
+        //å›è¡€
         if (Health < BaseHealth)
         {
             Health += HealthRegeneration;
         }
         Health = Mathf.Min(Health, BaseHealth);
-        //¾j¦º
-        Hunger -= HungerRate;
-        if (Hunger <= 0)
-        {
-            //Debug.Log("¾j¦º");
-        }
-        //¦Ñ¦º
+        //é¤“æ­»
+        //Hunger -= HungerRate;
+        //if (Hunger <= 0)
+        //{
+        //    Die();
+        //}
+        //è€æ­»
         Age += 1;
         if (Age >= Lifespan)
         {
-            //Debug.Log("¦Ñ¦º");
+            Die();
         }
-        //Ác´Ş§N«o
+        //ç¹æ®–å†·å»
         if (ReproductionCooldown > 0)
         {
             ReproductionCooldown -= 1;
         }
 
-        //¦æ°Ê§N«o
+        //è¡Œå‹•å†·å»
         if (ActionCooldown > 0)
         {
             ActionCooldown -= 1;
@@ -210,5 +241,134 @@ public abstract class Creature : MonoBehaviour, Tickable
         {
             DoAction();
         }
+        movement.MoveOnTick();
+    }
+    // å·¢ç‹€é¡åˆ¥ï¼šMovement
+    private class Movement
+    {
+        private Creature owner;
+        private Rigidbody2D rb;                 // å„ªå…ˆä½¿ç”¨ç‰©ç†å‰›é«”
+        private Vector2Int Destination;         // æ ¼åº§ç›®æ¨™ï¼ˆæ•´æ•¸æ ¼ï¼‰
+        private List<Vector2> path = null;      // å°èˆªå¾Œçš„ä¸–ç•Œåº§æ¨™é» (é€£çºŒ)
+        private int currentPathIndex = 0;
+        private float stuckThreshold = 0.2f;    // åµæ¸¬è¢«æ“ èµ°/å¡ä½çš„å®¹å¿è·é›¢
+        private int stuckLimitTicks = 6;        // è¶…éå¹¾æ¬¡å°±é‡æ–°å°èˆª
+        private int stuckCounter = 0;
+        private Vector2 lastRecordedPosition;
+        private bool awake;
+
+        public Movement(Creature owner)
+        {
+            this.owner = owner;
+            this.rb = owner.GetComponent<Rigidbody2D>(); // å¯èƒ½ç‚º null
+                                                         // åˆå§‹åŒ– lastRecordedPosition ç‚ºçœŸå¯¦ä½ç½®ï¼ˆæ¬Šå¨ï¼‰
+            lastRecordedPosition = GetAuthoritativePosition();
+            awake = false;
+        }
+
+        // è¨­å®šç›®çš„åœ°ï¼ˆæ ¼åº§ï¼‰
+        public void SetDestination(Vector2Int destination)
+        {
+            //Debug.Log("SetDestination");
+            Destination = destination;
+            awake = true;
+            Navigate();
+        }
+
+        public void MoveOnTick()
+        {
+            if (!awake) return;
+            Vector2 actualPos = GetAuthoritativePosition();
+
+            if (Vector2.Distance(actualPos, lastRecordedPosition) < 0.01f)
+                stuckCounter++;
+            else
+                stuckCounter = 0;
+
+            if (stuckCounter >= stuckLimitTicks)
+            {
+                stuckCounter = 0;
+                Navigate();
+            }
+
+            if (path != null && currentPathIndex < path.Count)
+            {
+                Vector2 target = path[currentPathIndex];
+                Vector2 nextPos = Vector2.MoveTowards(actualPos, target, owner.Speed * Time.fixedDeltaTime);
+                rb.MovePosition(nextPos);
+
+                Vector2 direction = (target - actualPos).normalized;
+                if (direction.sqrMagnitude > 0.001f)
+                {
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    owner.transform.rotation = Quaternion.Euler(0, 0, angle);
+                }
+
+                if (Vector2.Distance(actualPos, target) < 0.05f)
+                    currentPathIndex++;
+            }
+            else if (awake && path != null && currentPathIndex >= path.Count)
+            {
+                // è·¯å¾‘èµ°å®Œï¼Œæª¢æŸ¥æ˜¯å¦åˆ°é”ç›®çš„åœ°
+                Vector2Int currentPos = TempGetCurrentPosition();
+                if (currentPos == Destination)
+                {
+                    awake = false;
+                    owner.OnMovementComplete?.Invoke(Destination);
+                }
+            }
+
+            lastRecordedPosition = actualPos;
+        }
+
+        // å°èˆªï¼ˆå‘¼å«ä½ çš„ A* æˆ–å…¶å®ƒå°‹è·¯ç³»çµ±ï¼‰
+        public void Navigate()
+        {
+            //Debug.Log("Navigate");
+            Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
+            Vector2Int goal = Destination;
+
+            // å‡è¨­ AStar.FindPath å›å‚³ List<Vector2Int> æˆ– null
+            // ä½¿ç”¨ A* æ¼”ç®—æ³•å°‹æ‰¾è·¯å¾‘
+            List<Vector2Int> rawPath = AStar.FindPath(start, goal, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
+            if (rawPath == null || rawPath.Count == 0)
+            {
+                path = null;
+                currentPathIndex = 0;
+                return;
+            }
+
+            // æŠŠæ ¼å­åº§æ¨™è½‰æˆä¸–ç•Œåº§æ¨™ (ä¸­å¿ƒé»)ï¼Œè¦–ä½ çš„æ ¼å­ç³»çµ±å¯èƒ½éœ€è¦åç§»
+            path = rawPath.Select(v => new Vector2(v.x, v.y)).ToList();
+            currentPathIndex = 0;
+        }
+
+        // å–å¾—ç•¶å‰ç¶“éç‰©ç†ç³»çµ±ä¿®æ­£å¾Œçš„æ•´æ•¸æ ¼åº§æ¨™ï¼ˆå››æ¨äº”å…¥ï¼‰
+        public Vector2Int TempGetCurrentPosition()
+        {
+            Vector2 actual = GetAuthoritativePosition();
+            return Vector2Int.RoundToInt(actual);
+        }
+
+        // å–å¾—ç‰©ç†/Transform çš„æ¬Šå¨ä½ç½®
+        private Vector2 GetAuthoritativePosition()
+        {
+            if (rb != null) return rb.position;
+            return owner.transform.position;
+        }
+    }
+    public void MoveTo(Vector2Int destination)
+    {
+        movement.SetDestination(destination);
+    }
+
+    public void ForceNavigate()
+    {
+        movement.Navigate();
+    }
+
+    public Vector2Int GetRoundedPosition()
+    {
+        return movement.TempGetCurrentPosition();
     }
 }
