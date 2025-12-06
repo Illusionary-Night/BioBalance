@@ -1,6 +1,5 @@
+ï»¿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Tilemaps;
-using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour
 {
@@ -11,179 +10,125 @@ public class TerrainGenerator : MonoBehaviour
     public int mapHeight = 100;
 
     [Header("Noise Settings")]
-    [Tooltip("¾¸Án¤Ø«×¡C­È¶V¤j¡A¦a§Î¯S¼x¶V¤j¶V¥­·Æ¡C")]
+    [Tooltip("å™ªè²å°ºåº¦ã€‚å€¼è¶Šå¤§ï¼Œåœ°å½¢ç‰¹å¾µè¶Šå¤§è¶Šå¹³æ»‘ã€‚")]
     public float noiseScale = 20f;
-    [Tooltip("Å|¥[¼h¼Æ¡C¶V¦h¼h²Ó¸`¶VÂ×´I¡C")]
+    [Tooltip("ç–ŠåŠ å±¤æ•¸ã€‚è¶Šå¤šå±¤ç´°ç¯€è¶Šè±å¯Œã€‚")]
     public int octaves = 4;
-    [Tooltip("«ùÄò©Ê (0-1)¡A¼vÅT²Ó¸`ªº±j«×¡C")]
+    [Tooltip("æŒçºŒæ€§ (0-1)ï¼Œå½±éŸ¿ç´°ç¯€çš„å¼·åº¦ã€‚")]
     public float persistence = 0.5f;
-    [Tooltip("ÀW²vÅÜ¤Æ²v¡C")]
+    [Tooltip("é »ç‡è®ŠåŒ–ç‡ã€‚")]
     public float lacunarity = 2.0f;
-    public Vector2 noiseOffset; // ¥Î©óÀH¾÷"ºØ¤l"
 
-    [Header("Dual-Grid System")]
-    [Tooltip("¥Î©óÃ¸»s Debug µøÄ±ªº Tilemap")]
-    public Tilemap debugDisplayTilemap;
+    [Header("Map Seed Control")]
+    [Tooltip("è¼¸å…¥æ•´æ•¸ï¼Œå³å¯é‡ç¾åŒä¸€å¼µåœ°åœ–ã€‚")]
+    public int mapSeed = 1337; // é è¨­å€¼
+    [HideInInspector] 
+    public Vector2 noiseOffset;
 
+    [Tooltip("å®šç¾©å™ªè²å€¼å¦‚ä½•æ˜ å°„åˆ°åœ°å½¢é¡å‹ (è«‹æŒ‰å€¼å¾å°åˆ°å¤§æ’åº)")]
     [Header("Terrain Thresholds")]
-    [Tooltip("©w¸q¾¸Án­È¦p¦ó¬M®g¨ì¦a§ÎÃş«¬ (½Ğ«ö­È±q¤p¨ì¤j±Æ§Ç)")]
     public List<TerrainThreshold> terrainThresholds;
 
-    // ¡u©w¸q¼h¡v(Data Layer) - Àx¦s©Ò¦³¦a¹ÏÅŞ¿è
+    // ç´”æ•¸æ“š
     private TerrainMap definitionLayerMap;
 
-    // ¥Î©ó§Ö³t¬d§ä TerrainType ¹ïÀ³ªº TileBase
-    private Dictionary<TerrainType, TileBase> tileLookup;
+    [System.Serializable]
+    public struct TerrainThreshold
+    {
+        [Tooltip("å™ªè²å€¼å¿…é ˆ *ä½æ–¼* æ­¤é–¾å€¼")]
+        public float threshold;
+        public TerrainType terrain;
+    }
 
+    void Awake()
+    {
+        if (Instance != null && Instance != this) Destroy(this.gameObject);
+        else Instance = this;
 
-    // Åı AI ©M A* ´M¸ô¨t²Î Àò¨ú¦a¹Ï¼Æ¾Ú¼h
+        definitionLayerMap = new TerrainMap(TerrainType.Grass);
+    }
 
     public TerrainMap GetDefinitionMap()
     {
         return definitionLayerMap;
     }
 
-    // ¥Î©ó¦b Inspector ¤¤³]©wìH­È
-    [System.Serializable]
-    public struct TerrainThreshold
+    public void RandomizeOffset()
     {
-        [Tooltip("¾¸Án­È¥²¶· *§C©ó* ¦¹ìH­È")]
-        public float threshold;
-        // ¨Ï¥Î±z¦b Constant.cs ¤¤©w¸qªº TerrainType
-        public TerrainType terrain;
+        // ç”¢ç”Ÿä¸€å€‹æ–°çš„éš¨æ©Ÿæ•´æ•¸ç¨®å­
+        mapSeed = Random.Range(int.MinValue, int.MaxValue);
+        // ä½¿ç”¨æ–°ç¨®å­ç”¢ç”Ÿ Offset
+        GenerateNoiseOffsetFromSeed(mapSeed);
+
+        Debug.Log($"TerrainGenerator: æ–°ç¨®å­å·²ç”Ÿæˆ -> {mapSeed} (Offset: {noiseOffset})");
     }
 
-    void Awake()
+    public void GenerateMapData()
     {
-        if (Instance != null && Instance != this)
-        {
-            // ¦pªG³õ´º¤¤¤w¸g¦s¦b¤@­Ó¹ê¨Ò¡A«h¾P·´³o­Ó­«½Æªº
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            // §_«h¡A±N¦Û¤v³]©w¬°³o­ÓÀRºA¹ê¨Ò
-            Instance = this;
-        }
-        // 1. «Ø¥ß¤@­ÓªÅªº¡u©w¸q¼h¡v
-        definitionLayerMap = new TerrainMap(TerrainType.Grass);
+        GenerateNoiseOffsetFromSeed(mapSeed);
+        if (definitionLayerMap == null) definitionLayerMap = new TerrainMap(TerrainType.Grass);
+        if (Instance == null) Instance = this; // ç¢ºä¿ç·¨è¼¯æ¨¡å¼ä¸‹ Instance å­˜åœ¨
 
-        // 2. (·s) ¦bµ{¦¡½X¤¤«ü©w¨Ã¸ü¤J Tile ¸ê²£
-        LoadTilesFromResources();
-    }
-
-    void Start()
-    {
-        // 3. ²£¥ÍÀH¾÷°¾²¾ (ºØ¤l)
-        if (noiseOffset == Vector2.zero)
-        {
-            noiseOffset = new Vector2(Random.Range(-1000f, 1000f), Random.Range(-1000f, 1000f));
-        }
-
-        // 4. °õ¦æ¥Í¦¨
-        GenerateMap();
-    }
-
-
-    void LoadTilesFromResources()
-    {
-        tileLookup = new Dictionary<TerrainType, TileBase>();
-
-        // Äµ§i¡GResources.Load() ³t«×¸ûºC¡A¥uÀ³¦b Awake/Start ¤¤©I¥s
-        // °²³]±zªº Tile Assets ©ñ¦b "Assets/Resources/Tiles/" ¸ê®Æ§¨¤¤
-
-        // *** ³o¬O±z­n¨D¡u¦bµ{¦¡½X¤¤«ü©w¡vªº¦a¤è ***
-        // ¸ô®|¬O¬Û¹ï©ó "Resources" ¸ê®Æ§¨ªº¡A¥B "¤£¯à" ¥]§t°ÆÀÉ¦W
-
-        tileLookup.Add(TerrainType.Grass, Resources.Load<TileBase>("Tiles/def_grass_0"));
-        tileLookup.Add(TerrainType.Water, Resources.Load<TileBase>("Tiles/def_water_0"));
-
-        // ±z¥i¥HÄ~Äò¬° Constant.cs ¤¤¨ä¥Lªº¦a§Î²K¥[ Tile
-        // tileLookup.Add(TerrainType.Sand, Resources.Load<TileBase>("Tiles/def_sand_tile"));
-        // tileLookup.Add(TerrainType.Rock, Resources.Load<TileBase>("Tiles/def_rock_tile"));
-        // tileLookup.Add(TerrainType.Barrier, Resources.Load<TileBase>("Tiles/def_barrier_tile")); 
-
-        // ÀË¬d¬O§_¦³º|¸ü¤J
-        foreach (var tilePair in tileLookup)
-        {
-            if (tilePair.Value == null)
-            {
-                Debug.LogError($"¸ü¤J Tile ¥¢±Ñ¡I§ä¤£¨ì¸ô®|¡G'Resources/Tiles/{tilePair.Key.ToString().ToLower()}_tile'");
-            }
-        }
-    }
-    // ²£¥Í¬fªL¾¸Án¨Ã¶ñ¥R¡u©w¸q¼h¡v
-
-    public void GenerateMap()
-    {
-        // 1. «Ø¥ß¤@­ÓªÅªº¡u©w¸q¼h¡v
-        definitionLayerMap = new TerrainMap(TerrainType.Grass);
-
-        // 2. °j°é¹M¾ú©Ò¦³®y¼Ğ
         for (int x = 0; x < mapWidth; x++)
         {
             for (int y = 0; y < mapHeight; y++)
             {
-                // 3. ­pºâ¬fªL¾¸Án­È
                 float noiseValue = GetPerlinNoiseValue(x, y);
-
-                // 4. ±N¾¸Án­È¬M®g¨ì TerrainType
                 TerrainType type = GetTerrainTypeFromNoise(noiseValue);
-                Vector2Int pos = new Vector2Int(x, y);
-
-                // 5. Àx¦s¼Æ¾Ú¨ì¡u©w¸q¼h¡v
-                definitionLayerMap.SetTerrain(pos, type);
-
-                // 6. (·s¼W) Ã¸»s Tile ¨ì¡uDebug Åã¥Ü¼h¡v
-                if (tileLookup.TryGetValue(type, out TileBase tile))
-                {
-                    if (tile != null) // ¦A¦¸ÀË¬d¡A½T«O tile ¦¨¥\¸ü¤J
-                    {
-                        // ª½±µ 1:1 Ã¸»s¡A(0,0) ¹ïÀ³ (0,0)
-                        debugDisplayTilemap.SetTile(new Vector3Int(x, y, 0), tile);
-                    }
-                }
+                definitionLayerMap.SetTerrain(new Vector2Int(x, y), type);
             }
         }
-
-        Debug.Log("¦a¹Ï©w¸q¼h (TerrainMap) ¥Í¦¨§¹²¦¡C");
+        Debug.Log("TerrainGenerator: åœ°åœ–å®šç¾©å±¤æ•¸æ“šè¨ˆç®—å®Œç•¢ã€‚");
     }
 
+    public void ClearData()
+    {
+        // é‡æ–°åˆå§‹åŒ–ç‚ºä¸€å€‹æ–°çš„ã€ç©ºçš„è‰åœ°åœ°åœ–ï¼Œæˆ–è€…è¨­ç‚º null
+        definitionLayerMap = new TerrainMap(TerrainType.Grass);
+        Debug.Log("TerrainGenerator: æ•¸æ“šå·²é‡ç½®ã€‚");
+    }
+    // æŸæ—å™ªè²è¨ˆç®—é‚è¼¯
 
-    // ­pºâ¦h¼h¬fªL¾¸Án¥H¼W¥[²Ó¸`
+    private void GenerateNoiseOffsetFromSeed(int seed)
+    {
+        // ä½¿ç”¨æ•´æ•¸ç¨®å­åˆå§‹åŒ–äº‚æ•¸ç”Ÿæˆå™¨
+        Random.InitState(seed);
+
+        // æ¥ä¸‹ä¾†ç”¢ç”Ÿçš„å…©å€‹äº‚æ•¸æœƒæ°¸é ä¸€æ¨£
+        noiseOffset = new Vector2(
+            Random.Range(-10000f, 10000f),
+            Random.Range(-10000f, 10000f)
+        );
+    }
+
     private float GetPerlinNoiseValue(int x, int y)
     {
         float amplitude = 1;
         float frequency = 1;
         float noiseValue = 0;
+        float maxPossibleHeight = 0;
 
         for (int i = 0; i < octaves; i++)
         {
             float sampleX = (x / noiseScale) * frequency + noiseOffset.x * frequency;
             float sampleY = (y / noiseScale) * frequency + noiseOffset.y * frequency;
-
-            // Unity ¤º«Øªº¬fªL¾¸Án (¦^¶Ç­È 0-1)
             float perlin = Mathf.PerlinNoise(sampleX, sampleY);
             noiseValue += perlin * amplitude;
-
+            maxPossibleHeight += amplitude;
             amplitude *= persistence;
             frequency *= lacunarity;
         }
-        return noiseValue;
+
+        if (maxPossibleHeight > 0) return Mathf.Clamp01(noiseValue / maxPossibleHeight);
+        return Mathf.Clamp01(noiseValue);
     }
 
-    // ®Ú¾Ú¾¸Án­È©M±z¦b Inspector ¤¤³]©wªºìH­È¨Ó¨M©w¦a§Î
     private TerrainType GetTerrainTypeFromNoise(float noiseValue)
     {
-        // ±q¦Cªí³»³¡ (³Ì§CìH­È) ¶}©lÀË¬d
         foreach (var entry in terrainThresholds)
         {
-            if (noiseValue <= entry.threshold)
-            {
-                return entry.terrain;
-            }
+            if (noiseValue <= entry.threshold) return entry.terrain;
         }
-        // ¦pªG¤j©ó©Ò¦³ìH­È¡Aªğ¦^³Ì«á¤@­Ó (§@¬°³Ì°ª®ü©Ş)
         return terrainThresholds[terrainThresholds.Count - 1].terrain;
     }
 }
