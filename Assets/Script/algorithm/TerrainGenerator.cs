@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEngine;
 
@@ -11,45 +11,45 @@ public class TerrainGenerator : MonoBehaviour
     public int mapHeight = 100;
 
     [Header("Noise Settings")]
-    [Tooltip("¾¸Án¤Ø«×¡C­È¶V¤j¡A¦a§Î¯S¼x¶V¤j¶V¥­·Æ¡C")]
+    [Tooltip("å™ªè²å°ºåº¦ã€‚å€¼è¶Šå¤§ï¼Œåœ°å½¢ç‰¹å¾µè¶Šå¤§è¶Šå¹³æ»‘ã€‚")]
     public float noiseScale = 20f;
-    [Tooltip("Å|¥[¼h¼Æ¡C¶V¦h¼h²Ó¸`¶VÂ×´I¡C")]
+    [Tooltip("ç–ŠåŠ å±¤æ•¸ã€‚è¶Šå¤šå±¤ç´°ç¯€è¶Šè±å¯Œã€‚")]
     public int octaves = 4;
-    [Tooltip("«ùÄò©Ê (0-1)¡A¼vÅT²Ó¸`ªº±j«×¡C")]
+    [Tooltip("æŒçºŒæ€§ (0-1)ï¼Œå½±éŸ¿ç´°ç¯€çš„å¼·åº¦ã€‚")]
     public float persistence = 0.5f;
-    [Tooltip("ÀW²vÅÜ¤Æ²v¡C")]
+    [Tooltip("é »ç‡è®ŠåŒ–ç‡ã€‚")]
     public float lacunarity = 2.0f;
-    public Vector2 noiseOffset; // ¥Î©óÀH¾÷"ºØ¤l"
+    public Vector2 noiseOffset; // ç”¨æ–¼éš¨æ©Ÿ"ç¨®å­"
 
     [Header("Dual-Grid System")]
-    [Tooltip("¥Î©óÃ¸»s Debug µøÄ±ªº Tilemap")]
+    [Tooltip("ç”¨æ–¼ç¹ªè£½ Debug è¦–è¦ºçš„ Tilemap")]
     public Tilemap debugDisplayTilemap;
 
     [Header("Terrain Thresholds")]
-    [Tooltip("©w¸q¾¸Án­È¦p¦ó¬M®g¨ì¦a§ÎÃş«¬ (½Ğ«ö­È±q¤p¨ì¤j±Æ§Ç)")]
+    [Tooltip("å®šç¾©å™ªè²å€¼å¦‚ä½•æ˜ å°„åˆ°åœ°å½¢é¡å‹ (è«‹æŒ‰å€¼å¾å°åˆ°å¤§æ’åº)")]
     public List<TerrainThreshold> terrainThresholds;
 
-    // ¡u©w¸q¼h¡v(Data Layer) - Àx¦s©Ò¦³¦a¹ÏÅŞ¿è
+    // ã€Œå®šç¾©å±¤ã€(Data Layer) - å„²å­˜æ‰€æœ‰åœ°åœ–é‚è¼¯
     private TerrainMap definitionLayerMap;
 
-    // ¥Î©ó§Ö³t¬d§ä TerrainType ¹ïÀ³ªº TileBase
+    // ç”¨æ–¼å¿«é€ŸæŸ¥æ‰¾ TerrainType å°æ‡‰çš„ TileBase
     private Dictionary<TerrainType, TileBase> tileLookup;
 
 
-    // Åı AI ©M A* ´M¸ô¨t²Î Àò¨ú¦a¹Ï¼Æ¾Ú¼h
+    // è®“ AI å’Œ A* å°‹è·¯ç³»çµ± ç²å–åœ°åœ–æ•¸æ“šå±¤
 
     public TerrainMap GetDefinitionMap()
     {
         return definitionLayerMap;
     }
 
-    // ¥Î©ó¦b Inspector ¤¤³]©wìH­È
+    // ç”¨æ–¼åœ¨ Inspector ä¸­è¨­å®šé–¾å€¼
     [System.Serializable]
     public struct TerrainThreshold
     {
-        [Tooltip("¾¸Án­È¥²¶· *§C©ó* ¦¹ìH­È")]
+        [Tooltip("å™ªè²å€¼å¿…é ˆ *ä½æ–¼* æ­¤é–¾å€¼")]
         public float threshold;
-        // ¨Ï¥Î±z¦b Constant.cs ¤¤©w¸qªº TerrainType
+        // ä½¿ç”¨æ‚¨åœ¨ Constant.cs ä¸­å®šç¾©çš„ TerrainType
         public TerrainType terrain;
     }
 
@@ -57,30 +57,30 @@ public class TerrainGenerator : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            // ¦pªG³õ´º¤¤¤w¸g¦s¦b¤@­Ó¹ê¨Ò¡A«h¾P·´³o­Ó­«½Æªº
+            // å¦‚æœå ´æ™¯ä¸­å·²ç¶“å­˜åœ¨ä¸€å€‹å¯¦ä¾‹ï¼Œå‰‡éŠ·æ¯€é€™å€‹é‡è¤‡çš„
             Destroy(this.gameObject);
         }
         else
         {
-            // §_«h¡A±N¦Û¤v³]©w¬°³o­ÓÀRºA¹ê¨Ò
+            // å¦å‰‡ï¼Œå°‡è‡ªå·±è¨­å®šç‚ºé€™å€‹éœæ…‹å¯¦ä¾‹
             Instance = this;
         }
-        // 1. «Ø¥ß¤@­ÓªÅªº¡u©w¸q¼h¡v
+        // 1. å»ºç«‹ä¸€å€‹ç©ºçš„ã€Œå®šç¾©å±¤ã€
         definitionLayerMap = new TerrainMap(TerrainType.Grass);
 
-        // 2. (·s) ¦bµ{¦¡½X¤¤«ü©w¨Ã¸ü¤J Tile ¸ê²£
+        // 2. (æ–°) åœ¨ç¨‹å¼ç¢¼ä¸­æŒ‡å®šä¸¦è¼‰å…¥ Tile è³‡ç”¢
         LoadTilesFromResources();
     }
 
     void Start()
     {
-        // 3. ²£¥ÍÀH¾÷°¾²¾ (ºØ¤l)
+        // 3. ç”¢ç”Ÿéš¨æ©Ÿåç§» (ç¨®å­)
         if (noiseOffset == Vector2.zero)
         {
             noiseOffset = new Vector2(Random.Range(-1000f, 1000f), Random.Range(-1000f, 1000f));
         }
 
-        // 4. °õ¦æ¥Í¦¨
+        // 4. åŸ·è¡Œç”Ÿæˆ
         GenerateMap();
     }
 
@@ -89,68 +89,68 @@ public class TerrainGenerator : MonoBehaviour
     {
         tileLookup = new Dictionary<TerrainType, TileBase>();
 
-        // Äµ§i¡GResources.Load() ³t«×¸ûºC¡A¥uÀ³¦b Awake/Start ¤¤©I¥s
-        // °²³]±zªº Tile Assets ©ñ¦b "Assets/Resources/Tiles/" ¸ê®Æ§¨¤¤
+        // è­¦å‘Šï¼šResources.Load() é€Ÿåº¦è¼ƒæ…¢ï¼Œåªæ‡‰åœ¨ Awake/Start ä¸­å‘¼å«
+        // å‡è¨­æ‚¨çš„ Tile Assets æ”¾åœ¨ "Assets/Resources/Tiles/" è³‡æ–™å¤¾ä¸­
 
-        // *** ³o¬O±z­n¨D¡u¦bµ{¦¡½X¤¤«ü©w¡vªº¦a¤è ***
-        // ¸ô®|¬O¬Û¹ï©ó "Resources" ¸ê®Æ§¨ªº¡A¥B "¤£¯à" ¥]§t°ÆÀÉ¦W
+        // *** é€™æ˜¯æ‚¨è¦æ±‚ã€Œåœ¨ç¨‹å¼ç¢¼ä¸­æŒ‡å®šã€çš„åœ°æ–¹ ***
+        // è·¯å¾‘æ˜¯ç›¸å°æ–¼ "Resources" è³‡æ–™å¤¾çš„ï¼Œä¸” "ä¸èƒ½" åŒ…å«å‰¯æª”å
 
         tileLookup.Add(TerrainType.Grass, Resources.Load<TileBase>("Tiles/def_grass_0"));
         tileLookup.Add(TerrainType.Water, Resources.Load<TileBase>("Tiles/def_water_0"));
 
-        // ±z¥i¥HÄ~Äò¬° Constant.cs ¤¤¨ä¥Lªº¦a§Î²K¥[ Tile
+        // æ‚¨å¯ä»¥ç¹¼çºŒç‚º Constant.cs ä¸­å…¶ä»–çš„åœ°å½¢æ·»åŠ  Tile
         // tileLookup.Add(TerrainType.Sand, Resources.Load<TileBase>("Tiles/def_sand_tile"));
         // tileLookup.Add(TerrainType.Rock, Resources.Load<TileBase>("Tiles/def_rock_tile"));
         // tileLookup.Add(TerrainType.Barrier, Resources.Load<TileBase>("Tiles/def_barrier_tile")); 
 
-        // ÀË¬d¬O§_¦³º|¸ü¤J
+        // æª¢æŸ¥æ˜¯å¦æœ‰æ¼è¼‰å…¥
         foreach (var tilePair in tileLookup)
         {
             if (tilePair.Value == null)
             {
-                Debug.LogError($"¸ü¤J Tile ¥¢±Ñ¡I§ä¤£¨ì¸ô®|¡G'Resources/Tiles/{tilePair.Key.ToString().ToLower()}_tile'");
+                Debug.LogError($"è¼‰å…¥ Tile å¤±æ•—ï¼æ‰¾ä¸åˆ°è·¯å¾‘ï¼š'Resources/Tiles/{tilePair.Key.ToString().ToLower()}_tile'");
             }
         }
     }
-    // ²£¥Í¬fªL¾¸Án¨Ã¶ñ¥R¡u©w¸q¼h¡v
+    // ç”¢ç”ŸæŸæ—å™ªè²ä¸¦å¡«å……ã€Œå®šç¾©å±¤ã€
 
     public void GenerateMap()
     {
-        // 1. «Ø¥ß¤@­ÓªÅªº¡u©w¸q¼h¡v
+        // 1. å»ºç«‹ä¸€å€‹ç©ºçš„ã€Œå®šç¾©å±¤ã€
         definitionLayerMap = new TerrainMap(TerrainType.Grass);
 
-        // 2. °j°é¹M¾ú©Ò¦³®y¼Ğ
+        // 2. è¿´åœˆéæ­·æ‰€æœ‰åº§æ¨™
         for (int x = 0; x < mapWidth; x++)
         {
             for (int y = 0; y < mapHeight; y++)
             {
-                // 3. ­pºâ¬fªL¾¸Án­È
+                // 3. è¨ˆç®—æŸæ—å™ªè²å€¼
                 float noiseValue = GetPerlinNoiseValue(x, y);
 
-                // 4. ±N¾¸Án­È¬M®g¨ì TerrainType
+                // 4. å°‡å™ªè²å€¼æ˜ å°„åˆ° TerrainType
                 TerrainType type = GetTerrainTypeFromNoise(noiseValue);
                 Vector2Int pos = new Vector2Int(x, y);
 
-                // 5. Àx¦s¼Æ¾Ú¨ì¡u©w¸q¼h¡v
+                // 5. å„²å­˜æ•¸æ“šåˆ°ã€Œå®šç¾©å±¤ã€
                 definitionLayerMap.SetTerrain(pos, type);
 
-                // 6. (·s¼W) Ã¸»s Tile ¨ì¡uDebug Åã¥Ü¼h¡v
+                // 6. (æ–°å¢) ç¹ªè£½ Tile åˆ°ã€ŒDebug é¡¯ç¤ºå±¤ã€
                 if (tileLookup.TryGetValue(type, out TileBase tile))
                 {
-                    if (tile != null) // ¦A¦¸ÀË¬d¡A½T«O tile ¦¨¥\¸ü¤J
+                    if (tile != null) // å†æ¬¡æª¢æŸ¥ï¼Œç¢ºä¿ tile æˆåŠŸè¼‰å…¥
                     {
-                        // ª½±µ 1:1 Ã¸»s¡A(0,0) ¹ïÀ³ (0,0)
+                        // ç›´æ¥ 1:1 ç¹ªè£½ï¼Œ(0,0) å°æ‡‰ (0,0)
                         debugDisplayTilemap.SetTile(new Vector3Int(x, y, 0), tile);
                     }
                 }
             }
         }
 
-        Debug.Log("¦a¹Ï©w¸q¼h (TerrainMap) ¥Í¦¨§¹²¦¡C");
+        Debug.Log("åœ°åœ–å®šç¾©å±¤ (TerrainMap) ç”Ÿæˆå®Œç•¢ã€‚");
     }
 
 
-    // ­pºâ¦h¼h¬fªL¾¸Án¥H¼W¥[²Ó¸`
+    // è¨ˆç®—å¤šå±¤æŸæ—å™ªè²ä»¥å¢åŠ ç´°ç¯€
     private float GetPerlinNoiseValue(int x, int y)
     {
         float amplitude = 1;
@@ -162,7 +162,7 @@ public class TerrainGenerator : MonoBehaviour
             float sampleX = (x / noiseScale) * frequency + noiseOffset.x * frequency;
             float sampleY = (y / noiseScale) * frequency + noiseOffset.y * frequency;
 
-            // Unity ¤º«Øªº¬fªL¾¸Án (¦^¶Ç­È 0-1)
+            // Unity å…§å»ºçš„æŸæ—å™ªè² (å›å‚³å€¼ 0-1)
             float perlin = Mathf.PerlinNoise(sampleX, sampleY);
             noiseValue += perlin * amplitude;
 
@@ -172,10 +172,10 @@ public class TerrainGenerator : MonoBehaviour
         return noiseValue;
     }
 
-    // ®Ú¾Ú¾¸Án­È©M±z¦b Inspector ¤¤³]©wªºìH­È¨Ó¨M©w¦a§Î
+    // æ ¹æ“šå™ªè²å€¼å’Œæ‚¨åœ¨ Inspector ä¸­è¨­å®šçš„é–¾å€¼ä¾†æ±ºå®šåœ°å½¢
     private TerrainType GetTerrainTypeFromNoise(float noiseValue)
     {
-        // ±q¦Cªí³»³¡ (³Ì§CìH­È) ¶}©lÀË¬d
+        // å¾åˆ—è¡¨é ‚éƒ¨ (æœ€ä½é–¾å€¼) é–‹å§‹æª¢æŸ¥
         foreach (var entry in terrainThresholds)
         {
             if (noiseValue <= entry.threshold)
@@ -183,7 +183,7 @@ public class TerrainGenerator : MonoBehaviour
                 return entry.terrain;
             }
         }
-        // ¦pªG¤j©ó©Ò¦³ìH­È¡Aªğ¦^³Ì«á¤@­Ó (§@¬°³Ì°ª®ü©Ş)
+        // å¦‚æœå¤§æ–¼æ‰€æœ‰é–¾å€¼ï¼Œè¿”å›æœ€å¾Œä¸€å€‹ (ä½œç‚ºæœ€é«˜æµ·æ‹”)
         return terrainThresholds[terrainThresholds.Count - 1].terrain;
     }
 }
