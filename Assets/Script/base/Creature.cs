@@ -86,6 +86,10 @@ public class Creature : MonoBehaviour, ITickable
     [SerializeField] private int actionCooldown;
     public int ActionCooldown { get => actionCooldown; set => actionCooldown = value; }
 
+    [SerializeField] private ActionType currentAction;//not use, only show state
+
+    [SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
+
     public void Initialize(CreatureAttributes creatureAttributes , GameObject creature_object)
     {
         //個體編號
@@ -109,6 +113,7 @@ public class Creature : MonoBehaviour, ITickable
         PreyIDList = new List<int>(creatureAttributes.prey_ID_list);
         PredatorIDList = new List<int>(creatureAttributes.predator_ID_list);
         ActionList = new List<ActionType>(creatureAttributes.action_list);
+        FoodTypes = creatureAttributes.foodTypes; 
         //計算衍生屬性
         SleepTime = SleepingTail - SleepingHead;
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
@@ -124,28 +129,32 @@ public class Creature : MonoBehaviour, ITickable
         //角色物件調適
         transform.localScale = new Vector3(size * constantData.NORMALSIZE, size * constantData.NORMALSIZE, 1f);
         movement = new Movement(this);
+        OnEnable();
     }
     public void DoAction()
     {
-        Debug.Log("DoAction");
+        //Debug.Log("DoAction");
         List<KeyValuePair<ActionType,float>> available_actions = new();
         //每回合開始(每生物流程)	
         //計算每個action的條件達成與否
         //計算每個達成條件的action的權重
-        Debug.Log("ActionListCount "+ActionList.Count);
+        //Debug.Log("ActionListCount "+ActionList.Count);
         for (int i = 0; i < ActionList.Count; i++)
         {
-            Debug.Log("ActionList[i] "+ ActionList[i]);
+            //Debug.Log("ActionList[i] "+ ActionList[i]);
             //Debug.Log
             if (ActionSystem.IsConditionMet(this, ActionList[i]))
             {
-                Debug.Log(ActionList[i]);
+                //Debug.Log(ActionList[i]);
                 available_actions.Add(new KeyValuePair<ActionType,float>(ActionList[i], ActionSystem.GetWeight(this,ActionList[i])));
             }
         }
-        Debug.Log(available_actions.Count);
+        //Debug.Log(available_actions.Count);
         //將條件達成的action進行權重排序
         available_actions.Sort((x, y) => y.Value.CompareTo(x.Value));
+        //show weighted result in weightedActionList
+        weightedActionList.Clear();
+        for(int i=0;i < available_actions.Count; i++)weightedActionList.Add(available_actions[i].Key);
         while (available_actions.Count > 0)
         {
             //選擇權重最高
@@ -153,8 +162,9 @@ public class Creature : MonoBehaviour, ITickable
             //骰成功率
             if (ActionSystem.IsSuccess(this,selectedAction))
             {
+                currentAction = selectedAction;
                 ActionSystem.Execute(this, selectedAction);
-                ActionCooldown = ActionSystem.GetCooldown(this, selectedAction);
+
                 return;
             }
             else
@@ -179,7 +189,7 @@ public class Creature : MonoBehaviour, ITickable
         attributes.perception_range = PerceptionRange;
         attributes.sleeping_head = SleepingHead;
         attributes.sleeping_tail = SleepingTail;
-        attributes.FoodTypes = FoodTypes;
+        attributes.foodTypes = FoodTypes;
         attributes.Body = Body;
         attributes.prey_ID_list = PreyIDList;
         attributes.predator_ID_list = PredatorIDList;
@@ -189,6 +199,29 @@ public class Creature : MonoBehaviour, ITickable
     public void OnEnable()
     {
         Manager.OnTick += OnTick;
+    }
+    public void OnDisable()
+    {
+        Manager.OnTick -= OnTick;
+    }
+    public void Die()
+    {
+        Debug.LogWarning("Using Manager instance from: " + Manager.Instance.gameObject.name);
+        Debug.LogWarning("MeatPrefab is: " + Manager.Instance.MeatPrefab);
+
+        if (Manager.Instance.MeatPrefab != null)
+        {
+            Instantiate(Manager.Instance.MeatPrefab, transform.position, Quaternion.identity)
+                .GetComponent<Edible>()
+                .Initialize(Vector2Int.RoundToInt(transform.position));
+        }
+        else
+        {
+            Debug.LogWarning("MeatPrefab is null");
+        }
+        OnDisable();
+        Manager.Instance.UnregisterCreature(this);
+        Destroy(gameObject);
     }
     public void OnTick()
     {
@@ -200,16 +233,16 @@ public class Creature : MonoBehaviour, ITickable
         }
         Health = Mathf.Min(Health, BaseHealth);
         //餓死
-        Hunger -= HungerRate;
-        if (Hunger <= 0)
-        {
-            //Debug.Log("餓死");
-        }
+        //Hunger -= HungerRate;
+        //if (Hunger <= 0)
+        //{
+        //    Die();
+        //}
         //老死
         Age += 1;
         if (Age >= Lifespan)
         {
-            //Debug.Log("老死");
+            Die();
         }
         //繁殖冷卻
         if (ReproductionCooldown > 0)
@@ -227,11 +260,7 @@ public class Creature : MonoBehaviour, ITickable
         {
             DoAction();
         }
-        movement.FixedTick();
-    }
-    public void OnDisable()
-    {
-        Manager.OnTick -= OnTick;
+        movement.MoveOnTick();
     }
     // 巢狀類別：專門負責移動邏輯
     private class Movement
@@ -241,7 +270,6 @@ public class Creature : MonoBehaviour, ITickable
         private Vector2Int Destination;         // 格座目標（整數格）
         private List<Vector2> path = null;      // 導航後的世界座標點 (連續)
         private int currentPathIndex = 0;
-        public float speed = 3f;                // 單位：格/秒或世界單位/秒
         private float stuckThreshold = 0.2f;    // 偵測被擠走/卡住的容忍距離
         private int stuckLimitTicks = 6;        // 超過幾次就重新導航
         private int stuckCounter = 0;
@@ -260,14 +288,13 @@ public class Creature : MonoBehaviour, ITickable
         // 設定目的地（格座）
         public void SetDestination(Vector2Int destination)
         {
-            Debug.Log("SetDestination");
+            //Debug.Log("SetDestination");
             Destination = destination;
             awake = true;
             Navigate();
         }
 
-        // 每個 FixedUpdate 呼叫（物理步）
-        public void FixedTick()
+        public void MoveOnTick()
         {
             if (!awake) return;
             //先讀取這一回合開始時的真實位置
@@ -290,8 +317,17 @@ public class Creature : MonoBehaviour, ITickable
             if (path != null && currentPathIndex < path.Count)
             {
                 Vector2 target = path[currentPathIndex];
-                Vector2 nextPos = Vector2.MoveTowards(actualPos, target, speed * Time.fixedDeltaTime);
+                Vector2 nextPos = Vector2.MoveTowards(actualPos, target, owner.Speed * Time.fixedDeltaTime);
                 rb.MovePosition(nextPos);
+
+                // --- 新增轉向 ---
+                Vector2 direction = (target - actualPos).normalized;
+                if (direction.sqrMagnitude > 0.001f) // 避免零向量
+                {
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    owner.transform.rotation = Quaternion.Euler(0, 0, angle);
+                }
+
 
                 if (Vector2.Distance(actualPos, target) < 0.05f)
                     currentPathIndex++;
@@ -304,7 +340,7 @@ public class Creature : MonoBehaviour, ITickable
         // 導航（呼叫你的 A* 或其它尋路系統）
         public void Navigate()
         {
-            Debug.Log("Navigate");
+            //Debug.Log("Navigate");
             Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
             Vector2Int goal = Destination;
 

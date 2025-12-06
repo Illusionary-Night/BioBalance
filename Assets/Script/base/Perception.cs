@@ -10,7 +10,7 @@ public static class Perception
         // Returns the first target creature found within perception range, or null if none found
         public static Creature HasTarget(Creature current_creature, int target_ID)
         {
-            foreach (var each_species in Manager.species)
+            foreach (var each_species in Manager.Instance.Species)
             {
                 if (target_ID != each_species.attributes.species_ID) continue;
                 foreach (var each_creature in each_species.creatures)
@@ -35,7 +35,7 @@ public static class Perception
         public static int CountTargetNumber(Creature current_creature, int target_ID)
         {
             int count = 0;
-            foreach (var each_species in Manager.species)
+            foreach (var each_species in Manager.Instance.Species)
             {
                 if (target_ID != each_species.attributes.species_ID) continue;
                 foreach (var each_creature in each_species.creatures)
@@ -61,7 +61,7 @@ public static class Perception
         public static List<Creature> GetAllTargets(Creature current_creature, int target_ID)
         {
             List<Creature> targetsUUID = new();
-            foreach (var each_species in Manager.species)
+            foreach (var each_species in Manager.Instance.Species)
             {
                 if (target_ID != each_species.attributes.species_ID) continue;
                 foreach (var each_creature in each_species.creatures)
@@ -92,9 +92,11 @@ public static class Perception
         // Checks if there is at least one food item of the specified type within perception range
         public static bool HasTarget(Creature creature, FoodType food_type)
         {
-            foreach (var each_dropped_item in Manager.FoodItems)
+            Debug.Log("HasTarget?");
+            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
+                Debug.Log("Position: "+each_dropped_item+" ,Distance: "+distance);
                 if (distance > creature.PerceptionRange) continue;
                 if (each_dropped_item.Type != food_type) continue;
                 return true;
@@ -104,8 +106,11 @@ public static class Perception
         // Checks if there is at least one food item from the list of types within perception range
         public static bool HasTarget(Creature creature, List<FoodType> food_type_list)
         {
+            Debug.Log("HasAllKindTarget");
+            if (food_type_list == null) Debug.Log("food type list null");
             foreach (var food_type in food_type_list)
             {
+                //Debug.Log("foodType: ");
                 if (HasTarget(creature, food_type)) return true;
             }
             return false;
@@ -114,7 +119,7 @@ public static class Perception
         public static int CountTargetNumber(Creature creature, FoodType food_type)
         {
             int count = 0;
-            foreach (var each_dropped_item in Manager.FoodItems)
+            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
                 if (distance > creature.PerceptionRange) continue;
@@ -137,7 +142,7 @@ public static class Perception
         public static List<Edible> GetAllTargets(Creature creature, FoodType food_type)
         {
             List<Edible> targets = new();
-            foreach (var each_dropped_item in Manager.FoodItems)
+            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
                 if (distance > creature.PerceptionRange) continue;
@@ -154,7 +159,11 @@ public static class Perception
             {
                 targets.AddRange(GetAllTargets(creature, food_type));
             }
-            targets.Sort();
+            targets.Sort((x, y) => {
+                float distanceX = Vector2.Distance(creature.transform.position, x.transform.position);
+                float distanceY = Vector2.Distance(creature.transform.position, y.transform.position);
+                return distanceX.CompareTo(distanceY);
+            });
             return targets;
         }
     }
