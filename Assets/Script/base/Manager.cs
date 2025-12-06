@@ -10,7 +10,7 @@ public class Manager : MonoBehaviour
     [SerializeField] private readonly Dictionary<Vector2Int, Edible> fooditems = new();
     public Dictionary<Vector2Int, Edible> FoodItems => fooditems;
     public static event System.Action OnTick;
-    public float tickInterval = 1f / 30; // 30 ticks per second
+    public float tickInterval = 1f / 2; // 30 ticks per second
     [SerializeField] private GameObject meat_prefab;
     public GameObject MeatPrefab => meat_prefab;
     private float tick_timer = 0;
@@ -110,15 +110,14 @@ public class Manager : MonoBehaviour
     }
     public void UnregisterCreature(Creature dead_creature)
     {
-        Species itsSpecies = new();
+        Species itsSpecies;
         foreach (var each_species in species)
         {
             if (each_species.attributes.species_ID == dead_creature.SpeciesID)
             {
-                itsSpecies = each_species;
+                each_species.creatures.Remove(dead_creature);
             }
         }
-        itsSpecies.creatures.Remove(dead_creature);
     }
     // spawn the edible item
     private void SpawnEdible()

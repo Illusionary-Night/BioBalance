@@ -4,6 +4,7 @@ using System;
 //using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
+using System.IO;
 
 
 public class Creature : MonoBehaviour, ITickable
@@ -187,8 +188,8 @@ public class Creature : MonoBehaviour, ITickable
     }
     public void Die()
     {
-        Debug.LogWarning("Using Manager instance from: " + Manager.Instance.gameObject.name);
-        Debug.LogWarning("MeatPrefab is: " + Manager.Instance.MeatPrefab);
+        //Debug.LogWarning("Using Manager instance from: " + Manager.Instance.gameObject.name);
+        //Debug.LogWarning("MeatPrefab is: " + Manager.Instance.MeatPrefab);
 
         if (Manager.Instance.MeatPrefab != null)
         {
@@ -198,7 +199,7 @@ public class Creature : MonoBehaviour, ITickable
         }
         else
         {
-            Debug.LogWarning("MeatPrefab is null");
+            //Debug.LogWarning("MeatPrefab is null");
         }
         OnDisable();
         Manager.Instance.UnregisterCreature(this);
@@ -206,6 +207,9 @@ public class Creature : MonoBehaviour, ITickable
     }
     public void OnTick()
     {
+        //test
+        Debug.Log("path exit: " + (movement.path != null));
+        Debug.Log("Des:"+ movement.GetDestination());
         //回血、餓死、老死、繁殖冷卻
         //回血
         if (Health < BaseHealth)
@@ -214,11 +218,11 @@ public class Creature : MonoBehaviour, ITickable
         }
         Health = Mathf.Min(Health, BaseHealth);
         //餓死
-        //Hunger -= HungerRate;
-        //if (Hunger <= 0)
-        //{
-        //    Die();
-        //}
+        Hunger -= HungerRate;
+        if (Hunger <= 0)
+        {
+            Die();
+        }
         //老死
         Age += 1;
         if (Age >= Lifespan)
@@ -249,7 +253,7 @@ public class Creature : MonoBehaviour, ITickable
         private Creature owner;
         private Rigidbody2D rb;                 // 優先使用物理剛體
         private Vector2Int Destination;         // 格座目標（整數格）
-        private List<Vector2> path = null;      // 導航後的世界座標點 (連續)
+        public List<Vector2> path = null;      // 導航後的世界座標點 (連續)
         private int currentPathIndex = 0;
         private float stuckThreshold = 0.2f;    // 偵測被擠走/卡住的容忍距離
         private int stuckLimitTicks = 6;        // 超過幾次就重新導航
@@ -277,8 +281,13 @@ public class Creature : MonoBehaviour, ITickable
 
         public void MoveOnTick()
         {
+            Debug.Log("Distance: " +Vector2.Distance(TempGetCurrentPosition(),Destination));
             if (!awake) return;
-
+            if (path == null)
+            {
+                //Debug.Log("path is null");
+                return;
+            }
             // 這一回合開始的真實位置
             Vector2 actualPos = GetAuthoritativePosition();
             Vector2 expectedPos = actualPos;
@@ -309,11 +318,17 @@ public class Creature : MonoBehaviour, ITickable
             {
                 // 路徑走完，檢查是否到達目的地
                 Vector2Int currentPos = TempGetCurrentPosition();
-                if (currentPos == Destination)
+                Debug.Log("Distance: " + Vector2.Distance(currentPos, Destination));
+                if (Vector2.Distance(currentPos,Destination)<1.5f)
                 {
+                    Debug.Log("Path end");
                     awake = false;
                     owner.OnMovementComplete?.Invoke(Destination);
                 }
+            }
+            else
+            {
+                Debug.Log("awake/path is null"+awake+" "+path);
             }
 
             // 正確做法：記錄「預期」的移動位置
@@ -324,7 +339,7 @@ public class Creature : MonoBehaviour, ITickable
         // 導航（呼叫你的 A* 或其它尋路系統）
         public void Navigate()
         {
-            //Debug.Log("Navigate");
+            Debug.Log("Navigate");
             Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
             Vector2Int goal = Destination;
 
@@ -355,6 +370,10 @@ public class Creature : MonoBehaviour, ITickable
         {
             if (rb != null) return rb.position;
             return owner.transform.position;
+        }
+        public Vector2Int GetDestination()
+        {
+            return Destination;
         }
     }
     public void MoveTo(Vector2Int destination)

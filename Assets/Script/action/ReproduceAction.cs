@@ -16,19 +16,19 @@ public class ReproduceAction : ActionBase
 
     public override float GetWeight(Creature creature)
     {
-        return 1;
+        return 0.5f;
     }
 
     public override bool IsSuccess(Creature creature)
     {
-        return true;
+        return Random.Range(0, 3) == 0;
     }
 
     public override void Execute(Creature creature, ActionContext context = null)
     {
         int creature_num = 0;
         Manager.Instance.RegisterCreature(creature);
-        
+        creature.MoveTo(creature.GetRoundedPosition());   
         foreach (var each_species in Manager.Instance.Species)
         {
             if (each_species.attributes.species_ID == creature.SpeciesID)
@@ -43,6 +43,7 @@ public class ReproduceAction : ActionBase
         new_creature.Initialize(creature.ToCreatureAttribute(), new_game_object);
         
         creature.ReproductionCooldown = Cooldown;
+        creature.ActionCooldown = 100;
         
         // 繁殖是立即完成的 Action
         context?.Complete();

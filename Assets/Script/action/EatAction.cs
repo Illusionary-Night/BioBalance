@@ -4,7 +4,7 @@ using UnityEngine;
 class EatAction : ActionBase
 {
     public override ActionType Type => ActionType.Eat;
-    public override int Cooldown => 300;
+    public override int Cooldown => 10;
     
     public override bool IsConditionMet(Creature creature)
     {
@@ -18,7 +18,7 @@ class EatAction : ActionBase
     
     public override bool IsSuccess(Creature creature)
     {
-        return true;
+        return Random.Range(0,3)==0;
     }
     
     public override void Execute(Creature creature, ActionContext context = null)
@@ -41,13 +41,18 @@ class EatAction : ActionBase
                 }
                 
                 // 確認到達的是目標位置
-                if (arrivedPosition == foodPosition)
+                if (Vector2.Distance(arrivedPosition,foodPosition)<1.5f)
                 {
                     // 檢查食物是否仍然存在
                     if (food != null)
                     {
+                        Debug.LogWarning("eat");
                         food.Eaten();
                         creature.Hunger = Mathf.Min(creature.Hunger + food.NutritionalValue, creature.MaxHunger);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("food is null");
                     }
                     
                     // 標記 Action 完成
@@ -64,5 +69,6 @@ class EatAction : ActionBase
             // 沒有找到食物，直接標記為完成
             context?.Complete();
         }
+        creature.ActionCooldown = Cooldown;
     }
 }
