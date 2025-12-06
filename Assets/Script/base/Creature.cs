@@ -297,45 +297,38 @@ public class Creature : MonoBehaviour, ITickable
         public void MoveOnTick()
         {
             if (!awake) return;
-            //先讀取這一回合開始時的真實位置
+
+            // 這一回合開始的真實位置
             Vector2 actualPos = GetAuthoritativePosition();
+            Vector2 expectedPos = actualPos;
 
-            //判斷上回合移動是否生效（是否卡住/被擠開）
-            if (Vector2.Distance(actualPos, lastRecordedPosition) < 0.01f)
-                stuckCounter++;
-            else
-                stuckCounter = 0;
-
-            //若卡住太多次則重導航
-            if (stuckCounter >= stuckLimitTicks)
-            {
-                stuckCounter = 0;
-                Navigate();
-            }
-
-            //執行新的 MovePosition()（輸入指令，結果下次才會反映）
+            //移動
             if (path != null && currentPathIndex < path.Count)
             {
                 Vector2 target = path[currentPathIndex];
+
+                // 計算下一個位置
                 Vector2 nextPos = Vector2.MoveTowards(actualPos, target, owner.Speed * Time.fixedDeltaTime);
                 rb.MovePosition(nextPos);
+                expectedPos = nextPos;  // 記起來
 
-                // --- 新增轉向 ---
-                Vector2 direction = (target - actualPos).normalized;
-                if (direction.sqrMagnitude > 0.001f) // 避免零向量
+                // 修正：方向應該根據 nextPos，而不是 actualPos
+                Vector2 direction = (nextPos - actualPos).normalized;
+                if (direction.sqrMagnitude > 0.0001f)
                 {
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                     owner.transform.rotation = Quaternion.Euler(0, 0, angle);
                 }
 
-
-                if (Vector2.Distance(actualPos, target) < 0.05f)
+                // 判斷是否抵達目標
+                if (Vector2.Distance(nextPos, target) < 0.05f)
                     currentPathIndex++;
             }
 
-            //記錄這回合「預期應該走完後」的位置（供下一回合比較）
-            lastRecordedPosition = actualPos;
+            // 正確做法：記錄「預期」的移動位置
+            lastRecordedPosition = expectedPos;
         }
+
 
         // 導航（呼叫你的 A* 或其它尋路系統）
         public void Navigate()

@@ -691,7 +691,7 @@ MonoBehaviour:
     reproduction_rate: 200
     attack_power: 1
     lifespan: 1000
-    variation: 0.01
+    variation: 1
     perception_range: 20
     sleeping_head: 1
     sleeping_tail: 5
