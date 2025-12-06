@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.UI.Image;
 
@@ -11,22 +11,22 @@ public class ReproduceAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
     {
-        if (creature.Age < creature.Lifespan * 0.2f) return false;    // ¦~ÄÖ¥¼¹F20%
-        if (creature.Hunger <= creature.MaxHunger * 0.5f) return false; // °§¾j­È§C©ó50%
-        if (creature.ReproductionCooldown > 0) return false; // Ác´Ş§N«o¤¤
-        if (Perception.HasTarget(creature, creature.PredatorIDList)) return false; // ªşªñ¦³¼Ä¤H
+        if (creature.Age < creature.Lifespan * 0.2f) return false;    // å¹´é½¡æœªé”20%
+        if (creature.Hunger <= creature.MaxHunger * 0.5f) return false; // é£¢é¤“å€¼ä½æ–¼50%
+        if (creature.ReproductionCooldown > 0) return false; // ç¹æ®–å†·å»ä¸­
+        if (Perception.HasTarget(creature, creature.PredatorIDList)) return false; // é™„è¿‘æœ‰æ•µäºº
         return true;
     }
 
     public override float GetWeight(Creature creature)
     {
-        //(1 / °»¬d½d³ò¤º¦PÃş­ÓÅé¼Æ + 1) * 0.8
+        //(1 / åµæŸ¥ç¯„åœå…§åŒé¡å€‹é«”æ•¸ + 1) * 0.8
         return (1f / (Perception.CountTargetNumber(creature,creature.SpeciesID)+1)) * 0.8f;
     }
 
     public override bool IsSuccess(Creature creature)
     {
-        return Random.value < 0.6f; // 60% ¦¨¥\²v
+        return Random.value < 0.6f; // 60% æˆåŠŸç‡
     }
 
     public override void Execute(Creature creature)
@@ -42,6 +42,11 @@ public class ReproduceAction : ActionBase
         GameObject new_game_object = UnityEngine.Object.Instantiate(creature.CreatureObject);
         new_game_object.name = "creature " + creature.SpeciesID + "." + creature_num;
         Creature new_creature = new_game_object.GetComponent<Creature>();
-        new_creature.Initialize(creature.ToCreatureAttribute(),new_game_object);
+        new_creature.Initialize(creature.ToCreatureAttribute(), new_game_object);
+        
+        creature.ReproductionCooldown = Cooldown;
+        
+        // èœî¼¼??èˆ??å–³??î“? Action
+        context?.Complete();
     }
 }

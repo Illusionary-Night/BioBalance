@@ -65,22 +65,22 @@ public class TerrainGenerator : MonoBehaviour
             // 否則，將自己設定為這個靜態實例
             Instance = this;
         }
-        // 1. 建立一個空的「定義層」
+        // 建立一個空的「定義層」
         definitionLayerMap = new TerrainMap(TerrainType.Grass);
 
-        // 2. (新) 在程式碼中指定並載入 Tile 資產
+        // 在程式碼中指定並載入 Tile 
         LoadTilesFromResources();
     }
 
     void Start()
     {
-        // 3. 產生隨機偏移 (種子)
+        // 產生隨機偏移 (種子)
         if (noiseOffset == Vector2.zero)
         {
             noiseOffset = new Vector2(Random.Range(-1000f, 1000f), Random.Range(-1000f, 1000f));
         }
 
-        // 4. 執行生成
+        // 執行生成
         GenerateMap();
     }
 
@@ -157,6 +157,8 @@ public class TerrainGenerator : MonoBehaviour
         float frequency = 1;
         float noiseValue = 0;
 
+        float maxPossibleHeight = 0;
+
         for (int i = 0; i < octaves; i++)
         {
             float sampleX = (x / noiseScale) * frequency + noiseOffset.x * frequency;
@@ -166,10 +168,22 @@ public class TerrainGenerator : MonoBehaviour
             float perlin = Mathf.PerlinNoise(sampleX, sampleY);
             noiseValue += perlin * amplitude;
 
+            maxPossibleHeight += amplitude;
+
             amplitude *= persistence;
             frequency *= lacunarity;
         }
-        return noiseValue;
+
+        // 標準化噪聲值到 0-1 範圍
+        if (maxPossibleHeight > 0)
+        {
+            float normalizedHeight = noiseValue / maxPossibleHeight;
+
+            // 使用 Clamp01 確保浮點數誤差不會讓它稍微超過 1 或低於 0
+            return Mathf.Clamp01(normalizedHeight);
+        }
+
+        return Mathf.Clamp01(noiseValue);
     }
 
     // 根據噪聲值和您在 Inspector 中設定的閾值來決定地形

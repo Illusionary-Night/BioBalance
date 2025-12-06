@@ -283,7 +283,7 @@ MonoBehaviour:
   noiseOffset: {x: 0, y: 0}
   debugDisplayTilemap: {fileID: 48143763}
   terrainThresholds:
-  - threshold: 0.7
+  - threshold: 0.2
     terrain: 5
   - threshold: 1
     terrain: 0
