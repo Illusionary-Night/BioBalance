@@ -4,7 +4,7 @@ using UnityEngine;
 public class MoveAction : ActionBase
 {
 	public override ActionType Type => ActionType.Move;
-	public override int Cooldown => 30;
+	public override int Cooldown => 10;
 	[SerializeField] private static readonly int MoveDistance = 100;
 
     public override bool IsConditionMet(Creature creature)
@@ -27,7 +27,7 @@ public class MoveAction : ActionBase
         return Random.Range(0, 2) == 0;
 	}
 
-	public override void Execute(Creature creature)
+	public override void Execute(Creature creature, ActionContext context = null)
 	{
         //Debug.Log("move");
         // 隨機移動到鄰近位置
