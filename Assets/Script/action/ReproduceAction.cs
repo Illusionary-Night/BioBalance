@@ -42,9 +42,8 @@ public class ReproduceAction : ActionBase
         Creature new_creature = new_game_object.GetComponent<Creature>();
         new_creature.Initialize(creature.ToCreatureAttribute(), new_game_object);
         
-        creature.ReproductionCooldown = Cooldown;
-        creature.ActionCooldown = 100;
-        
+        creature.ReproductionCooldown = creature.ReproductionInterval;
+
         // 繁殖是立即完成的 Action
         context?.Complete();
     }

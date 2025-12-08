@@ -69,6 +69,5 @@ class EatAction : ActionBase
             // 沒有找到食物，直接標記為完成
             context?.Complete();
         }
-        creature.ActionCooldown = Cooldown;
     }
 }

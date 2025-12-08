@@ -165,6 +165,15 @@ public class Creature : MonoBehaviour, ITickable
         actionCooldown = 20;
     }
 
+    public int GetActionCooldown(ActionType actionType)
+    {
+        if (actionCD.ContainsKey(actionType))
+        {
+            return actionCD[actionType];
+        }
+        return 0;
+    }
+
     public CreatureAttributes ToCreatureAttribute()
     {
         CreatureAttributes attributes = new CreatureAttributes();

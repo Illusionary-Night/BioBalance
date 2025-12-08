@@ -110,7 +110,6 @@ public class Manager : MonoBehaviour
     }
     public void UnregisterCreature(Creature dead_creature)
     {
-        Species itsSpecies;
         foreach (var each_species in species)
         {
             if (each_species.attributes.species_ID == dead_creature.SpeciesID)
