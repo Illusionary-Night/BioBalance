@@ -71,7 +71,7 @@ public class ActionStateMachine
                 // °õ¦æ Action
                 owner.CurrentAction = selectedAction;
                 ActionSystem.Execute(owner, selectedAction, currentContext);
-                
+
                 return;
             }
             else
