@@ -22,6 +22,7 @@ public class Creature : MonoBehaviour, ITickable
     [SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
     public List<ActionType> WeightedActionList => weightedActionList;
 
+    private Dictionary<ActionType, int> actionCD = new();
     // 玩家決定
     [Header("=== 玩家決定 ===")]
     [SerializeField] private int species_ID;
@@ -157,6 +158,13 @@ public class Creature : MonoBehaviour, ITickable
     {
         return actionStateMachine;
     }
+
+    public void SetActionCooldown(ActionType actionType, int cooldown)
+    {
+        actionCD[actionType] = cooldown;
+        actionCooldown = 20;
+    }
+
     public CreatureAttributes ToCreatureAttribute()
     {
         CreatureAttributes attributes = new CreatureAttributes();
@@ -239,6 +247,14 @@ public class Creature : MonoBehaviour, ITickable
         if (ActionCooldown > 0)
         {
             ActionCooldown -= 1;
+        }
+
+        foreach (var key in actionCD.Keys.ToList())
+        {
+            if (actionCD[key] > 0)
+            {
+                actionCD[key] -= 1;
+            }
         }
 
         if (ActionCooldown <= 0)
