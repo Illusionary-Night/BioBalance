@@ -15,6 +15,10 @@ public class Creature : MonoBehaviour, ITickable
     // 移動完成事件
     public event System.Action<Vector2Int> OnMovementComplete;
 
+    // 防止重複銷毀和訪問已銷毀物件的標記
+    private bool isDead = false;
+    public bool IsDead => isDead;
+
     // 當前狀態
     [SerializeField] private ActionType currentAction;
     public ActionType CurrentAction { get => currentAction; set => currentAction = value; }
@@ -106,6 +110,7 @@ public class Creature : MonoBehaviour, ITickable
     {
         //個體編號
         _UUID = System.Guid.NewGuid().ToString();
+        isDead = false;
         float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
         //睡眠時間變異
         int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail - creatureAttributes.sleeping_head) * variationFactor());
@@ -148,6 +153,7 @@ public class Creature : MonoBehaviour, ITickable
     }
     public void DoAction()
     {
+        if (isDead) return;
         // 委派給狀態機處理
         actionStateMachine.EvaluateAndExecute();
     }
@@ -161,6 +167,7 @@ public class Creature : MonoBehaviour, ITickable
 
     public void SetActionCooldown(ActionType actionType, int cooldown)
     {
+        if (isDead) return;
         actionCD[actionType] = cooldown;
         actionCooldown = 20;
     }
@@ -205,12 +212,21 @@ public class Creature : MonoBehaviour, ITickable
     }
     public void Die()
     {
+        // 防止重複執行
+        if (isDead) return;
+        isDead = true;
+
         //Debug.LogWarning("Using Manager instance from: " + Manager.Instance.gameObject.name);
         //Debug.LogWarning("MeatPrefab is: " + Manager.Instance.MeatPrefab);
 
-        if (Manager.Instance.MeatPrefab != null)
+        // 重要：先取消訂閱事件
+        OnDisable();
+
+        if (Manager.Instance != null)
         {
-            Instantiate(Manager.Instance.MeatPrefab, transform.position, Quaternion.identity)
+            // Spawn food item
+            GameObject meat_prefab = Resources.Load<GameObject>("Prefabs/Edible/Meat");
+            Instantiate(meat_prefab, transform.position, Quaternion.identity, Manager.Instance.EnvironmentEntities)
                 .GetComponent<Edible>()
                 .Initialize(Vector2Int.RoundToInt(transform.position));
         }
@@ -218,15 +234,26 @@ public class Creature : MonoBehaviour, ITickable
         {
             //Debug.LogWarning("MeatPrefab is null");
         }
-        OnDisable();
-        Manager.Instance.UnregisterCreature(this);
+        
+        if (Manager.Instance != null)
+        {
+            Manager.Instance.UnregisterCreature(this);
+        }
+        
         Destroy(gameObject);
     }
     public void OnTick()
     {
+        // 安全檢查
+        if (isDead || this == null) return;
+
         //test
-        Debug.Log("path exit: " + (movement.path != null));
-        Debug.Log("Des:"+ movement.GetDestination());
+        if (movement != null && movement.path != null)
+        {
+            Debug.Log("path exist: " + (movement.path != null));
+            Debug.Log("Des:" + movement.GetDestination());
+        }
+        
         //回血、餓死、老死、繁殖冷卻
         //回血
         if (Health < BaseHealth)
@@ -234,18 +261,23 @@ public class Creature : MonoBehaviour, ITickable
             Health += HealthRegeneration;
         }
         Health = Mathf.Min(Health, BaseHealth);
+        
         //餓死
         Hunger -= HungerRate;
         if (Hunger <= 0)
         {
             Die();
+            return; // 立即返回
         }
+        
         //老死
         Age += 1;
         if (Age >= Lifespan)
         {
             Die();
+            return; // 立即返回
         }
+        
         //繁殖冷卻
         if (ReproductionCooldown > 0)
         {
@@ -270,7 +302,11 @@ public class Creature : MonoBehaviour, ITickable
         {
             DoAction();
         }
-        movement.MoveOnTick();
+        
+        if (movement != null)
+        {
+            movement.MoveOnTick();
+        }
     }
     // 巢狀類別：Movement
     private class Movement
@@ -298,15 +334,29 @@ public class Creature : MonoBehaviour, ITickable
         // 設定目的地（格座）
         public void SetDestination(Vector2Int destination)
         {
+            // 安全檢查
+            if (owner == null || owner.isDead) return;
+            
             //Debug.Log("SetDestination");
             Destination = destination;
             awake = true;
             Navigate();
         }
 
+        void PreventDrifting()
+        {
+            if (rb.linearVelocity != Vector2.zero)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+        }
+
         public void MoveOnTick()
         {
-            Debug.Log("Distance: " +Vector2.Distance(TempGetCurrentPosition(),Destination));
+            // 安全檢查
+            if (owner == null || owner.isDead) return;
+
+            Debug.Log("Distance: " + Vector2.Distance(TempGetCurrentPosition(), Destination));
             if (!awake) return;
             if (path == null)
             {
@@ -316,6 +366,8 @@ public class Creature : MonoBehaviour, ITickable
             // 這一回合開始的真實位置
             Vector2 actualPos = GetAuthoritativePosition();
             Vector2 expectedPos = actualPos;
+
+            PreventDrifting();
 
             //移動
             if (path != null && currentPathIndex < path.Count)
@@ -344,7 +396,7 @@ public class Creature : MonoBehaviour, ITickable
                 // 路徑走完，檢查是否到達目的地
                 Vector2Int currentPos = TempGetCurrentPosition();
                 Debug.Log("Distance: " + Vector2.Distance(currentPos, Destination));
-                if (Vector2.Distance(currentPos,Destination)<1.5f)
+                if (Vector2.Distance(currentPos, Destination) < 1.5f)
                 {
                     Debug.Log("Path end");
                     awake = false;
@@ -353,7 +405,7 @@ public class Creature : MonoBehaviour, ITickable
             }
             else
             {
-                Debug.Log("awake/path is null"+awake+" "+path);
+                Debug.Log("awake/path is null" + awake + " " + path);
             }
 
             // 正確做法：記錄「預期」的移動位置
@@ -364,6 +416,9 @@ public class Creature : MonoBehaviour, ITickable
         // 導航（呼叫你的 A* 或其它尋路系統）
         public void Navigate()
         {
+            // 安全檢查
+            if (owner == null || owner.isDead) return;
+
             Debug.Log("Navigate");
             Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
             Vector2Int goal = Destination;
@@ -393,6 +448,10 @@ public class Creature : MonoBehaviour, ITickable
         // 取得物理/Transform 的權威位置
         private Vector2 GetAuthoritativePosition()
         {
+            // 安全檢查
+            if (owner == null || owner.isDead || owner.gameObject == null)
+                return Vector2.zero;
+                
             if (rb != null) return rb.position;
             return owner.transform.position;
         }
@@ -403,16 +462,19 @@ public class Creature : MonoBehaviour, ITickable
     }
     public void MoveTo(Vector2Int destination)
     {
+        if (isDead || movement == null) return;
         movement.SetDestination(destination);
     }
 
     public void ForceNavigate()
     {
+        if (isDead || movement == null) return;
         movement.Navigate();
     }
 
     public Vector2Int GetRoundedPosition()
     {
+        if (movement == null) return Vector2Int.zero;
         return movement.TempGetCurrentPosition();
     }
 }

@@ -11,12 +11,11 @@ public class Manager : MonoBehaviour
     public Dictionary<Vector2Int, Edible> FoodItems => fooditems;
     public static event System.Action OnTick;
     public float tickInterval = 1f / 2; // 30 ticks per second
-    [SerializeField] private GameObject meat_prefab;
-    public GameObject MeatPrefab => meat_prefab;
     private float tick_timer = 0;
     private int mixTickTime = 240000;
     [SerializeField] public int TickTime;
     private int tick_time => tick_time;
+    public Transform EnvironmentEntities { get; private set; }
     void Start()
     {
         Initialize();
@@ -48,6 +47,8 @@ public class Manager : MonoBehaviour
     private void Initialize()
     {
         TickTime = 0;
+        GameObject env_entites_prefab = Resources.Load<GameObject>("Prefabs/Parents/EnvironmentEntities");
+        EnvironmentEntities = Instantiate(env_entites_prefab).transform;
     }
 
     private void OnEnable()
@@ -140,7 +141,7 @@ public class Manager : MonoBehaviour
             if (TerrainGenerator.Instance.GetDefinitionMap().GetTerrain(pos) != TerrainType.Grass) continue;
             // Spawn food item
             GameObject food_item_prefab = Resources.Load<GameObject>("Prefabs/Edible/Grass");
-            GameObject food_item_object = Instantiate(food_item_prefab);
+            GameObject food_item_object = Instantiate(food_item_prefab, EnvironmentEntities);
             Edible food_item = food_item_object.GetComponent<Edible>();
             food_item.Initialize(pos);
         }
