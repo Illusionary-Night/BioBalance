@@ -72,7 +72,10 @@ public static class ActionSystem
     public static void Execute(Creature creature, ActionType actiontype, ActionContext context = null)
     {
         if (actions.TryGetValue(actiontype, out var f))
+        {
             f.Execute(creature, context);
+            creature.SetActionCooldown(actiontype, f.Cooldown);
+        }
     }
 }
 
