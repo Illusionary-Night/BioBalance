@@ -38,6 +38,5 @@ public class MoveAction : ActionBase
 
         // 呼叫Creature自行導航地點
 		creature.MoveTo(newPosition);
-		creature.ActionCooldown = Cooldown;
     }
 }

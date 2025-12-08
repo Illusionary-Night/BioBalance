@@ -51,7 +51,9 @@ public static class ActionSystem
 
     public static bool IsConditionMet(Creature creature, ActionType actiontype)
     {
-        return actions.TryGetValue(actiontype, out var f) && f.IsConditionMet(creature);
+        return actions.TryGetValue(actiontype, out var f)
+               && f.IsConditionMet(creature)
+               && creature.GetActionCooldown(actiontype) <= 0;
     }
 
     public static float GetWeight(Creature creature, ActionType actiontype)
@@ -93,6 +95,3 @@ public abstract class ActionBase
     // 新增 context 參數
     public abstract void Execute(Creature creature, ActionContext context = null);
 }
-
-
-
