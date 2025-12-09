@@ -128,8 +128,8 @@ public class Manager : MonoBehaviour
         if (fooditems.Count > 120) return;
 
         Vector2Int position = new Vector2Int(
-            Random.Range(0, 501),
-            Random.Range(0, 501)
+            Random.Range(200, 300),
+            Random.Range(200, 300)
         );
         // Check if position is occupied
         if (fooditems.ContainsKey(position)) return;
