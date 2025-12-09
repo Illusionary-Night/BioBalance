@@ -13,21 +13,21 @@ MonoBehaviour:
   m_Name: Grass
   m_EditorClassIdentifier: Assembly-CSharp::DualGridTileData
   terrainType: 0
-  priority: 0
+  priority: 1
   tiles:
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: a63408e281f8baa4daca0f8886cc400e, type: 2}
+  - {fileID: 11400000, guid: 3856b7f5dd7d2664fa96896fee8b00e5, type: 2}
+  - {fileID: 11400000, guid: 948858153a1534d4da10d3d62492a106, type: 2}
+  - {fileID: 11400000, guid: dc039b7e25107bb4eadde32fad7f8665, type: 2}
+  - {fileID: 11400000, guid: d76f47fdccc6a434d8e66d90715db2cc, type: 2}
+  - {fileID: 11400000, guid: 2d2f8492bb1d2924b8adb3b555990d19, type: 2}
+  - {fileID: 11400000, guid: ac41e1fd362c84f4894afb4cff6d689b, type: 2}
+  - {fileID: 11400000, guid: 10f6b76c7bf7c424292e6c95b469bf76, type: 2}
+  - {fileID: 11400000, guid: a1992d29156d1ae4fb1aef69b38fc6f7, type: 2}
+  - {fileID: 11400000, guid: eb8ce59239f874a4389d37875d6fc666, type: 2}
+  - {fileID: 11400000, guid: edfcb53e7c3c7614aa3c446c41af89e2, type: 2}
+  - {fileID: 11400000, guid: 897c7566f26e5d34990e7fcdfda033d3, type: 2}
+  - {fileID: 11400000, guid: fe8a6e41063f62044872aafc39f451b4, type: 2}
+  - {fileID: 11400000, guid: 5139bfe2a6f995f488cf4e6fea7f80f7, type: 2}
+  - {fileID: 11400000, guid: 11cab561bfe35b84ab88df877ebaa435, type: 2}

@@ -21,7 +21,7 @@ public class TerrainMap
     private readonly Dictionary<Vector2Int, TerrainType> terrainData = new Dictionary<Vector2Int, TerrainType>();
     private readonly TerrainType defaultTerrain;
 
-    public TerrainMap(TerrainType defaultTerrain = TerrainType.Grass)
+    public TerrainMap(TerrainType defaultTerrain = TerrainType.Barrier)
     {
         this.defaultTerrain = defaultTerrain;
     }

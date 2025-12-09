@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 class EatAction : ActionBase
 {
@@ -26,7 +27,7 @@ class EatAction : ActionBase
         List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.FoodTypes);
         if (edibleTargets.Count > 0)
         {
-            Edible food = edibleTargets[Random.Range(0, 6)];
+            Edible food = edibleTargets[Random.Range(0, Mathf.Min(edibleTargets.Count, 6))];
             Vector2Int foodPosition = Vector2Int.RoundToInt(food.transform.position);
             
             // 使用狀態機註冊移動回調

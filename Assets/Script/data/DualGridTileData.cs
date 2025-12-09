@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-[CreateAssetMenu(fileName = "NewDualGridTile", menuName = "BioBalance/Dual Grid Tile Data")]
+[CreateAssetMenu(fileName = "NewDual-GridTileData", menuName = "BioBalance/Dual-Grid Tile Data")]
 public class DualGridTileData : ScriptableObject
 {
     public TerrainType terrainType;

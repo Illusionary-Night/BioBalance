@@ -128,8 +128,8 @@ public class Manager : MonoBehaviour
         if (fooditems.Count > 120) return;
 
         Vector2Int position = new Vector2Int(
-            Random.Range(200, 300),
-            Random.Range(200, 300)
+            Random.Range(0, 501),
+            Random.Range(0, 501)
         );
         // Check if position is occupied
         if (fooditems.ContainsKey(position)) return;
@@ -137,13 +137,18 @@ public class Manager : MonoBehaviour
         var random_positions = GetRandomPosition(position, 3, Random.Range(1, 5));
         foreach (var pos in random_positions)
         {
+            //Debug.Log("Trying to spawn food at: " + pos);
+            //Debug.Log("Terrain at pos: " + TerrainGenerator.Instance.GetDefinitionMap().GetTerrain(pos));
             if (fooditems.ContainsKey(pos)) continue;
             if (TerrainGenerator.Instance.GetDefinitionMap().GetTerrain(pos) != TerrainType.Grass) continue;
+            Vector3 pos3 = new Vector3(pos.x, pos.y, 0f);
             // Spawn food item
             GameObject food_item_prefab = Resources.Load<GameObject>("Prefabs/Edible/Grass");
-            GameObject food_item_object = Instantiate(food_item_prefab, EnvironmentEntities);
+            GameObject food_item_object = Instantiate(food_item_prefab, pos3, Quaternion.identity,EnvironmentEntities);
             Edible food_item = food_item_object.GetComponent<Edible>();
-            food_item.Initialize(pos);
+            fooditems.Add(pos, food_item);
+            food_item.Initialize();
+
         }
 
     }
