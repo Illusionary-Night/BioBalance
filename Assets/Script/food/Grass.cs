@@ -2,7 +2,10 @@ using UnityEngine;
 
 public class Grass : Edible
 {
+    [SerializeField]
     public override int LifeSpan { get; protected set; } = 50000;
-    public override float NutritionalValue => 10f;
+    [SerializeField] 
+    public override float NutritionalValue => 50f;
+    [SerializeField] 
     public override FoodType Type => FoodType.Grass;
 }

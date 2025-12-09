@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 class EatAction : ActionBase
 {
@@ -26,24 +27,24 @@ class EatAction : ActionBase
         List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.FoodTypes);
         if (edibleTargets.Count > 0)
         {
-            Edible food = edibleTargets[Random.Range(0, 6)];
+            Edible food = edibleTargets[Random.Range(0, Mathf.Min(edibleTargets.Count, 6))];
             Vector2Int foodPosition = Vector2Int.RoundToInt(food.transform.position);
             
-            // ¨Ï¥Îª¬ºA¾÷µù¥U²¾°Ê¦^½Õ
+            // ä½¿ç”¨ç‹€æ…‹æ©Ÿè¨»å†Šç§»å‹•å›èª¿
             var stateMachine = creature.GetStateMachine();
             
             System.Action<Vector2Int> onArrived = (arrivedPosition) =>
             {
-                // ÀË¬d Context ¬O§_¤´µM¦³®Ä
+                // æª¢æŸ¥ Context æ˜¯å¦ä»ç„¶æœ‰æ•ˆ
                 if (context != null && !context.IsValid)
                 {
                     return;
                 }
                 
-                // ½T»{¨ì¹Fªº¬O¥Ø¼Ğ¦ì¸m
+                // ç¢ºèªåˆ°é”çš„æ˜¯ç›®æ¨™ä½ç½®
                 if (Vector2.Distance(arrivedPosition,foodPosition)<1.5f)
                 {
-                    // ÀË¬d­¹ª«¬O§_¤´µM¦s¦b
+                    // æª¢æŸ¥é£Ÿç‰©æ˜¯å¦ä»ç„¶å­˜åœ¨
                     if (food != null)
                     {
                         Debug.LogWarning("eat");
@@ -55,18 +56,18 @@ class EatAction : ActionBase
                         Debug.LogWarning("food is null");
                     }
                     
-                    // ¼Ğ°O Action §¹¦¨
+                    // æ¨™è¨˜ Action å®Œæˆ
                     context?.Complete();
                 }
             };
             
-            // ³z¹Lª¬ºA¾÷µù¥U¦^½Õ¡]¦Û°ÊºŞ²z²M²z¡^
+            // é€éç‹€æ…‹æ©Ÿè¨»å†Šå›èª¿ï¼ˆè‡ªå‹•ç®¡ç†æ¸…ç†ï¼‰
             stateMachine.RegisterMovementCallback(onArrived);
             creature.MoveTo(foodPosition);
         }
         else
         {
-            // ¨S¦³§ä¨ì­¹ª«¡Aª½±µ¼Ğ°O¬°§¹¦¨
+            // æ²’æœ‰æ‰¾åˆ°é£Ÿç‰©ï¼Œç›´æ¥æ¨™è¨˜ç‚ºå®Œæˆ
             context?.Complete();
         }
     }

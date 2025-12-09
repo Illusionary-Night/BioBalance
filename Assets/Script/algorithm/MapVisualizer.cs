@@ -11,6 +11,7 @@ public class MapVisualizer : MonoBehaviour
         public TerrainType terrainType; // 對應的地形
         public Tilemap targetTilemap;   // 對應的 Tilemap
         public int sortingOrder;     // 繪製順序
+        public bool useDualGrid;    // 是否使用 Dual-Grid 偏移
     }
 
     [Header("Debug Layer")]
@@ -23,15 +24,18 @@ public class MapVisualizer : MonoBehaviour
     [Header("Dual-Grid Data")]
     public List<DualGridTileData> dualGridDataList;
 
+    [Header("Simple Tile Data (不使用 Dual-Grid)")]
+    public List<Tile> simpleTileDataList;
+
     private Dictionary<TerrainType, TileBase> debugTileLookup;
 
-    // ... (InitializeDebugResources 和 RenderDebugMap 保持不變) ...
+    // --- Debug 繪製相關 ---
     public void InitializeDebugResources()
     {
         if (debugTileLookup != null && debugTileLookup.Count > 0) return;
         debugTileLookup = new Dictionary<TerrainType, TileBase>();
-        LoadAndCheck(TerrainType.Grass, "Tiles/def_grass_tile");
-        LoadAndCheck(TerrainType.Water, "Tiles/def_water_tile");
+        LoadAndCheck(TerrainType.Grass, "Tiles/def_grass_0");
+        LoadAndCheck(TerrainType.Water, "Tiles/def_water_0");
     }
     private void LoadAndCheck(TerrainType type, string path)
     {
@@ -145,23 +149,11 @@ public class MapVisualizer : MonoBehaviour
         Debug.Log("MapVisualizer: 顯示層繪製完畢。");
     }
 
-    // --- 判斷邏輯 (關鍵) ---
+    // --- 判斷邏輯 ---
     private bool IsSolid(TerrainType targetType, int currentLayerIndex, Dictionary<TerrainType, int> priorityMap)
     {
-        // 規則 1：如果是第 0 層 (基底層/水)，它把 "任何" 有定義在列表中的地形都當作實心
-        // 這樣水就會鋪滿在草和岩石底下
-        if (currentLayerIndex == 0)
-        {
-            // 只要這個地形不是 "虛空" (有被定義在 priorityMap 裡)，就視為實心
-            // 如果您希望連 "未定義" 的地形都填滿水，直接 return true 即可
-            return true;
-        }
-
-        // 規則 2：比較優先級
         if (priorityMap.TryGetValue(targetType, out int targetPriority))
         {
-            // 如果 目標(草) >= 當前(水)，視為實心 -> 水會畫在草底下
-            // 如果 目標(水) <  當前(草)，視為空   -> 草不會畫到水面上
             return targetPriority >= currentLayerIndex;
         }
 

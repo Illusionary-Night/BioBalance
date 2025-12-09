@@ -45,7 +45,8 @@ public class TerrainGenerator : MonoBehaviour
         if (Instance != null && Instance != this) Destroy(this.gameObject);
         else Instance = this;
 
-        definitionLayerMap = new TerrainMap(TerrainType.Grass);
+        definitionLayerMap = new TerrainMap(TerrainType.Water);
+        GenerateMapData();
     }
 
     public TerrainMap GetDefinitionMap()
@@ -66,7 +67,7 @@ public class TerrainGenerator : MonoBehaviour
     public void GenerateMapData()
     {
         GenerateNoiseOffsetFromSeed(mapSeed);
-        if (definitionLayerMap == null) definitionLayerMap = new TerrainMap(TerrainType.Grass);
+        if (definitionLayerMap == null) definitionLayerMap = new TerrainMap(TerrainType.Water);
         if (Instance == null) Instance = this; // 確保編輯模式下 Instance 存在
 
         for (int x = 0; x < mapWidth; x++)
@@ -83,8 +84,8 @@ public class TerrainGenerator : MonoBehaviour
 
     public void ClearData()
     {
-        // 重新初始化為一個新的、空的草地地圖，或者設為 null
-        definitionLayerMap = new TerrainMap(TerrainType.Grass);
+        // 重新初始化為一個新的、空的地圖，或者設為 null
+        definitionLayerMap = new TerrainMap(TerrainType.Water);
         Debug.Log("TerrainGenerator: 數據已重置。");
     }
     // 柏林噪聲計算邏輯

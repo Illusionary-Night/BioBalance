@@ -46,7 +46,7 @@ public static class ActionSystem
             }
         }
 
-        Debug.Log($"Total registered actions: {actions.Count}");
+        //Debug.Log($"Total registered actions: {actions.Count}");
     }
 
     public static bool IsConditionMet(Creature creature, ActionType actiontype)

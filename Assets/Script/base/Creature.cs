@@ -228,7 +228,7 @@ public class Creature : MonoBehaviour, ITickable
             GameObject meat_prefab = Resources.Load<GameObject>("Prefabs/Edible/Meat");
             Instantiate(meat_prefab, transform.position, Quaternion.identity, Manager.Instance.EnvironmentEntities)
                 .GetComponent<Edible>()
-                .Initialize(Vector2Int.RoundToInt(transform.position));
+                .Initialize();
         }
         else
         {
@@ -250,8 +250,8 @@ public class Creature : MonoBehaviour, ITickable
         //test
         if (movement != null && movement.path != null)
         {
-            Debug.Log("path exist: " + (movement.path != null));
-            Debug.Log("Des:" + movement.GetDestination());
+            //Debug.Log("path exist: " + (movement.path != null));
+            //Debug.Log("Des:" + movement.GetDestination());
         }
         
         //回血、餓死、老死、繁殖冷卻
@@ -308,6 +308,17 @@ public class Creature : MonoBehaviour, ITickable
             movement.MoveOnTick();
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        movement.isColliding = true;
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        movement.isColliding = false;
+    }
+
     // 巢狀類別：Movement
     private class Movement
     {
@@ -321,6 +332,7 @@ public class Creature : MonoBehaviour, ITickable
         private int stuckCounter = 0;
         private Vector2 lastRecordedPosition;
         private bool awake;
+        public bool isColliding = false;
 
         public Movement(Creature owner)
         {
@@ -345,7 +357,7 @@ public class Creature : MonoBehaviour, ITickable
 
         void PreventDrifting()
         {
-            if (rb.linearVelocity != Vector2.zero)
+            if (rb.linearVelocity != Vector2.zero && !isColliding)
             {
                 rb.linearVelocity = Vector2.zero;
             }
@@ -356,7 +368,7 @@ public class Creature : MonoBehaviour, ITickable
             // 安全檢查
             if (owner == null || owner.isDead) return;
 
-            Debug.Log("Distance: " + Vector2.Distance(TempGetCurrentPosition(), Destination));
+            //Debug.Log("Distance: " + Vector2.Distance(TempGetCurrentPosition(), Destination));
             if (!awake) return;
             if (path == null)
             {
@@ -408,18 +420,18 @@ public class Creature : MonoBehaviour, ITickable
                 Debug.Log("awake/path is null" + awake + " " + path);
             }
 
-            // 正確做法：記錄「預期」的移動位置
+            // 記錄「預期」的移動位置
             lastRecordedPosition = expectedPos;
         }
 
 
-        // 導航（呼叫你的 A* 或其它尋路系統）
+        // 導航呼叫 A* 或其它尋路系統
         public void Navigate()
         {
             // 安全檢查
             if (owner == null || owner.isDead) return;
 
-            Debug.Log("Navigate");
+            //Debug.Log("Navigate");
             Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
             Vector2Int goal = Destination;
 
