@@ -64,16 +64,8 @@ public class ActionStateMachine
             // 如果有正在執行的 Action，先清理
             if (IsExecuting)
             {
-                if (currentContext.ActionType == selectedAction)
-                {
-                    // 如果正在執行的 Action 與選中的相同，則不需要重新執行
-                    return;
-                }
-                else
-                {
-                    // 取消當前 Action
-                    CancelCurrentAction();
-                }
+                // 取消當前 Action
+                CancelCurrentAction();
             }
 
             if (ActionSystem.IsSuccess(owner, selectedAction))

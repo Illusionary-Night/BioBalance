@@ -27,7 +27,7 @@ public static class CreaturePool
     // Factory method to create a new Creature instance
     private static Creature CreateCreature()
     {
-        GameObject prefab = Resources.Load<GameObject>("Prefabs/Creature");
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Species/EmptyCreature");
         return GameObject.Instantiate(prefab).GetComponent<Creature>();
     }
 
