@@ -280,11 +280,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f13fee27070a104a9dff6c28c4300ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Creature
-  currentAction: 0
   weightedActionList: 000000000100000003000000
   species_ID: 0
-  size: 0
   _UUID: 
+  size: 0
   speed: 0
   base_health: 0
   reproduction_rate: 0
@@ -295,13 +294,10 @@ MonoBehaviour:
   predator_ID_list: 
   action_list: 
   sleeping_head: 0
-  SleepingHead: 0
   sleeping_tail: 0
-  SleepingTail: 0
   perceptionRange: 0
   hungerRate: 0
   maxHunger: 0
-  reproductionInterval: 0
   healthRegeneration: 0
   foodTypes: 
   body: 0
@@ -309,8 +305,8 @@ MonoBehaviour:
   hunger: 0
   health: 0
   age: 0
-  reproductionCooldown: 0
   actionCooldown: 0
+  currentAction: 0
 --- !u!212 &805884279
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -962,22 +958,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestRunner
   ManualControl: 0
-  CreatureAttributes:
-    species_ID: 1
-    size: 1
-    speed: 5
-    base_health: 100
-    reproduction_rate: 2000
-    attack_power: 1
-    lifespan: 5000
-    variation: 0.01
-    perception_range: 20
-    sleeping_head: 1
-    sleeping_tail: 5
-    foodTypes: 00000000
-    prey_ID_list: 
-    predator_ID_list: 
-    action_list: 010000000000000003000000
+  goat: {fileID: 11400000, guid: 5fccf5b44f4c8e040999e493a7404c96, type: 2}
   CreatureObject: {fileID: 805884277}
 --- !u!114 &1645334815
 MonoBehaviour:
