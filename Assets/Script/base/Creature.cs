@@ -58,9 +58,11 @@ public partial class Creature : MonoBehaviour, ITickable
         {
             // Spawn food item
             GameObject meat_prefab = Resources.Load<GameObject>("Prefabs/Edible/Meat");
+
             Instantiate(meat_prefab, transform.position, Quaternion.identity, Manager.Instance.EnvironmentEntities)
                 .GetComponent<Edible>()
                 .Initialize();
+            //Manager.Instance.FoodItems.Add(transform.position,meat_prefab);
         }
         else
         {

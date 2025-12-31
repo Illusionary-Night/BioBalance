@@ -53,7 +53,7 @@ class EatAction : ActionBase
                     }
                     else
                     {
-                        Debug.LogWarning("food is null");
+                        Debug.Log("food is null");
                     }
                     
                     // 標記 Action 完成

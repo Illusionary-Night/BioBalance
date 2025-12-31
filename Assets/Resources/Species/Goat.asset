@@ -15,18 +15,18 @@ MonoBehaviour:
   attributes:
     species_ID: 1
     size: 1
-    speed: 13.4
+    speed: 14
     base_health: 91.4
-    reproduction_rate: 0.726
+    reproduction_rate: 1
     attack_power: 0
     lifespan: 1768
     variation: 0
     perception_range: 10
-    sleeping_head: 55
-    sleeping_tail: 64
+    sleeping_head: 59
+    sleeping_tail: 86
     foodTypes: 0000000001000000
-    prey_ID_list: 00000000
+    prey_ID_list: 0000000000000000
     predator_ID_list: 00000000
     action_list: 000000000300000001000000
   _cdKeys: 000000000100000003000000
-  _cdValues: 6400000014000000f4010000
+  _cdValues: 640000001400000064000000
