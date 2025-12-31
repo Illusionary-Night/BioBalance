@@ -4,8 +4,8 @@ using UnityEngine;
 public class MoveAction : ActionBase
 {
 	public override ActionType Type => ActionType.Move;
-	public override int Cooldown => 10;
-	[SerializeField] private static readonly int MoveDistance = 100;
+	//public override int Cooldown => 10;
+	//[SerializeField] private static readonly int MoveDistance = 100;
 
     public override bool IsConditionMet(Creature creature)
 	{
@@ -32,9 +32,10 @@ public class MoveAction : ActionBase
         //Debug.Log("move");
         // 隨機移動到鄰近位置
         Vector2Int currentPosition = creature.GetRoundedPosition();
-
-		Vector2Int randomDisplacement = new(Random.Range(-MoveDistance, MoveDistance + 1), Random.Range(-MoveDistance, MoveDistance + 1));
-		Vector2Int newPosition = currentPosition + randomDisplacement;
+        int rangeInt = Mathf.FloorToInt(creature.PerceptionRange);
+        Vector2Int randomDisplacement = new(Random.Range(-rangeInt, rangeInt + 1), Random.Range(-rangeInt, rangeInt + 1));
+        //Vector2Int randomDisplacement = new(Random.Range(-MoveDistance, MoveDistance + 1), Random.Range(-MoveDistance, MoveDistance + 1));
+        Vector2Int newPosition = currentPosition + randomDisplacement;
 
         // 呼叫Creature自行導航地點
 		creature.MoveTo(newPosition);

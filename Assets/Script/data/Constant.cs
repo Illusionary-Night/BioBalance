@@ -54,6 +54,7 @@ public struct CreatureAttributes
     public List<int> prey_ID_list;       //新增食物列表
     public List<int> predator_ID_list;   //新增天敵列表
     public List<ActionType> action_list;
+    public Dictionary<ActionType, int> action_max_CD;
 }
 [System.Serializable]
 public struct Species
@@ -64,7 +65,7 @@ public struct Species
 public static class AttributesCalculator{
     public static float CalculateHungerRate(float size, float speed, float attack_power)
     {
-        return (size * speed + attack_power)/50;
+        return (size * speed + attack_power/20)/100;
     }
     public static float CalculateMaxHunger(float size, float base_health, List<FoodType> foods)
     {
@@ -80,7 +81,7 @@ public static class AttributesCalculator{
     }
     public static float CalculateHealthRegeneration(float base_health, float size, float sleeping_time)
     {
-        return base_health * sleeping_time / size;
+        return base_health * sleeping_time / size /100000;
     }
 }
 

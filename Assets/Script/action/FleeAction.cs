@@ -7,7 +7,7 @@ public class FleeAction : ActionBase
     public FleeAction() { }
 
     public override ActionType Type => ActionType.Flee;
-    public override int Cooldown => 3;
+    //public override int Cooldown => 3;
     [SerializeField] private static readonly int FleeRange = 5;
     [SerializeField] private static readonly int PredationRange = 5;
     public override bool IsConditionMet(Creature creature)

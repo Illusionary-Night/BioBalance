@@ -4,13 +4,13 @@ public class TestRunner : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] public bool ManualControl = true;
-    [SerializeField] public CreatureAttributes CreatureAttributes;
+    [SerializeField] public _Species goat;
     [SerializeField] public GameObject CreatureObject;
     private Creature creature;
     void Start()
     {
         //ActionSystem.DebugRegisteredActions();
-        CreatureObject.GetComponent<Creature>().Initialize(CreatureAttributes, CreatureObject);
+        CreatureObject.GetComponent<Creature>().Initialize(goat.attributes, CreatureObject);
         creature = CreatureObject.GetComponent<Creature>();
     }
 
@@ -31,11 +31,4 @@ public class TestRunner : MonoBehaviour
             creature.ForceNavigate();
         }
     }
-
-    // ���z�B�J
-    //void FixedUpdate()
-    //{
-    //    if (creature != null)
-    //        creature.OnTick(); // <- �I�s Movement.FixedTick() ����
-    //}
 }

@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 class EatAction : ActionBase
 {
     public override ActionType Type => ActionType.Eat;
-    public override int Cooldown => 10;
+    //public override int Cooldown => 10;
     
     public override bool IsConditionMet(Creature creature)
     {
@@ -47,7 +47,7 @@ class EatAction : ActionBase
                     // 檢查食物是否仍然存在
                     if (food != null)
                     {
-                        Debug.LogWarning("eat");
+                        //Debug.LogWarning("eat");
                         food.Eaten();
                         creature.Hunger = Mathf.Min(creature.Hunger + food.NutritionalValue, creature.MaxHunger);
                     }

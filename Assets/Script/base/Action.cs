@@ -63,7 +63,7 @@ public static class ActionSystem
 
     public static int GetCooldown(Creature creature, ActionType actiontype)
     {
-        return actions.TryGetValue(actiontype, out var f) ? f.Cooldown : 0;
+        return creature?.GetActionCooldown(actiontype) ?? 0;
     }
 
     public static bool IsSuccess(Creature creature, ActionType actiontype)
@@ -76,7 +76,7 @@ public static class ActionSystem
         if (actions.TryGetValue(actiontype, out var f))
         {
             f.Execute(creature, context);
-            creature.SetActionCooldown(actiontype, f.Cooldown);
+            creature.ResetActionCooldown(actiontype);
         }
     }
 }
@@ -86,7 +86,7 @@ public abstract class ActionBase
     protected ActionBase() { }
 
     public abstract ActionType Type { get; }
-    public abstract int Cooldown { get; }
+    //public abstract int Cooldown { get; }
 
     public abstract bool IsConditionMet(Creature creature);
     public abstract float GetWeight(Creature creature);

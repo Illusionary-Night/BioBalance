@@ -10,6 +10,12 @@ public class ActionStateMachine
     private ActionContext currentContext;
     private System.Action<Vector2Int> currentMovementCallback;
 
+    //給creature editor那邊監控用---
+    public bool HasMovementCallback => currentMovementCallback != null;
+    public string CurrentActionName => currentContext?.ActionType.ToString() ?? "None";
+    //----------
+
+
     // 用於追蹤哪些事件處理器需要在清理時移除
     private List<System.Delegate> registeredCallbacks = new();
 
