@@ -37,7 +37,7 @@ public abstract class Edible : MonoBehaviour, ITickable
 
     public virtual void Eaten()
     {
-        Debug.Log("eaten");
+        //Debug.Log("eaten");
         Destroy(this.gameObject);
     }
 

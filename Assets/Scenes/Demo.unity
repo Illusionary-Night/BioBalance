@@ -393,7 +393,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 3
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: 9a2820d88a77cd74db217d4573a2112c, type: 2}
@@ -441,8 +441,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.028297424, y: 0.007080078}
-  m_Radius: 2.6434555
+  m_Offset: {x: 0.028297424, y: -0.028923035}
+  m_Radius: 1.3471756
 --- !u!1 &847012862
 GameObject:
   m_ObjectHideFlags: 0

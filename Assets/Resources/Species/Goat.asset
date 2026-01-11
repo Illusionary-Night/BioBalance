@@ -15,7 +15,7 @@ MonoBehaviour:
   attributes:
     species_ID: 1
     size: 1
-    speed: 13.4
+    speed: 7.1
     base_health: 91.4
     reproduction_rate: 0.726
     attack_power: 0
@@ -27,6 +27,6 @@ MonoBehaviour:
     foodTypes: 0000000001000000
     prey_ID_list: 00000000
     predator_ID_list: 00000000
-    action_list: 000000000300000001000000
-  _cdKeys: 000000000100000003000000
-  _cdValues: 6400000014000000f4010000
+    action_list: 03000000010000000600000000000000
+  _cdKeys: 00000000010000000300000006000000
+  _cdValues: 500000003c000000f401000014000000

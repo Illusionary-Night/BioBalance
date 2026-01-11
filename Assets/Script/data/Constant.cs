@@ -9,6 +9,7 @@ using UnityEngine;
 public class constantData : MonoBehaviour
 {
     public const int NORMALSIZE = 1;
+    public const int STOCKLIMIT = 5;
 }
 
 
@@ -26,7 +27,8 @@ public enum ActionType
     Sleep,
     Reproduce,
     Attack,
-    Flee
+    Flee,
+    Daze
 }
 
 public enum FoodType
@@ -112,4 +114,9 @@ public static class DefaultTerrainCosts
         { TerrainType.Ice, 1.2f }
     };
 
+}
+
+public enum Direction
+{
+    None, North, South, East, West, Northwest, Southwest, Northeast, Southeast
 }

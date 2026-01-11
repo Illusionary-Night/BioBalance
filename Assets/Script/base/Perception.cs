@@ -40,6 +40,7 @@ public static class Perception
                 if (target_ID != each_species.attributes.species_ID) continue;
                 foreach (var each_creature in each_species.creatures)
                 {
+                    if (each_creature == null) continue;
                     float distance = Vector2.Distance(current_creature.transform.position, each_creature.transform.position);
                     if (distance > current_creature.PerceptionRange) continue;
                     count++;

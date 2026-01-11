@@ -1,4 +1,12 @@
-﻿using System.Collections;
+﻿/*
+ * [區段名稱] Hurt Section
+ * [區段說明] 負責 Creature 的生命值管理與受擊方向偵測。
+ * [主要功能] 接收傷害數值、將攻擊者座標轉換為 8 向受擊方位、提供受擊狀態查詢。
+ * [可用函式] void Hurt(int), void Hurt(int, Vector2), bool UnderAttack(), Direction GetUnderAttackDirection(), Direction GetAndResetDirection()
+ * [測試區域] Inspector中的Debug Tools有拉桿可以設定受到攻擊的方向。
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using System;
 //using Unity.VisualScripting;
@@ -99,7 +107,7 @@ public partial class Creature : MonoBehaviour, ITickable
             }
             else
             {
-                Debug.Log("殺死");
+                //Debug.Log("殺死");
                 Die();
                 return;
             }
@@ -120,7 +128,7 @@ public partial class Creature : MonoBehaviour, ITickable
             }
             else
             {
-                Debug.Log("餓死");
+                //Debug.Log("餓死");
                 Die();
                 return;
             }
@@ -140,19 +148,12 @@ public partial class Creature : MonoBehaviour, ITickable
             }
             else
             {
-                Debug.Log("老死");
+                //Debug.Log("老死");
                 Die();
                 return;
             }
         }
         
-        
-        ////繁殖冷卻
-        //if (ReproductionCooldown > 0)
-        //{
-        //    ReproductionCooldown -= 1;
-        //}
-
         //行動冷卻
         if (ActionCooldown > 0)
         {
@@ -171,11 +172,10 @@ public partial class Creature : MonoBehaviour, ITickable
         {
             DoAction();
         }
-        
-        if (movement != null)
-        {
-            movement.MoveOnTick();
-        }
+
+        movement?.MoveOnTick();
+
+
     }
     public void ResetAllCooldowns()
     {
@@ -190,4 +190,66 @@ public partial class Creature : MonoBehaviour, ITickable
     {
         this.isInvincible = isInvincible;
     }
+
+    //Hurt Section---------------------------------------------------------------------------
+
+    /// <summary> 執行基礎傷害扣血，並確保生命值不低於 0 </summary>
+    public void Hurt(int damage)
+    {
+        under_attack_direction = Direction.None;
+        health -= damage;
+        health = Mathf.Max(health, 0);
+    }
+
+    /// <summary> 執行傷害並記錄攻擊來源方位，用於觸發受傷逃跑判定或者之後進一步的動畫或特效 </summary>
+    public void Hurt(int damage, Vector2 attackerPosition)
+    {
+        // 計算攻擊者相對於自己的方位向量
+        Vector2 direction = attackerPosition - (Vector2)transform.position;
+        under_attack_direction = GetDirectionFromVector(direction);
+        health -= damage;
+        health = Mathf.Max(health, 0);
+    }
+
+    /// <summary> 將向量轉換為 8 方向列舉，以 45 度角為一個判斷區間 </summary>
+    private Direction GetDirectionFromVector(Vector2 direction)
+    {
+        if (direction.sqrMagnitude < 0.001f) return Direction.None;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        if (angle < 0) angle += 360;
+
+        if (angle >= 337.5f || angle < 22.5f) return Direction.East;
+        if (angle >= 22.5f && angle < 67.5f) return Direction.Northeast;
+        if (angle >= 67.5f && angle < 112.5f) return Direction.North;
+        if (angle >= 112.5f && angle < 157.5f) return Direction.Northwest;
+        if (angle >= 157.5f && angle < 202.5f) return Direction.West;
+        if (angle >= 202.5f && angle < 247.5f) return Direction.Southwest;
+        if (angle >= 247.5f && angle < 292.5f) return Direction.South;
+        if (angle >= 292.5f && angle < 337.5f) return Direction.Southeast;
+
+        return Direction.None;
+    }
+
+    /// <summary> 檢查目前是否處於受擊狀態（方位不為 None 代表受擊中） </summary>
+    public bool UnderAttack()
+    {
+        return under_attack_direction != Direction.None;
+    }
+
+    /// <summary> 取得受擊方位</summary>
+    public Direction GetUnderAttackDirection()
+    {
+        return under_attack_direction;
+    }
+
+    /// <summary> 取得受擊方位並立刻重置狀態，確保單次受傷僅觸發一次反應 </summary>
+    public Direction GetAndResetUnderAttackDirection()
+    {
+        Direction result = under_attack_direction;
+        under_attack_direction = Direction.None;
+        return result;
+    }
+    //Hurt Section-------------------------------------------------------------------------
+
 }

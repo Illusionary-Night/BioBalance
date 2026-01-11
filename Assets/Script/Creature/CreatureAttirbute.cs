@@ -13,7 +13,7 @@ public partial class Creature : MonoBehaviour, ITickable {
     private Dictionary<ActionType, int> action_max_CD = new();
 
     [SerializeField] private string _UUID;
-    public string UUID { get => _UUID; }//-------------------------------------------------------haven't use
+    public string UUID { get => _UUID; }
     // Player Design---------------------------------------------------------------------------
     [Header("Player Design")]
     [SerializeField] private float size;
@@ -50,9 +50,6 @@ public partial class Creature : MonoBehaviour, ITickable {
     [SerializeField] private float maxHunger;
     public float MaxHunger { get => maxHunger; private set => maxHunger = value; }
 
-    //[SerializeField] private float reproductionInterval;
-    //public float ReproductionInterval { get => reproductionInterval; private set => reproductionInterval = value; }
-
     [SerializeField] private float healthRegeneration;
     public float HealthRegeneration { get => healthRegeneration; private set => healthRegeneration = value; }
 
@@ -75,14 +72,13 @@ public partial class Creature : MonoBehaviour, ITickable {
     [SerializeField] private float age;
     public float Age { get => age; set => age = value; }
 
-    //[SerializeField] private float reproductionCooldown;
-    //public float ReproductionCooldown { get => reproductionCooldown; private set => reproductionCooldown = value; }
-
     [SerializeField] private int actionCooldown;
     public int ActionCooldown { get => actionCooldown; set => actionCooldown = value; }
 
     [SerializeField] private ActionType currentAction;
     public ActionType CurrentAction { get => currentAction; set => currentAction = value; }
+
+    [SerializeField] private Direction under_attack_direction;
 
 
     public void AttributeInheritance(CreatureAttributes creatureAttributes, GameObject creature_object)

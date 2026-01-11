@@ -33,7 +33,7 @@ public class Manager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         tick_timer += Time.deltaTime;
         if (tick_timer >= tickInterval)

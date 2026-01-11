@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System.Reflection;
+using static Perception;
 
 [CustomEditor(typeof(Creature))]
 public class CreatureEditor : Editor
@@ -14,6 +15,7 @@ public class CreatureEditor : Editor
 
     // 一些function內部的變數，為了不被刷新只能定在這裡
     private Vector2Int testPos = Vector2Int.zero;
+    private float testAngle = 0f;
     public override void OnInspectorGUI()
     {
         Creature creature = (Creature)target;
@@ -106,6 +108,9 @@ public class CreatureEditor : Editor
         EditorGUILayout.LabelField($"Current Action: {creature.CurrentAction}");
 
         EditorGUILayout.LabelField($"Distance: {creature.GetDistanceToDestination()}");
+
+        EditorGUILayout.LabelField($"StuckTimes: {creature.GetMovementStuckTimes()}");
+
         // 讓畫面在執行時動態刷新
         if (Application.isPlaying) Repaint();
     }
@@ -210,9 +215,49 @@ public class CreatureEditor : Editor
             creature.MoveTo(testPos);
         }
         EditorGUILayout.EndVertical();
+
+        DrawUnderAttackTest(creature);
     }
 
+    private void DrawUnderAttackTest(Creature creature) {
 
+        EditorGUILayout.LabelField("Direction Test", EditorStyles.boldLabel);
+
+        EditorGUILayout.LabelField($"Under Attack Direction: {creature.GetUnderAttackDirection()}");
+        EditorGUILayout.LabelField($"Remain HP: {creature.Health}");
+
+        // 1. 使用滑桿調整角度
+        testAngle = EditorGUILayout.Slider("Test Angle", testAngle, 0, 360);
+
+        // 2. 繪製一個簡易的視覺化小圓盤
+        Rect rect = GUILayoutUtility.GetRect(80, 80);
+        if (Event.current.type == EventType.Repaint)
+        {
+            Vector2 center = rect.center;
+            Handles.color = Color.grey;
+            Handles.DrawWireDisc(center, Vector3.forward, 35f); // 畫圓圈
+
+            // 畫出指針
+            float rad = testAngle * Mathf.Deg2Rad;
+            Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
+            Handles.color = Color.red;
+            Handles.DrawLine(center, center + dir * 35f);
+        }
+
+        if (GUILayout.Button("Hurt from that Angle"))
+        {
+            float rad = testAngle * Mathf.Deg2Rad;
+            Vector2 spawnPos = (Vector2)creature.transform.position + new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
+            creature.Hurt(10, spawnPos);
+        }
+        if (GUILayout.Button("Hurt without Direction"))
+        {
+            creature.Hurt(10);
+        }
+
+        // 讓畫面在執行時動態刷新
+        if (Application.isPlaying) Repaint();
+    }
     private void DrawColoredProgressBar(Rect rect, float value, string text, Color barColor)
     {
         // 畫背景 (深灰色)
@@ -296,9 +341,8 @@ public class CreatureEditor : Editor
         EditorGUILayout.BeginVertical("box");
         EditorGUILayout.LabelField("World Visualizer", EditorStyles.boldLabel);
 
-        if (GUILayout.Button("📍 Show Destination In Scene", GUILayout.Height(30)))
+        if (GUILayout.Button("Show Destination In Scene", GUILayout.Height(30)))
         {
-            // 取得生物的目的地（利用你之前的 GetDestination 方法）
             Vector2Int dest = creature.GetMovementDestination();
 
             if (IndicatorController.Instance != null)
