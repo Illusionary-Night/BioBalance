@@ -21,7 +21,7 @@ MonoBehaviour:
     attack_power: 0
     lifespan: 1768
     variation: 0
-    perception_range: 10
+    perception_range: 15
     sleeping_head: 55
     sleeping_tail: 64
     foodTypes: 0000000001000000
@@ -29,4 +29,4 @@ MonoBehaviour:
     predator_ID_list: 00000000
     action_list: 03000000010000000600000000000000
   _cdKeys: 00000000010000000300000006000000
-  _cdValues: 500000003c000000f401000014000000
+  _cdValues: 500000002d0000002c01000014000000

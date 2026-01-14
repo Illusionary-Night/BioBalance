@@ -89,6 +89,7 @@ public class Manager : MonoBehaviour
     }
     public void RegisterCreature(Creature new_creature)
     {
+        //Debug.Log($"[Manager] 請求註冊生物, ID: {new_creature.SpeciesID}_{new_creature.UUID}");
         Species itsSpecies = new();
         bool is_new_species = true;
         foreach (var each_species in species)
@@ -108,16 +109,53 @@ public class Manager : MonoBehaviour
         }
         itsSpecies.creatures.Add(new_creature);
         //PredatorUpdate(new_creature);
+        // 列印目前的族群現況
+        //foreach (var s in species)
+        //{
+        //    Debug.Log($"族群 {s.attributes.species_ID} 當前剩餘: {s.creatures.Count}");
+        //    foreach(var c in s.creatures)
+        //    {
+        //        Debug.Log($"族群 {s.attributes.species_ID} 生物 {c.UUID}");
+        //    }
+        //}
     }
     public void UnregisterCreature(Creature dead_creature)
     {
-        foreach (var each_species in species)
+        if (dead_creature == null) return;
+
+        //Debug.Log($"[Manager] 請求註銷生物, ID: {dead_creature.SpeciesID}_{dead_creature.UUID}");
+        bool success = false;
+
+        // 使用 for 迴圈直接透過索引存取 List 內部的 struct
+        for (int i = 0; i < species.Count; i++)
         {
-            if (each_species.attributes.species_ID == dead_creature.SpeciesID)
+            if (species[i].attributes.species_ID == dead_creature.SpeciesID)
             {
-                each_species.creatures.Remove(dead_creature);
+                for(int j = 0; j < species[i].creatures.Count; j++)
+                {
+                    if (species[i].creatures[j].UUID == dead_creature.UUID)
+                    {
+                        species[i].creatures.RemoveAt(j);
+                    }
+                }
+                success = true; // 修正：記得標記成功
             }
         }
+
+        if (!success)
+        {
+            Debug.LogError($"[Manager] 註銷失敗！找不到 SpeciesID 為 {dead_creature.SpeciesID} 的族群");
+        }
+
+        // 列印目前的族群現況
+        //foreach (var s in species)
+        //{
+        //    Debug.Log($"族群 {s.attributes.species_ID} 當前剩餘: {s.creatures.Count}");
+        //    foreach (var c in s.creatures)
+        //    {
+        //        Debug.Log($"族群 {s.attributes.species_ID} 生物 {c.UUID}");
+        //    }
+        //}
     }
     // spawn the edible item
     private void SpawnEdible()

@@ -15,15 +15,6 @@ public partial class Creature : MonoBehaviour, ITickable
     // 移動完成事件
     public event System.Action<Vector2Int> OnMovementComplete;
 
-    public void OnEnable()
-    {
-        Manager.OnTick += OnTick;
-    }
-    public void OnDisable()
-    {
-        Manager.OnTick -= OnTick;
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         movement.isColliding = true;

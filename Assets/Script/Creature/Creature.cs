@@ -17,7 +17,14 @@ using System.IO;
 
 public partial class Creature : MonoBehaviour, ITickable
 {
-
+    public void OnEnable()
+    {
+        Manager.OnTick += OnTick;
+    }
+    public void OnDisable()
+    {
+        Manager.OnTick -= OnTick;
+    }
 
     // 防止重複銷毀和訪問已銷毀物件的標記
     private bool isDead = false;
@@ -180,7 +187,6 @@ public partial class Creature : MonoBehaviour, ITickable
     public void ResetAllCooldowns()
     {
         ActionCooldown = 0;
-        //ReproductionCooldown = 0;
         // 清空字典中的冷卻
         var keys = new List<ActionType>(actionCD.Keys);
         foreach (var key in keys) actionCD[key] = 0;

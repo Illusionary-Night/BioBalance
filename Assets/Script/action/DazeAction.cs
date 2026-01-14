@@ -7,7 +7,6 @@ public class DazeAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
 	{
-		// 永遠可以移動
 		return true;
 	}
 

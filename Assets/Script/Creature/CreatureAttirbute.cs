@@ -111,7 +111,7 @@ public partial class Creature : MonoBehaviour, ITickable {
         //ReproductionInterval = AttributesCalculator.CalculateReproductionInterval(Size, BaseHealth);
         HealthRegeneration = AttributesCalculator.CalculateHealthRegeneration(BaseHealth, Size, SleepTime);
         //ªì©lª¬ºA
-        Hunger = MaxHunger;
+        Hunger = MaxHunger/2;
         Health = BaseHealth;
         Age = 0;
         //ReproductionCooldown = 0;

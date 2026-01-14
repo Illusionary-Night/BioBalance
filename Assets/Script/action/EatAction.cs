@@ -19,7 +19,7 @@ class EatAction : ActionBase
     
     public override bool IsSuccess(Creature creature)
     {
-        return Random.Range(0,2)==0;
+        return Random.Range(0,10)<=7;
     }
     
     public override void Execute(Creature creature, ActionContext context = null)
