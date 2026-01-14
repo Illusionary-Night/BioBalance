@@ -80,8 +80,27 @@ public partial class Creature : MonoBehaviour, ITickable
             Manager.Instance.UnregisterCreature(this);
         }
         
-        Destroy(gameObject);
+        // 使用物件池回收，而不是直接銷毀
+        CreaturePool.ReleaseCreature(this);
     }
+
+    /// <summary>
+    /// 重置生物狀態（供物件池重用時調用）
+    /// </summary>
+    public void ResetState()
+    {
+        isDead = false;
+        isInvincible = false;
+        under_attack_direction = Direction.None;
+        
+        // 重置狀態機
+        actionStateMachine = null;
+        movement = null;
+        
+        // 重置冷卻
+        ResetAllCooldowns();
+    }
+
     public void OnTick()
     {
         // 安全檢查
