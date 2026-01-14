@@ -68,7 +68,13 @@ public static class ActionSystem
 
     public static bool IsSuccess(Creature creature, ActionType actiontype)
     {
-        return actions.TryGetValue(actiontype, out var f) && f.IsSuccess(creature);
+        bool success = actions.TryGetValue(actiontype, out var f) && f.IsSuccess(creature);
+        if (!success)
+        {
+            creature.ResetActionCooldown(actiontype);
+            //Debug.Log($"{actiontype} fail");
+        }
+        return success;
     }
 
     public static void Execute(Creature creature, ActionType actiontype, ActionContext context = null)

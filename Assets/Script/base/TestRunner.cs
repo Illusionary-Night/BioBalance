@@ -12,6 +12,7 @@ public class TestRunner : MonoBehaviour
         //ActionSystem.DebugRegisteredActions();
         CreatureObject.GetComponent<Creature>().Initialize(goat.attributes, CreatureObject);
         creature = CreatureObject.GetComponent<Creature>();
+        Manager.Instance.RegisterCreature(creature);
     }
 
     // Update is called once per frame

@@ -166,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TestRunner
   ManualControl: 0
   goat: {fileID: 11400000, guid: 5fccf5b44f4c8e040999e493a7404c96, type: 2}
-  CreatureObject: {fileID: 1321549414}
+  CreatureObject: {fileID: 1226668025}
 --- !u!4 &244281955
 Transform:
   m_ObjectHideFlags: 0
@@ -642,7 +642,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1321549414
+--- !u!1 &1226668025
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -650,11 +650,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1321549419}
-  - component: {fileID: 1321549418}
-  - component: {fileID: 1321549417}
-  - component: {fileID: 1321549416}
-  - component: {fileID: 1321549415}
+  - component: {fileID: 1226668030}
+  - component: {fileID: 1226668029}
+  - component: {fileID: 1226668028}
+  - component: {fileID: 1226668027}
+  - component: {fileID: 1226668026}
   m_Layer: 0
   m_Name: Goat
   m_TagString: Untagged
@@ -662,13 +662,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!58 &1321549415
+--- !u!58 &1226668026
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1321549414}
+  m_GameObject: {fileID: 1226668025}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -696,22 +696,22 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.028297424, y: 0.007080078}
-  m_Radius: 2.6434555
---- !u!50 &1321549416
+  m_Offset: {x: 0.028297424, y: -0.028923035}
+  m_Radius: 1.3471756
+--- !u!50 &1226668027
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1321549414}
+  m_GameObject: {fileID: 1226668025}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 3
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: 9a2820d88a77cd74db217d4573a2112c, type: 2}
@@ -725,13 +725,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &1321549417
+--- !u!114 &1226668028
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1321549414}
+  m_GameObject: {fileID: 1226668025}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2f13fee27070a104a9dff6c28c4300ab, type: 3}
@@ -764,13 +764,14 @@ MonoBehaviour:
   age: 0
   actionCooldown: 0
   currentAction: 0
---- !u!212 &1321549418
+  under_attack_direction: 0
+--- !u!212 &1226668029
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1321549414}
+  m_GameObject: {fileID: 1226668025}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -822,13 +823,13 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!4 &1321549419
+--- !u!4 &1226668030
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1321549414}
+  m_GameObject: {fileID: 1226668025}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 251.53, y: 250.34, z: 0}
@@ -1398,5 +1399,5 @@ SceneRoots:
   - {fileID: 244281955}
   - {fileID: 357938613}
   - {fileID: 739288335}
-  - {fileID: 1321549419}
   - {fileID: 423214107}
+  - {fileID: 1226668030}
