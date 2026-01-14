@@ -40,7 +40,7 @@ public class ReproduceAction : ActionBase
     public override void Execute(Creature creature, ActionContext context = null)
     {
         int creature_num = 0;
-        Manager.Instance.RegisterCreature(creature);
+        //Manager.Instance.RegisterCreature(creature);
         creature.MoveTo(creature.GetRoundedPosition());   
         foreach (var each_species in Manager.Instance.Species)
         {
@@ -50,13 +50,10 @@ public class ReproduceAction : ActionBase
             }
         }
         
-        GameObject new_game_object = UnityEngine.Object.Instantiate(creature.gameObject);
-        new_game_object.name = "creature " + creature.SpeciesID + "." + creature_num;
-        Creature new_creature = new_game_object.GetComponent<Creature>();
-        new_creature.Initialize(creature.ToCreatureAttribute(), new_game_object);
-        new_creature.transform.position = creature.transform.position + new Vector3(Random.value%100/100, Random.value%100/100, 0);
-        
-        //creature.ReproductionCooldown = creature.ReproductionInterval;
+        // 使用物件池取得新生物
+        Vector3 spawnPosition = creature.transform.position + new Vector3(Random.value % 100 / 100f, Random.value % 100 / 100f, 0);
+        Creature new_creature = CreaturePool.GetCreature(creature.ToCreatureAttribute(), spawnPosition);
+        new_creature.gameObject.name = "creature " + creature.SpeciesID + "." + creature_num;
 
         // 繁殖是立即完成的 Action
         context?.Complete();
