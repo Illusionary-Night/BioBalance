@@ -20,7 +20,7 @@ public class StatisticsTableEditor : EditorWindow
     private float lastUpdateTime = 0f;
     private const float updateInterval = 0.5f; // 每 0.5 秒紀錄一次數據，避免過快
 
-    [MenuItem("Window/Ecosystem/Population Stats")]
+    [MenuItem("Window/BioBalance/Population Stats")]
     public static void ShowWindow()
     {
         StatisticsTableEditor window = GetWindow<StatisticsTableEditor>("生態統計表");
@@ -32,7 +32,7 @@ public class StatisticsTableEditor : EditorWindow
     }
     private void OnGUI()
     {
-        EditorGUILayout.LabelField("全族群監控面板 (測試版)", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("全族群監控面板", EditorStyles.boldLabel);
 
         if (allSpecies.Count == 0)
         {
