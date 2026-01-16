@@ -219,7 +219,7 @@ public partial class Creature : MonoBehaviour, ITickable
     //Hurt Section---------------------------------------------------------------------------
 
     /// <summary> 執行基礎傷害扣血，並確保生命值不低於 0 </summary>
-    public void Hurt(int damage)
+    public void Hurt(float damage)
     {
         under_attack_direction = Direction.None;
         health -= damage;
@@ -227,7 +227,7 @@ public partial class Creature : MonoBehaviour, ITickable
     }
 
     /// <summary> 執行傷害並記錄攻擊來源方位，用於觸發受傷逃跑判定或者之後進一步的動畫或特效 </summary>
-    public void Hurt(int damage, Vector2 attackerPosition)
+    public void Hurt(float damage, Vector2 attackerPosition)
     {
         // 計算攻擊者相對於自己的方位向量
         Vector2 direction = attackerPosition - (Vector2)transform.position;

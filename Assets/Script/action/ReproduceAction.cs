@@ -22,7 +22,7 @@ public class ReproduceAction : ActionBase
     public override bool IsSuccess(Creature creature)
     {
         // --- 參數設定 ---
-        float maxChance = 1f;       // 附近完全沒人時，最大的繁殖機率 (40%)
+        float maxChance = 0.7f;       // 附近完全沒人時，最大的繁殖機率 (40%)
         float crowdThreshold = 8f;    // 當附近達到 8 隻時，成功率降為幾乎為 0
         float steepness = 2f;         // 曲線陡峭度（數值越高，對擁擠越敏感）
 

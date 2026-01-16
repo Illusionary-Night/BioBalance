@@ -22,13 +22,14 @@ public enum BodyType
 
 public enum ActionType
 {
+    Daze,
     Move,
     Eat,
     Sleep,
     Reproduce,
     Attack,
     Flee,
-    Daze
+    Hunt
 }
 
 public enum FoodType

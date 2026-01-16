@@ -24,5 +24,6 @@ public class DazeAction : ActionBase
 	public override void Execute(Creature creature, ActionContext context = null)
 	{
 		creature.MoveTo(creature.GetRoundedPosition());
+        context?.Complete();
     }
 }
