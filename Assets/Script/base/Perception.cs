@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using static UnityEngine.GraphicsBuffer;
+using static Perception;
 
 public static class Perception
 {
@@ -61,7 +62,7 @@ public static class Perception
         // Retrieves a sorted list of all target creatures with the specified ID within perception range
         public static List<Creature> GetAllTargets(Creature current_creature, int target_ID)
         {
-            List<Creature> targetsUUID = new();
+            List<Creature> targets = new();
             foreach (var each_species in Manager.Instance.Species)
             {
                 if (target_ID != each_species.attributes.species_ID) continue;
@@ -69,11 +70,15 @@ public static class Perception
                 {
                     float distance = Vector2.Distance(current_creature.transform.position, each_creature.transform.position);
                     if (distance > current_creature.PerceptionRange) continue;
-                    targetsUUID.Add(each_creature);
+                    targets.Add(each_creature);
                 }
             }
-            targetsUUID.Sort();
-            return targetsUUID;
+            targets.Sort((x, y) => {
+                float distanceX = Vector2.Distance(current_creature.transform.position, x.transform.position);
+                float distanceY = Vector2.Distance(current_creature.transform.position, y.transform.position);
+                return distanceX.CompareTo(distanceY);
+            });
+            return targets;
         }
         // Retrieves a sorted list of all target creatures from the list of IDs within perception range
         public static List<Creature> GetAllTargets(Creature current_creature, List<int> target_ID_list)
@@ -83,7 +88,11 @@ public static class Perception
             {
                 targets.AddRange(GetAllTargets(current_creature, target_ID));
             }
-            targets.Sort();
+            targets.Sort((x, y) => {
+                float distanceX = Vector2.Distance(current_creature.transform.position, x.transform.position);
+                float distanceY = Vector2.Distance(current_creature.transform.position, y.transform.position);
+                return distanceX.CompareTo(distanceY);
+            });
             return targets;
         }
     }

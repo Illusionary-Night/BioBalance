@@ -72,6 +72,7 @@ public class SpeciesEditor : Editor
         // --- 分組設計：核心屬性 ---
         EditorGUILayout.BeginVertical("helpbox");
         EditorGUILayout.LabelField("Core Statistics", EditorStyles.miniBoldLabel);
+        attr.creautreBase = (CreatureBase)EditorGUILayout.EnumPopup("Creature Base Type", attr.creautreBase);
         attr.species_ID = EditorGUILayout.IntField("Species ID", attr.species_ID);
         attr.size = EditorGUILayout.Slider("Size", attr.size, 0.1f, 1f);
         attr.speed = EditorGUILayout.Slider("Speed", attr.speed, 0f, 20f);

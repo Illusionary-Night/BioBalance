@@ -9,7 +9,7 @@ public partial class Creature : MonoBehaviour, ITickable {
     public int SpeciesID { get => species_ID; private set => species_ID = value; }
 
     private Dictionary<ActionType, int> actionCD = new();
-    
+
     private Dictionary<ActionType, int> action_max_CD = new();
 
     [SerializeField] private string _UUID;
@@ -31,9 +31,9 @@ public partial class Creature : MonoBehaviour, ITickable {
     [SerializeField] private float variation;
     public float Variation { get => variation; private set => variation = value; }
     [SerializeField] private List<int> prey_ID_list = new List<int>();
-    public List<int> PreyIDList { get => prey_ID_list; private set => prey_ID_list = value; }       
+    public List<int> PreyIDList { get => prey_ID_list; private set => prey_ID_list = value; }
     [SerializeField] private List<int> predator_ID_list = new List<int>();
-    public List<int> PredatorIDList { get => predator_ID_list; private set => predator_ID_list = value; } 
+    public List<int> PredatorIDList { get => predator_ID_list; private set => predator_ID_list = value; }
     [SerializeField] private List<ActionType> action_list;
     public List<ActionType> ActionList { get => action_list; private set => action_list = value; }
     [SerializeField] private int sleeping_head;
@@ -42,6 +42,8 @@ public partial class Creature : MonoBehaviour, ITickable {
     public int SleepingTail { get => sleeping_tail; private set => sleeping_tail = value; }
     [SerializeField] private float perceptionRange;
     public float PerceptionRange { get => perceptionRange; private set => perceptionRange = value; }
+    [SerializeField] CreatureBase creautre_base;
+    public CreatureBase CreatureBase { get => CreatureBase; }
 
     [Header("Computer Calculation")]
     [SerializeField] private float hungerRate;
@@ -78,7 +80,7 @@ public partial class Creature : MonoBehaviour, ITickable {
     [SerializeField] private ActionType currentAction;
     public ActionType CurrentAction { get => currentAction; set => currentAction = value; }
 
-    [SerializeField] private Direction under_attack_direction;
+    [SerializeField] private Direction under_attack_direction; 
 
 
     public void AttributeInheritance(CreatureAttributes creatureAttributes, GameObject creature_object)
@@ -104,6 +106,7 @@ public partial class Creature : MonoBehaviour, ITickable {
         ActionList = new List<ActionType>(creatureAttributes.action_list);
         action_max_CD = creatureAttributes.action_max_CD;
         FoodTypes = creatureAttributes.foodTypes;
+        creautre_base = creatureAttributes.creautreBase;
         //計算衍生屬性
         SleepTime = SleepingTail - SleepingHead;
         HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
@@ -111,7 +114,7 @@ public partial class Creature : MonoBehaviour, ITickable {
         //ReproductionInterval = AttributesCalculator.CalculateReproductionInterval(Size, BaseHealth);
         HealthRegeneration = AttributesCalculator.CalculateHealthRegeneration(BaseHealth, Size, SleepTime);
         //初始狀態
-        Hunger = MaxHunger/2;
+        Hunger = MaxHunger;
         Health = BaseHealth;
         Age = 0;
         //ReproductionCooldown = 0;
@@ -138,6 +141,7 @@ public partial class Creature : MonoBehaviour, ITickable {
         attributes.predator_ID_list = PredatorIDList;
         attributes.action_list = ActionList;
         attributes.action_max_CD = action_max_CD;
+        attributes.creautreBase = creautre_base;
         return attributes;
     }
     public void ResetActionCooldown(ActionType actionType)

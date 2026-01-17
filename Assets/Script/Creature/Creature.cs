@@ -43,7 +43,8 @@ public partial class Creature : MonoBehaviour, ITickable
         movement = new Movement(this);
         // 初始化狀態機
         actionStateMachine = new ActionStateMachine(this);
-
+        // 生物圖片
+        SetCreatureSprite(creautre_base);
         OnEnable();
     }
     public void DoAction()
@@ -276,5 +277,24 @@ public partial class Creature : MonoBehaviour, ITickable
         return result;
     }
     //Hurt Section-------------------------------------------------------------------------
+
+
+    public void SetCreatureSprite(CreatureBase baseType)
+    {
+        // 1. 將 Enum 轉為字串 (例如 "Slime")
+        string spriteName = baseType.ToString();
+
+        // 2. 從 Resources 加載 (路徑需放在 Resources/Sprites/ 下)
+        Sprite loadedSprite = Resources.Load<Sprite>($"Sprites/{spriteName}");
+
+        if (loadedSprite != null)
+        {
+            GetComponent<SpriteRenderer>().sprite = loadedSprite;
+        }
+        else
+        {
+            Debug.LogError($"找不到對應圖片: Sprites/{spriteName}");
+        }
+    }
 
 }

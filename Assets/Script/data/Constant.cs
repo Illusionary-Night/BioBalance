@@ -23,13 +23,12 @@ public enum BodyType
 public enum ActionType
 {
     Daze,
-    Move,
+    Wander,
     Eat,
     Sleep,
     Reproduce,
     Attack,
-    Flee,
-    Hunt
+    Flee
 }
 
 public enum FoodType
@@ -58,6 +57,7 @@ public struct CreatureAttributes
     public List<int> predator_ID_list;   //新增天敵列表
     public List<ActionType> action_list;
     public Dictionary<ActionType, int> action_max_CD;
+    public CreatureBase creautreBase;
 }
 [System.Serializable]
 public struct Species
@@ -120,4 +120,10 @@ public static class DefaultTerrainCosts
 public enum Direction
 {
     None, North, South, East, West, Northwest, Southwest, Northeast, Southeast
+}
+
+public enum CreatureBase
+{
+    Slime,
+    Goat
 }

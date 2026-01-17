@@ -13,20 +13,21 @@ MonoBehaviour:
   m_Name: Slime
   m_EditorClassIdentifier: Assembly-CSharp::_Species
   attributes:
-    species_ID: 1
+    species_ID: 2
     size: 1
     speed: 7.1
-    base_health: 91.4
+    base_health: 30
     reproduction_rate: 0.726
     attack_power: 0
-    lifespan: 1768
+    lifespan: 500
     variation: 0.1
     perception_range: 15
     sleeping_head: 55
     sleeping_tail: 64
     foodTypes: 0000000001000000
     prey_ID_list: 00000000
-    predator_ID_list: 00000000
-    action_list: 03000000010000000600000000000000
-  _cdKeys: 00000000010000000300000006000000
-  _cdValues: 500000002d0000002c01000014000000
+    predator_ID_list: 01000000
+    action_list: 00000000010000000200000004000000
+    creautreBase: 0
+  _cdKeys: 00000000010000000400000002000000
+  _cdValues: 140000003c000000c800000028000000

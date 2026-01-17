@@ -5,38 +5,22 @@ public class TestRunner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] public bool ManualControl = true;
     [SerializeField] public _Species goat;
-    [SerializeField] public GameObject CreatureObject;
-    private Creature creature;
+    [SerializeField] public _Species slime;
+    [SerializeField] public GameObject GoatParent;
+    [SerializeField] public GameObject SlimeParent;
     void Start()
     {
-        //ActionSystem.DebugRegisteredActions();
-        CreatureObject.GetComponent<Creature>().Initialize(goat.attributes, CreatureObject);
-        creature = CreatureObject.GetComponent<Creature>();
-        Manager.Instance.RegisterCreature(creature);
+        // 使用物件池取得新生物
+        Vector3 spawnPosition = new Vector3(250,250,0);
+        Creature creature1 = CreaturePool.GetCreature(goat.attributes, spawnPosition,GoatParent.transform);
+        creature1.gameObject.name ="creature_"+creature1.SpeciesID+"_"+creature1.UUID;
+        Manager.Instance.RegisterCreature(creature1);
 
 
         // 使用物件池取得新生物
-        Vector3 spawnPosition = new Vector3(250,250,0);
-        Creature new_creature = CreaturePool.GetCreature(creature.ToCreatureAttribute(), spawnPosition);
-        new_creature.gameObject.name = new_creature.SpeciesID+"_"+new_creature.UUID;
-        Manager.Instance.RegisterCreature(new_creature);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // �ƹ�����G�]�w�ت��a
-        if (Input.GetMouseButtonDown(0) && ManualControl)
-        {
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2Int dest = Vector2Int.RoundToInt(new Vector2(worldPos.x, worldPos.y));
-            creature.MoveTo(dest);
-        }
-
-        // ���ť���G���s�ɯ�
-        if (Input.GetKeyDown(KeyCode.Space) && ManualControl)
-        {
-            creature.ForceNavigate();
-        }
+        Vector3 spawnPosition2 = new Vector3(255, 255, 0);
+        Creature creature2 = CreaturePool.GetCreature(slime.attributes, spawnPosition2,SlimeParent.transform);
+        creature2.gameObject.name = "creature_" + creature2.SpeciesID + "_" + creature2.UUID;
+        Manager.Instance.RegisterCreature(creature2);
     }
 }

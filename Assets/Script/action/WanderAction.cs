@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MoveAction : ActionBase
 {
-    public override ActionType Type => ActionType.Move;
+    public override ActionType Type => ActionType.Wander;
     //public override int Cooldown => 10;
     //[SerializeField] private static readonly int MoveDistance = 100;
 

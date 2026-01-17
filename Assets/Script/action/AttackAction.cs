@@ -4,9 +4,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HuntAction : ActionBase
+public class AttackAction : ActionBase
 {
-	public override ActionType Type => ActionType.Daze;
+	public override ActionType Type => ActionType.Attack;
 
     public override bool IsConditionMet(Creature creature)
 	{
@@ -48,7 +48,7 @@ public class HuntAction : ActionBase
                     // 檢查目標是否仍然存在
                     if (target != null)
                     {
-                        Debug.Log("Hunt!");
+                        Debug.Log("Attack!");
                         target.Hurt(creature.AttackPower, creature.transform.position);
                     }
                     else
