@@ -2,11 +2,12 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-public class TickManeger: MonoBehaviour
+public class TickManager: MonoBehaviour
 {
-    public static TickManeger Instance { get; private set; }
-
-    public TickManeger()
+    public static TickManager Instance { get; private set; }
+    public int CurrentHour { get; private set; }
+    public int CurrentDay { get; private set; }
+    public TickManager()
     {
         if (Instance != null && Instance != this)
         {
@@ -40,10 +41,17 @@ public class TickManeger: MonoBehaviour
     private void Tick()
     {
         tickCount++;
+        int total_hours = tickCount / constantData.TICKS_PER_HOUR;
+        CurrentHour = total_hours % constantData.HOURS_PER_DAY;
+        CurrentDay = (total_hours / constantData.HOURS_PER_DAY) + 1;
+
         foreach (var t in tickable)
         {
             t?.Invoke();
         }
+
+        // Debug log every hour
+        // if (tickCount % constantData.TICKS_PER_HOUR == 0) Debug.Log($"Now is {CurrentDay} days {CurrentHour} hours");
     }
 
     private void Update()
