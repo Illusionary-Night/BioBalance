@@ -86,7 +86,7 @@ public class SpeciesEditor : Editor
         // 睡眠區間 (MinMaxSlider 需要 float 變數)
         float head = attr.sleeping_head;
         float tail = attr.sleeping_tail;
-        EditorGUILayout.MinMaxSlider("Sleep Interval", ref head, ref tail, 0f, 100f);
+        EditorGUILayout.MinMaxSlider("Sleep Interval", ref head, ref tail, 0f, constantData.HOURS_PER_DAY);
         attr.sleeping_head = (int)head;
         attr.sleeping_tail = (int)tail;
 
