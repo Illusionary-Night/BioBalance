@@ -5,16 +5,13 @@ using UnityEngine.UIElements;
 public class Manager : MonoBehaviour
 {
     public static Manager Instance { get; private set; }
-    [SerializeField] private readonly List<Species> species = new();
+    [SerializeField]
+    private readonly List<Species> species = new();
     public List<Species> Species => species;
-    [SerializeField] private readonly Dictionary<Vector2Int, Edible> fooditems = new();
+    [SerializeField]
+    private readonly Dictionary<Vector2Int, Edible> fooditems = new();
     public Dictionary<Vector2Int, Edible> FoodItems => fooditems;
     public static event System.Action OnTick;
-    public float tickInterval = 1f / 2; // 30 ticks per second
-    private float tick_timer = 0;
-    private int mixTickTime = 240000;
-    [SerializeField] public int TickTime;
-    private int tick_time => tick_time;
     public Transform EnvironmentEntities { get; private set; }
     void Start()
     {
@@ -32,23 +29,27 @@ public class Manager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        tick_timer += Time.deltaTime;
-        if (tick_timer >= tickInterval)
-        {
-            tick_timer -= tickInterval;
-            TickTime = (TickTime + 1) % mixTickTime;
-            // Trigger event
-            OnTick?.Invoke();
-        }
-    }
     private void Initialize()
     {
-        TickTime = 0;
+        if (TickManager.Instance == null)
+        {
+            new GameObject("TickManager").AddComponent<TickManager>();
+        }
+
+        TickManager.Instance.RegisterTickable(() =>
+        {
+            OnTick?.Invoke();
+        });
+
+        TickManager.Instance.RegisterTickable(SpawnEdible);
+
         GameObject env_entites_prefab = Resources.Load<GameObject>("Prefabs/Parents/EnvironmentEntities");
         EnvironmentEntities = Instantiate(env_entites_prefab).transform;
+    }
+
+    private void OnDestroy()
+    {
+        TickManager.Instance?.UnregisterTickable(SpawnEdible);
     }
 
     private void OnEnable()
@@ -59,6 +60,8 @@ public class Manager : MonoBehaviour
     {
         OnTick -= SpawnEdible;
     }
+
+
     private void PredatorUpdate(Creature new_creature)
     {
         foreach (var each_species in species)
