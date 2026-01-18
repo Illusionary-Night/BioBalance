@@ -166,11 +166,11 @@ public class Manager : MonoBehaviour
         //Debug.Log("grass num: "+FoodItems.Count);
         //TODO: Const of max food items and map size
         // Limit the number of food items
-        if (fooditems.Count > 120) return;
+        if (fooditems.Count > 4000) return;
 
         Vector2Int position = new Vector2Int(
-            Random.Range(200, 300),
-            Random.Range(200, 300)
+            Random.Range(100, 400),
+            Random.Range(100, 400)
         );
         // Check if position is occupied
         if (fooditems.ContainsKey(position)) return;

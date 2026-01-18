@@ -19,15 +19,15 @@ MonoBehaviour:
     base_health: 91.4
     reproduction_rate: 0.726
     attack_power: 5
-    lifespan: 1768
+    lifespan: 2626
     variation: 0.1
     perception_range: 15
-    sleeping_head: 55
-    sleeping_tail: 64
+    sleeping_head: 6
+    sleeping_tail: 9
     foodTypes: 0000000001000000
     prey_ID_list: 02000000
     predator_ID_list: 
-    action_list: 0000000001000000020000000500000004000000
+    action_list: 00000000010000000200000003000000060000000400000005000000
     creautreBase: 1
-  _cdKeys: 0000000001000000020000000400000005000000
-  _cdValues: 14000000500000002d0000002c0100003c000000
+  _cdKeys: 00000000010000000200000004000000050000000300000006000000
+  _cdValues: 14000000500000002d0000002c0100003c0000000a00000005000000
