@@ -82,11 +82,11 @@ public class SpeciesEditor : Editor
         species.basePerceptionRange = EditorGUILayout.Slider("Perception Range", species.basePerceptionRange, 0, 100);
 
         // 睡眠區間 (MinMaxSlider 需要 float 變數)
-        float head = attr.sleeping_head;
-        float tail = attr.sleeping_tail;
+        float head = species.baseSleepingHead;
+        float tail = species.baseSleepingTail;
         EditorGUILayout.MinMaxSlider("Sleep Interval", ref head, ref tail, 0f, constantData.HOURS_PER_DAY);
-        attr.sleeping_head = (int)head;
-        attr.sleeping_tail = (int)tail;
+        species.baseSleepingHead = (int)head;
+        species.baseSleepingTail = (int)tail;
 
         EditorGUILayout.EndVertical();
 

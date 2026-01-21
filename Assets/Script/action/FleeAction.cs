@@ -114,7 +114,7 @@ public class FleeAction : ActionBase
     /// </summary>
     private List<Creature> GetNearbyPredators(Creature creature)
     {
-        return Perception.Creatures.GetAllTargets(creature, creature.PredatorIDList);
+        return Perception.Creatures.GetAllTargets(creature, creature.predatorIDList);
     }
 
     /// <summary>
@@ -163,7 +163,7 @@ public class FleeAction : ActionBase
     private Vector2Int CalculateFleeTarget(Creature creature, Vector2 fleeDirection)
     {
         Vector2 creaturePos = creature.transform.position;
-        float fleeDistance = Random.Range(creature.PerceptionRange * MIN_FLEE_RATE, creature.PerceptionRange * MAX_FLEE_RATE);
+        float fleeDistance = Random.Range(creature.perceptionRange * MIN_FLEE_RATE, creature.perceptionRange * MAX_FLEE_RATE);
 
         // ���ժ����k�]��V
         Vector2Int targetPos = Vector2Int.RoundToInt(creaturePos + fleeDirection * fleeDistance);

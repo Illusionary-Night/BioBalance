@@ -111,7 +111,7 @@ public static class Perception
                 return false;
             }
 
-            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange))
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange))
             {
 
 
@@ -126,7 +126,7 @@ public static class Perception
         // Checks if there is at least one food item from the list of types within perception range
         public static bool HasTarget(Creature creature, List<FoodType> food_type_list)
         {
-            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange);
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange);
 
             foreach (var food_type in food_type_list)
             {
@@ -160,7 +160,7 @@ public static class Perception
                 return 0;
             }
 
-            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange))
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange))
             {
                 Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
 
@@ -175,7 +175,7 @@ public static class Perception
         public static int CountTarget(Creature creature, List<FoodType> food_type_list)
         {
             int count = 0;
-            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange);
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange);
 
             foreach (var food_type in food_type_list)
             {
@@ -202,7 +202,7 @@ public static class Perception
         public static List<Edible> GetAllTargets(Creature creature, FoodType food_type)
         {
             List<Edible> targets = new();
-            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange);
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange);
 
             EntityData.SpawnableEntityType? spawnabletype = (EntityData.SpawnableEntityType)EntityData.FoodType2SpawnableType(food_type);
             if (spawnabletype == null)
@@ -211,7 +211,7 @@ public static class Perception
                 return targets;
             }
 
-            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange))
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange))
             {
                 Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
 
@@ -233,7 +233,7 @@ public static class Perception
         public static List<Edible> GetAllTargets(Creature creature, List<FoodType> food_type_list)
         {
             List<Edible> targets = new();
-            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange);
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange);
 
             foreach (var food_type in food_type_list)
             {

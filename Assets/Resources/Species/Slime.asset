@@ -16,8 +16,8 @@ MonoBehaviour:
   creatureBase: 0
   foodTypes: 00000000
   preyIDList: 
-  predatorIDList: 
-  actionList: 00000000010000000200000004000000
+  predatorIDList: 01000000
+  actionList: 000000000100000002000000040000000600000003000000
   variation: 0
   baseSize: 1
   baseSpeed: 5
@@ -28,5 +28,5 @@ MonoBehaviour:
   basePerceptionRange: 10
   baseSleepingHead: 200
   baseSleepingTail: 600
-  _cdKeys: 00000000010000000200000004000000
-  _cdValues: 14000000500000003200000064000000
+  _cdKeys: 000000000100000002000000040000000600000003000000
+  _cdValues: 140000005000000032000000640000001400000014000000

@@ -8,8 +8,8 @@ public class SleepAction : ActionBase
     //private const float SleepHungerRateMultiplier = 0.3f;
     public override bool IsConditionMet(Creature creature)
     {
-        int sleepHead = creature.SleepingHead;
-        int sleepTail = creature.SleepingTail;
+        int sleepHead = creature.sleepingHead;
+        int sleepTail = creature.sleepingTail;
         int nowHour = TickManager.Instance.CurrentHour;
         
         if (sleepHead > sleepTail) 
@@ -26,9 +26,9 @@ public class SleepAction : ActionBase
     {
         //return 2f;
 
-        int sleepHead = creature.SleepingHead;
-        int sleepTail = creature.SleepingTail;
-        int sleepDuration = creature.SleepTime;
+        int sleepHead = creature.sleepingHead;
+        int sleepTail = creature.sleepingTail;
+        int sleepDuration = creature.sleepTime;
         int nowHour = TickManager.Instance.CurrentHour;
         int hoursPerDay = constantData.HOURS_PER_DAY;
 
