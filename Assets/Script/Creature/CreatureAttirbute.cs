@@ -15,8 +15,7 @@ public partial class Creature : MonoBehaviour, ITickable {
     public Dictionary<ActionType, int> actionMaxCD => mySpecies.actionMaxCD;
     public float variation => mySpecies.variation;
 
-    // --- 個體遺傳屬性 (唯讀自動屬性，初始化後不可改) ---
-    public string uuid { get; private set; }
+    // --- 個體遺傳屬性 ---
     public float size { get; private set; }
     public float speed { get; private set; }
     public float maxHealth { get; private set; }
@@ -86,7 +85,18 @@ public partial class Creature : MonoBehaviour, ITickable {
     public void ResetActionCooldown(ActionType actionType)
     {
         if (isDead) return;
-        actionCD[actionType] = actionMaxCD[actionType];
+
+        if (actionMaxCD.TryGetValue(actionType, out int maxCD))
+        {
+            actionCD[actionType] = maxCD;
+        }
+        else
+        {
+            // 如果開發者在編輯器沒設定 CD，給予警告並設為預設值 0，程式才不會斷掉
+            Debug.LogWarning($"[Creature] {mySpecies.name} 缺少動作 {actionType} 的 CD 設定！");
+            actionCD[actionType] = 0;
+        }
+
         actionCooldown = 20;
     }
 

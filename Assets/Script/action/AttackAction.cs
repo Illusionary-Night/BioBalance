@@ -20,7 +20,7 @@ public class AttackAction : ActionBase
 
 	public override bool IsSuccess(Creature creature)
 	{
-		return Random.Range(0,100)<=70;
+		return Random.Range(0,9)<7;
 	}
 
 	public override void Execute(Creature creature, ActionContext context = null)

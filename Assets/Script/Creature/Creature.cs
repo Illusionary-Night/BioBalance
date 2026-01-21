@@ -34,6 +34,7 @@ public partial class Creature : MonoBehaviour, ITickable
     public bool IsInvincible => isInvincible;
     public void Initialize(Species species, CreatureAttributes creatureAttributes, GameObject creature_object)
     {
+        mySpecies = species;
         AttributeInheritance(species, creatureAttributes, creature_object);
         //個體編號
         UUID = System.Guid.NewGuid().ToString();
@@ -127,7 +128,7 @@ public partial class Creature : MonoBehaviour, ITickable
             }
             else
             {
-                //Debug.Log("殺死");
+                Debug.Log("殺死");
                 Die();
                 return;
             }

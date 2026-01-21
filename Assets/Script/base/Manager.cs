@@ -100,26 +100,42 @@ public class Manager : MonoBehaviour
     {
         int id = newCreature.speciesID;
 
-        // 1. 嘗試從字典中獲取現有的物種資料
+        // 嘗試獲取物種資料
         if (!species.TryGetValue(id, out var speciesData))
         {
-            // 2. 如果字典裡沒有這個 ID，表示這是一個全新的物種
-            // 我們直接將生物身上帶的物種引用註冊進 Manager
+            // 這是新物種
             speciesData = newCreature.mySpecies;
             species.Add(id, speciesData);
 
-            Debug.Log($"[Manager] 註冊全新物種: {speciesData.name} (ID: {id})");
+            // --- 自動化容器生成 ---
+            // 在 EnvironmentEntities 下建立一個以物種命名的空物件
+            GameObject container = new GameObject($"{speciesData.name}_Container");
+            container.transform.SetParent(this.EnvironmentEntities);
+
+            // 你甚至可以把這個 Transform 存進 Species 物件中（如果 Species 有預留欄位）
+            // speciesData.runtimeContainer = container.transform; 
+
+            Debug.Log($"[Manager] 註冊新物種並建立容器: {speciesData.name}");
         }
 
-        // 3. 將生物加入該物種的運行時字典
-        // 因為 speciesData 無論是舊有的還是剛新增的，現在都保證不為 null
-        if (!speciesData.creatures.TryAdd(newCreature.uuid, newCreature))
+        // 統一處理 Parent 賦值
+        // 這裡尋找剛才建立或已存在的容器
+        Transform targetContainer = EnvironmentEntities.Find($"{speciesData.name}_Container");
+        if (targetContainer != null)
         {
-            Debug.LogWarning($"[Manager] 生物 {newCreature.uuid} 已經在物種 {id} 的清單中了。");
+            newCreature.transform.SetParent(targetContainer);
+        }
+        else
+        {
+            Debug.LogWarning($"container miss! {speciesData.name}_Container");
+        }
+
+        // 加入字典
+        if (!speciesData.creatures.TryAdd(newCreature.UUID, newCreature))
+        {
             return;
         }
 
-        // 4. 更新生態鏈關係（天敵/獵物）
         PredatorUpdate(newCreature);
     }
     public void UnregisterCreature(Creature deadCreature)
@@ -128,7 +144,7 @@ public class Manager : MonoBehaviour
 
         if (species.TryGetValue(id, out var speciesData))
         {
-            if (speciesData.creatures.Remove(deadCreature.uuid))
+            if (speciesData.creatures.Remove(deadCreature.UUID))
             {
                 // 只有移除成功才執行後續邏輯
                 // 例如：清空該生物的 CD 字典或狀態，避免物件池回收後殘留舊資料

@@ -43,7 +43,7 @@ public class ReproduceAction : ActionBase
         // 使用物件池取得新生物
         Vector3 spawnPosition = creature.transform.position + new Vector3(Random.value % 100 / 100f, Random.value % 100 / 100f, 0);
         Creature new_creature = CreaturePool.GetCreature(creature.mySpecies, creature.ToCreatureAttribute(), spawnPosition);
-        new_creature.gameObject.name = "creature_" + new_creature.speciesID + "_" + new_creature.UUID;
+        new_creature.gameObject.name = new_creature.creatureBase+ "_" + new_creature.UUID;
         Manager.Instance.RegisterCreature(new_creature);
 
         // 繁殖是立即完成的 Action
