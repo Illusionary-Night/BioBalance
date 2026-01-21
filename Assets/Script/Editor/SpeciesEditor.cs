@@ -3,19 +3,17 @@ using UnityEditor;
 using NUnit.Framework;
 using System.Collections.Generic;
 
-[CustomEditor(typeof(_Species))]
+[CustomEditor(typeof(Species))]
 public class SpeciesEditor : Editor
 {
     private ActionType selectedActionToCD; // 在類別層級宣告
-    _Species species;
+    Species species;
     public override void OnInspectorGUI()
     {
-        species = (_Species)target;
+        species = (Species)target;
         // 加上這行可以自動處理多數欄位的 Undo
         serializedObject.Update();
 
-        // 使用暫存變數處理 struct
-        var attr = species.attributes;
 
         // 檢測 GUI 是否有變動
         EditorGUI.BeginChangeCheck();
@@ -25,21 +23,21 @@ public class SpeciesEditor : Editor
         EditorGUILayout.Space(10);
 
         // --- 2. 基礎數值 ---
-        DrawBaseAttributes(ref attr);
+        DrawBaseAttributes();
 
         EditorGUILayout.Space(10);
 
         // --- 3. 生態關係 ---
         EditorGUILayout.BeginVertical("box");
-        DrawIntList(attr.prey_ID_list, "Prey IDs");
-        DrawIntList(attr.predator_ID_list, "Predator IDs");
+        DrawIntList(species.preyIDList, "Prey IDs");
+        DrawIntList(species.predatorIDList, "Predator IDs");
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.Space(10);
 
         // --- 4. 行為清單 ---
-        DrawEnumList(attr.foodTypes, "Food Types");
-        DrawEnumList(attr.action_list, "Available Actions");
+        DrawEnumList(species.foodTypes, "Food Types");
+        DrawEnumList(species.actionList, "Available Actions");
 
         EditorGUILayout.Space(10);
 
@@ -53,7 +51,7 @@ public class SpeciesEditor : Editor
             Undo.RecordObject(species, "Modify Species Attributes");
 
             // 把修改後的 struct 存回去
-            species.attributes = attr;
+            //species.attributes = attr;----------------------------------------------先關掉
 
             // 強制 Unity 儲存這個資產檔
             EditorUtility.SetDirty(species);
@@ -65,37 +63,33 @@ public class SpeciesEditor : Editor
         // 將序列化物件的更改套用（雖然你用 target 轉型修改，但這行是好習慣）
         serializedObject.ApplyModifiedProperties();
     }
-    public void DrawBaseAttributes(ref CreatureAttributes attr)
+    public void DrawBaseAttributes()
     {
         EditorGUILayout.Space(10);
 
         // --- 分組設計：核心屬性 ---
         EditorGUILayout.BeginVertical("helpbox");
         EditorGUILayout.LabelField("Core Statistics", EditorStyles.miniBoldLabel);
-        attr.creautreBase = (CreatureBase)EditorGUILayout.EnumPopup("Creature Base Type", attr.creautreBase);
-        attr.species_ID = EditorGUILayout.IntField("Species ID", attr.species_ID);
-        attr.size = EditorGUILayout.Slider("Size", attr.size, 0.1f, 1f);
-        attr.speed = EditorGUILayout.Slider("Speed", attr.speed, 0f, 20f);
-        attr.base_health = EditorGUILayout.Slider("Base Health", attr.base_health, 0f, 100f);
-        attr.reproduction_rate = EditorGUILayout.Slider("Reproduction Rate", attr.reproduction_rate, 0f, 1f);
-        attr.attack_power = EditorGUILayout.Slider("Attack Power", attr.attack_power, 0f, 100f);
-        attr.lifespan = EditorGUILayout.Slider("Lifespan", attr.lifespan, 0, 10000);
-        attr.variation = EditorGUILayout.Slider("Variation", attr.variation, 0f, 1f);
-        attr.perception_range = EditorGUILayout.Slider("Perception Range", attr.perception_range, 0, 100);
+        species.creatureBase = (CreatureBase)EditorGUILayout.EnumPopup("Creature Base Type", species.creatureBase);
+        species.speciesID = EditorGUILayout.IntField("Species ID", species.speciesID);
+        species.baseSize = EditorGUILayout.Slider("Size", species.baseSize, 0.1f, 1f);
+        species.baseSpeed = EditorGUILayout.Slider("Speed", species.baseSpeed, 0f, 20f);
+        species.baseMaxHealth = EditorGUILayout.Slider("Base Health", species.baseMaxHealth, 0f, 100f);
+        species.baseReproductionRate = EditorGUILayout.Slider("Reproduction Rate", species.baseReproductionRate, 0f, 1f);
+        species.baseAttackPower = EditorGUILayout.Slider("Attack Power", species.baseAttackPower, 0f, 100f);
+        species.baseLifespan = EditorGUILayout.Slider("Lifespan", species.baseLifespan, 0, 10000);
+        species.variation = EditorGUILayout.Slider("Variation", species.variation, 0f, 1f);
+        species.basePerceptionRange = EditorGUILayout.Slider("Perception Range", species.basePerceptionRange, 0, 100);
 
         // 睡眠區間 (MinMaxSlider 需要 float 變數)
-        float head = attr.sleeping_head;
-        float tail = attr.sleeping_tail;
+        float head = species.baseSleepingHead;
+        float tail = species.baseSleepingTail;
         EditorGUILayout.MinMaxSlider("Sleep Interval", ref head, ref tail, 0f, 100f);
-        attr.sleeping_head = (int)head;
-        attr.sleeping_tail = (int)tail;
+        species.baseSleepingHead = (int)head;
+        species.baseSleepingTail = (int)tail;
 
         EditorGUILayout.EndVertical();
 
-        attr.Body = (BodyType)EditorGUILayout.EnumPopup("Body Type", attr.Body);
-
-        // 將修改後的數值存回 ScriptableObject
-        species.attributes = attr;
     }
     private void DrawIntList(List<int> list, string label)
     {
@@ -178,10 +172,10 @@ public class SpeciesEditor : Editor
         EditorGUILayout.LabelField("Action Max CD Settings", EditorStyles.boldLabel);
 
         // 確保字典已初始化
-        if (species.attributes.action_max_CD == null)
-            species.attributes.action_max_CD = new Dictionary<ActionType, int>();
+        if (species.actionMaxCD == null)
+            species.actionMaxCD = new Dictionary<ActionType, int>();
 
-        var dict = species.attributes.action_max_CD;
+        var dict = species.actionMaxCD;
 
         // 1. 繪製現有的條目
         List<ActionType> keys = new List<ActionType>(dict.Keys);

@@ -9,25 +9,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 556b1ea2414ef9343a4927a70e53b982, type: 3}
+  m_Script: {fileID: 11500000, guid: 039a7fe6f95bb1b48974ee2ba3d3b757, type: 3}
   m_Name: Goat
-  m_EditorClassIdentifier: Assembly-CSharp::_Species
-  attributes:
-    species_ID: 1
-    size: 1
-    speed: 7.1
-    base_health: 91.4
-    reproduction_rate: 0.726
-    attack_power: 5
-    lifespan: 1768
-    variation: 0.1
-    perception_range: 15
-    sleeping_head: 55
-    sleeping_tail: 64
-    foodTypes: 0000000001000000
-    prey_ID_list: 02000000
-    predator_ID_list: 
-    action_list: 0000000001000000020000000500000004000000
-    creautreBase: 1
-  _cdKeys: 0000000001000000020000000400000005000000
-  _cdValues: 14000000500000002d0000002c0100003c000000
+  m_EditorClassIdentifier: Assembly-CSharp::Species
+  speciesID: 1
+  creatureBase: 1
+  foodTypes: 00000000
+  preyIDList: 02000000
+  predatorIDList: 
+  actionList: 0000000001000000020000000400000005000000
+  variation: 0
+  baseSize: 1
+  baseSpeed: 5
+  baseMaxHealth: 100
+  baseReproductionRate: 0.5
+  baseAttackPower: 10
+  baseLifespan: 2000
+  basePerceptionRange: 10
+  baseSleepingHead: 200
+  baseSleepingTail: 600
+  _cdKeys: 00000000050000000200000004000000
+  _cdValues: 140000003c000000320000002c010000

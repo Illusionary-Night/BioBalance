@@ -3,97 +3,75 @@ using UnityEngine;
 using System.Collections.Generic;
 using static UnityEngine.GraphicsBuffer;
 using static Perception;
+using System.Linq;
 
 public static class Perception
 {
     public static class Creatures
     {
         // Returns the first target creature found within perception range, or null if none found
-        public static Creature HasTarget(Creature current_creature, int target_ID)
+        public static bool HasTarget(Creature current_creature, int target_ID)
         {
-            foreach (var each_species in Manager.Instance.Species)
-            {
-                if (target_ID != each_species.attributes.species_ID) continue;
-                foreach (var each_creature in each_species.creatures)
-                {
-                    float distance = Vector2.Distance(current_creature.transform.position, each_creature.transform.position);
-                    if (distance > current_creature.PerceptionRange) continue;
-                    return each_creature;
-                }
-            }
-            return null;
+            if (!Manager.Instance.Species.TryGetValue(target_ID, out var target_species))
+                return false;
+
+            float range = current_creature.perceptionRange;
+            float rangeSq = range * range; // 預先算好範圍的平方
+
+            return target_species.creatures.Values.Any(c =>
+                c != null && !c.IsDead && c != current_creature &&
+                (current_creature.transform.position - c.transform.position).sqrMagnitude < rangeSq
+            );
         }
         // Returns true if any target creature from the list is found within perception range
         public static bool HasTarget(Creature creature, List<int> target_ID_list)
         {
-            foreach (var target in target_ID_list)
-            {
-                if (HasTarget(creature, target)) return true;
-            }
-            return false;
+            return target_ID_list?.Any(id => HasTarget(creature, id))??false;
         }
         // Counts the number of target creatures with the specified ID within perception range
         public static int CountTargetNumber(Creature current_creature, int target_ID)
         {
-            int count = 0;
-            foreach (var each_species in Manager.Instance.Species)
-            {
-                if (target_ID != each_species.attributes.species_ID) continue;
-                foreach (var each_creature in each_species.creatures)
-                {
-                    if (each_creature == null) continue;
-                    float distance = Vector2.Distance(current_creature.transform.position, each_creature.transform.position);
-                    if (distance > current_creature.PerceptionRange) continue;
-                    count++;
-                }
-            }
-            return count;
+            if (!Manager.Instance.Species.TryGetValue(target_ID, out var target_species))
+                return 0;
+
+            float range = current_creature.perceptionRange;
+            float rangeSq = range * range; // 預先算好範圍的平方
+
+            return target_species.creatures.Values.Count(c =>
+                c != null && !c.IsDead && c != current_creature &&
+                (current_creature.transform.position - c.transform.position).sqrMagnitude < rangeSq
+            );
         }
         // Counts the total number of target creatures from the list of IDs within perception range
         public static int CountTarget(Creature current_creature, List<int> target_ID_list)
         {
-            int count = 0;
-            foreach (var target_ID in target_ID_list)
-            {
-                count += CountTargetNumber(current_creature, target_ID);
-            }
-            return count;
+            return target_ID_list?.Sum(id => CountTargetNumber(current_creature,id)) ?? 0;
         }
         // Retrieves a sorted list of all target creatures with the specified ID within perception range
         public static List<Creature> GetAllTargets(Creature current_creature, int target_ID)
         {
-            List<Creature> targets = new();
-            foreach (var each_species in Manager.Instance.Species)
-            {
-                if (target_ID != each_species.attributes.species_ID) continue;
-                foreach (var each_creature in each_species.creatures)
-                {
-                    float distance = Vector2.Distance(current_creature.transform.position, each_creature.transform.position);
-                    if (distance > current_creature.PerceptionRange) continue;
-                    targets.Add(each_creature);
-                }
-            }
-            targets.Sort((x, y) => {
-                float distanceX = Vector2.Distance(current_creature.transform.position, x.transform.position);
-                float distanceY = Vector2.Distance(current_creature.transform.position, y.transform.position);
-                return distanceX.CompareTo(distanceY);
-            });
-            return targets;
+            if (!Manager.Instance.Species.TryGetValue(target_ID, out var target_species))
+                return new List<Creature>();
+
+            Vector2 currentPos = current_creature.transform.position;
+            float range = current_creature.perceptionRange;
+            float rangeSq = range * range; // 預算平方以優化效能
+
+            return target_species.creatures.Values
+                .Where(c => c != null && !c.IsDead && c != current_creature) // 過濾無效目標
+                .Where(c => (currentPos - (Vector2)c.transform.position).sqrMagnitude < rangeSq) // 範圍判定
+                .OrderBy(c => (currentPos - (Vector2)c.transform.position).sqrMagnitude) // 由近到遠排序
+                .ToList(); // 轉回 List
         }
         // Retrieves a sorted list of all target creatures from the list of IDs within perception range
         public static List<Creature> GetAllTargets(Creature current_creature, List<int> target_ID_list)
         {
-            List<Creature> targets = new();
-            foreach (var target_ID in target_ID_list)
-            {
-                targets.AddRange(GetAllTargets(current_creature, target_ID));
-            }
-            targets.Sort((x, y) => {
-                float distanceX = Vector2.Distance(current_creature.transform.position, x.transform.position);
-                float distanceY = Vector2.Distance(current_creature.transform.position, y.transform.position);
-                return distanceX.CompareTo(distanceY);
-            });
-            return targets;
+            Vector2 currentPos = current_creature.transform.position;
+
+            return target_ID_list?
+                .SelectMany(id => GetAllTargets(current_creature, id)) // 將多個 List 合併為一個序列
+                .OrderBy(c => ((Vector2)c.transform.position - currentPos).sqrMagnitude) // 統一進行距離排序
+                .ToList() ?? new List<Creature>(); // 確保不回傳 null
         }
     }
 
@@ -107,7 +85,7 @@ public static class Perception
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
                 //Debug.Log("Position: "+each_dropped_item+" ,Distance: "+distance);
-                if (distance > creature.PerceptionRange) continue;
+                if (distance > creature.perceptionRange) continue;
                 if (each_dropped_item.Type != food_type) continue;
                 return true;
             }
@@ -132,7 +110,7 @@ public static class Perception
             foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
-                if (distance > creature.PerceptionRange) continue;
+                if (distance > creature.perceptionRange) continue;
                 if (each_dropped_item.Type != food_type) continue;
                 count++;
             }
@@ -155,7 +133,7 @@ public static class Perception
             foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
             {
                 float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
-                if (distance > creature.PerceptionRange) continue;
+                if (distance > creature.perceptionRange) continue;
                 if (each_dropped_item.Type != food_type) continue;
                 targets.Add(each_dropped_item);
             }

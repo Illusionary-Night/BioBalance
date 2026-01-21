@@ -37,24 +37,17 @@ public class ActionStateMachine
         // 收集可用的 Actions
         List<KeyValuePair<ActionType, float>> availableActions = new List<KeyValuePair<ActionType, float>>();
 
-        for (int i = 0; i < owner.ActionList.Count; i++)
+        for (int i = 0; i < owner.actionList.Count; i++)
         {
-            if (ActionSystem.IsConditionMet(owner, owner.ActionList[i]))
+            if (ActionSystem.IsConditionMet(owner, owner.actionList[i]))
             {
-                float weight = ActionSystem.GetWeight(owner, owner.ActionList[i]);
-                availableActions.Add(new KeyValuePair<ActionType, float>(owner.ActionList[i], weight));
+                float weight = ActionSystem.GetWeight(owner, owner.actionList[i]);
+                availableActions.Add(new KeyValuePair<ActionType, float>(owner.actionList[i], weight));
             }
         }
 
         // 按權重排序
         availableActions.Sort((x, y) => y.Value.CompareTo(x.Value));
-
-        // 更新權重列表（用於偵錯）
-        owner.WeightedActionList.Clear();
-        foreach (var action in availableActions)
-        {
-            owner.WeightedActionList.Add(action.Key);
-        }
 
         // 嘗試執行 Action
         while (availableActions.Count > 0)
@@ -78,7 +71,7 @@ public class ActionStateMachine
                 currentContext.OnCompleted += OnActionCompleted;
                 
                 // 執行 Action
-                owner.CurrentAction = selectedAction;
+                owner.SetCurrentAction(selectedAction);
                 ActionSystem.Execute(owner, selectedAction, currentContext);
 
                 return;
@@ -144,8 +137,9 @@ public class ActionStateMachine
         // 設定冷卻時間
         if (currentContext != null)
         {
-            int cooldown = ActionSystem.GetCooldown(owner, currentContext.ActionType);
-            owner.ActionCooldown = cooldown;
+            //int cooldown = ActionSystem.GetCooldown(owner, currentContext.ActionType);
+            //owner.actionCooldown = cooldown;
+            owner.ResetActionCooldown(currentContext.ActionType);
         }
         
         Cleanup();

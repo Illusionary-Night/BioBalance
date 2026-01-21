@@ -106,7 +106,7 @@ public class StatisticsTableEditor : EditorWindow
     {
         foreach (var species in Manager.Instance.Species)
         {
-            int id = species.attributes.species_ID;
+            int id = species.Value.speciesID;
 
             if (!allSpecies.ContainsKey(id))
             {
@@ -114,7 +114,7 @@ public class StatisticsTableEditor : EditorWindow
             }
 
             var stats = allSpecies[id];
-            stats.currentCount = species.creatures.Count;
+            stats.currentCount = species.Value.Count;
 
             // 紀錄歷史，並限制紀錄上限（例如保留最近 200 筆資料）
             stats.countHistory.Add(stats.currentCount);

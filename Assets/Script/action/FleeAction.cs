@@ -12,13 +12,13 @@ public class FleeAction : ActionBase
     [SerializeField] private static readonly int PredationRange = 5;
     public override bool IsConditionMet(Creature creature)
     {
-        return Perception.Creatures.HasTarget(creature, creature.PredatorIDList);   
+        return Perception.Creatures.HasTarget(creature, creature.predatorIDList);   
     }
 
     public override float GetWeight(Creature creature)
     {
         //(1 / 偵查範圍內同類個體數 + 1) * 0.8
-        return (1f / (Perception.Creatures.CountTargetNumber(creature, creature.SpeciesID) + 1)) * 0.8f;
+        return (1f / (Perception.Creatures.CountTargetNumber(creature, creature.speciesID) + 1)) * 0.8f;
     }
 
     public override bool IsSuccess(Creature creature)

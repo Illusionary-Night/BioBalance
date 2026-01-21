@@ -1,153 +1,92 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static Perception;
 
 public partial class Creature : MonoBehaviour, ITickable {
-    [Header("Information")]
-    [SerializeField] private List<ActionType> weightedActionList = new List<ActionType>();
-    public List<ActionType> WeightedActionList => weightedActionList;
-    [SerializeField] private int species_ID;
-    public int SpeciesID { get => species_ID; private set => species_ID = value; }
+    public Species mySpecies;
+    public string UUID { get; private set; }
+    // --- 物種資料引用 (從 ScriptableObject 抓取，不佔個體空間) ---
+    public int speciesID => mySpecies.speciesID;
+    public CreatureBase creatureBase => mySpecies.creatureBase;
+    public List<int> preyIDList => mySpecies.preyIDList;
+    public List<int> predatorIDList => mySpecies.predatorIDList;
+    public List<ActionType> actionList => mySpecies.actionList;
+    public List<FoodType> foodTypes => mySpecies.foodTypes;
+    public Dictionary<ActionType, int> actionMaxCD => mySpecies.actionMaxCD;
+    public float variation => mySpecies.variation;
 
-    private Dictionary<ActionType, int> actionCD = new();
+    // --- 個體遺傳屬性 (唯讀自動屬性，初始化後不可改) ---
+    public string uuid { get; private set; }
+    public float size { get; private set; }
+    public float speed { get; private set; }
+    public float maxHealth { get; private set; }
+    public float reproductionRate { get; private set; }
+    public float attackPower { get; private set; }
+    public float lifespan { get; private set; }
+    public float perceptionRange { get; private set; }
+    public int sleepingHead { get; private set; }
+    public int sleepingTail { get; private set; }
+    public float hungerRate { get; private set; }
+    public float maxHunger { get; private set; }
+    public float healthRegeneration { get; private set; }
+    public int sleepTime { get; private set; }
 
-    private Dictionary<ActionType, int> action_max_CD = new();
+    // --- 運行時動態狀態 ---
+    public float hunger { get; private set; }
+    public float health { get; private set; }
+    public float age { get; private set; }
+    public int actionCooldown { get; private set; }
+    public ActionType currentAction { get; private set; }
+    public BodyType body { get; private set; }
 
-    [SerializeField] private string _UUID;
-    public string UUID { get => _UUID; }
-    // Player Design---------------------------------------------------------------------------
-    [Header("Player Design")]
-    [SerializeField] private float size;
-    public float Size { get => size; private set => size = value; }
-    [SerializeField] private float speed;
-    public float Speed { get => speed; private set => speed = value; }
-    [SerializeField] private float base_health;
-    public float BaseHealth { get => base_health; private set => base_health = value; }
-    [SerializeField] private float reproduction_rate;
-    public float ReproductionRate { get => reproduction_rate; private set => reproduction_rate = value; }
-    [SerializeField] private float attack_power;
-    public float AttackPower { get => attack_power; private set => attack_power = value; }
-    [SerializeField] private float lifespan;
-    public float Lifespan { get => lifespan; private set => lifespan = value; }
-    [SerializeField] private float variation;
-    public float Variation { get => variation; private set => variation = value; }
-    [SerializeField] private List<int> prey_ID_list = new List<int>();
-    public List<int> PreyIDList { get => prey_ID_list; private set => prey_ID_list = value; }
-    [SerializeField] private List<int> predator_ID_list = new List<int>();
-    public List<int> PredatorIDList { get => predator_ID_list; private set => predator_ID_list = value; }
-    [SerializeField] private List<ActionType> action_list;
-    public List<ActionType> ActionList { get => action_list; private set => action_list = value; }
-    [SerializeField] private int sleeping_head;
-    public int SleepingHead { get => sleeping_head; private set => sleeping_head = value; }
-    [SerializeField] private int sleeping_tail;
-    public int SleepingTail { get => sleeping_tail; private set => sleeping_tail = value; }
-    [SerializeField] private float perceptionRange;
-    public float PerceptionRange { get => perceptionRange; private set => perceptionRange = value; }
-    [SerializeField] CreatureBase creautre_base;
-    public CreatureBase CreatureBase { get => CreatureBase; }
+    public Direction underAttackDirection { get; private set; }
+    public Dictionary<ActionType, int> actionCD { get; private set; } = new();
 
-    [Header("Computer Calculation")]
-    [SerializeField] private float hungerRate;
-    public float HungerRate { get => hungerRate; private set => hungerRate = value; }
-
-    [SerializeField] private float maxHunger;
-    public float MaxHunger { get => maxHunger; private set => maxHunger = value; }
-
-    [SerializeField] private float healthRegeneration;
-    public float HealthRegeneration { get => healthRegeneration; private set => healthRegeneration = value; }
-
-    [SerializeField] private List<FoodType> foodTypes;
-    public List<FoodType> FoodTypes { get => foodTypes; private set => foodTypes = value; }
-
-    [SerializeField] private BodyType body;
-    public BodyType Body { get => body; private set => body = value; }
-
-    [SerializeField] private int sleepTime;
-    public int SleepTime { get => sleepTime; private set => sleepTime = value; }
-
-    [Header("Current State")]
-    [SerializeField] private float hunger;
-    public float Hunger { get => hunger; set => hunger = value; }
-
-    [SerializeField] private float health;
-    public float Health { get => health; set => health = value; }
-
-    [SerializeField] private float age;
-    public float Age { get => age; set => age = value; }
-
-    [SerializeField] private int actionCooldown;
-    public int ActionCooldown { get => actionCooldown; set => actionCooldown = value; }
-
-    [SerializeField] private ActionType currentAction;
-    public ActionType CurrentAction { get => currentAction; set => currentAction = value; }
-
-    [SerializeField] private Direction under_attack_direction; 
-
-
-    public void AttributeInheritance(CreatureAttributes creatureAttributes, GameObject creature_object)
+    public void AttributeInheritance(Species species, CreatureAttributes creatureAttributes, GameObject creature_object)
     {
-        float variationFactor() => UnityEngine.Random.Range(-creatureAttributes.variation, creatureAttributes.variation);
+        float variationFactor() => UnityEngine.Random.Range(-species.variation, species.variation);
         //睡眠時間變異
         int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail - creatureAttributes.sleeping_head) * variationFactor());
-        SleepingHead = creatureAttributes.sleeping_head + delta_sleep_time();
-        SleepingTail = creatureAttributes.sleeping_tail + delta_sleep_time();
+        sleepingHead = creatureAttributes.sleeping_head + delta_sleep_time();
+        sleepingTail = creatureAttributes.sleeping_tail + delta_sleep_time();
         //其他玩家屬性變異
-        Size = creatureAttributes.size + creatureAttributes.size * variationFactor();
-        Speed = creatureAttributes.speed + creatureAttributes.speed * variationFactor();
-        BaseHealth = creatureAttributes.base_health + creatureAttributes.base_health * variationFactor();
-        ReproductionRate = creatureAttributes.reproduction_rate + creatureAttributes.reproduction_rate * variationFactor();
-        AttackPower = creatureAttributes.attack_power + creatureAttributes.attack_power * variationFactor();
-        Lifespan = creatureAttributes.lifespan + creatureAttributes.lifespan * variationFactor();
-        PerceptionRange = creatureAttributes.perception_range + creatureAttributes.perception_range * variationFactor();
-        //其他玩家屬性不變
-        SpeciesID = creatureAttributes.species_ID;
-        Variation = creatureAttributes.variation;
-        PreyIDList = new List<int>(creatureAttributes.prey_ID_list);
-        PredatorIDList = new List<int>(creatureAttributes.predator_ID_list);
-        ActionList = new List<ActionType>(creatureAttributes.action_list);
-        action_max_CD = creatureAttributes.action_max_CD;
-        FoodTypes = creatureAttributes.foodTypes;
-        creautre_base = creatureAttributes.creautreBase;
+        size = creatureAttributes.size + creatureAttributes.size * variationFactor();
+        speed = creatureAttributes.speed + creatureAttributes.speed * variationFactor();
+        maxHealth = creatureAttributes.max_health + creatureAttributes.max_health * variationFactor();
+        reproductionRate = creatureAttributes.reproduction_rate + creatureAttributes.reproduction_rate * variationFactor();
+        attackPower = creatureAttributes.attack_power + creatureAttributes.attack_power * variationFactor();
+        lifespan = creatureAttributes.lifespan + creatureAttributes.lifespan * variationFactor();
+        perceptionRange = creatureAttributes.perception_range + creatureAttributes.perception_range * variationFactor();
         //計算衍生屬性
-        SleepTime = SleepingTail - SleepingHead;
-        HungerRate = AttributesCalculator.CalculateHungerRate(Size, Speed, AttackPower);
-        MaxHunger = AttributesCalculator.CalculateMaxHunger(Size, BaseHealth, FoodTypes);
-        //ReproductionInterval = AttributesCalculator.CalculateReproductionInterval(Size, BaseHealth);
-        HealthRegeneration = AttributesCalculator.CalculateHealthRegeneration(BaseHealth, Size, SleepTime);
+        sleepTime = sleepingTail - sleepingHead;
+        hungerRate = AttributesCalculator.CalculateHungerRate(size, speed, attackPower);
+        maxHunger = AttributesCalculator.CalculateMaxHunger(size, maxHealth, foodTypes);
+        healthRegeneration = AttributesCalculator.CalculateHealthRegeneration(maxHealth, size, sleepTime);
         //初始狀態
-        Hunger = MaxHunger;
-        Health = BaseHealth;
-        Age = 0;
-        //ReproductionCooldown = 0;
-        ActionCooldown = 0;
+        hunger = maxHunger;
+        health = maxHealth;
+        age = 0;
+        actionCooldown = 0;
     }
 
     public CreatureAttributes ToCreatureAttribute()
     {
         CreatureAttributes attributes = new CreatureAttributes();
-        attributes.species_ID = SpeciesID;
-        attributes.size = Size;
-        attributes.base_health = BaseHealth;
-        attributes.speed = Speed;
-        attributes.attack_power = AttackPower;
-        attributes.reproduction_rate = ReproductionRate;
-        attributes.variation = Variation;
-        attributes.lifespan = Lifespan;
-        attributes.perception_range = PerceptionRange;
-        attributes.sleeping_head = SleepingHead;
-        attributes.sleeping_tail = SleepingTail;
-        attributes.foodTypes = FoodTypes;
-        attributes.Body = Body;
-        attributes.prey_ID_list = PreyIDList;
-        attributes.predator_ID_list = PredatorIDList;
-        attributes.action_list = ActionList;
-        attributes.action_max_CD = action_max_CD;
-        attributes.creautreBase = creautre_base;
+        attributes.size = size;
+        attributes.max_health = maxHealth;
+        attributes.speed = speed;
+        attributes.attack_power = attackPower;
+        attributes.reproduction_rate = reproductionRate;
+        attributes.lifespan = lifespan;
+        attributes.perception_range = perceptionRange;
+        attributes.sleeping_head = sleepingHead;
+        attributes.sleeping_tail = sleepingTail;
         return attributes;
     }
     public void ResetActionCooldown(ActionType actionType)
     {
         if (isDead) return;
-        actionCD[actionType] = action_max_CD[actionType];
+        actionCD[actionType] = actionMaxCD[actionType];
         actionCooldown = 20;
     }
 
@@ -161,9 +100,9 @@ public partial class Creature : MonoBehaviour, ITickable {
     }
     public int GetMaxActionCooldown(ActionType actionType)
     {
-        if (action_max_CD.ContainsKey(actionType))
+        if (actionMaxCD.ContainsKey(actionType))
         {
-            return action_max_CD[actionType];
+            return actionMaxCD[actionType];
         }
         return 0;
 
@@ -174,6 +113,13 @@ public partial class Creature : MonoBehaviour, ITickable {
     }
     public Dictionary<ActionType, int> GetActionMaxCDList()
     {
-        return action_max_CD;
+        return actionMaxCD;
+    }
+    public void RestoreHunger(float nutritionalValue) { 
+        hunger = Mathf.Min(hunger + nutritionalValue, maxHunger);
+    }
+    public void SetCurrentAction(ActionType type)
+    {
+        currentAction = type;
     }
 }

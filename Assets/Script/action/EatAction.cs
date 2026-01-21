@@ -9,7 +9,7 @@ class EatAction : ActionBase
     
     public override bool IsConditionMet(Creature creature)
     {
-        return Perception.Items.HasTarget(creature, creature.FoodTypes);
+        return Perception.Items.HasTarget(creature, creature.foodTypes);
     }
     
     public override float GetWeight(Creature creature)
@@ -24,7 +24,7 @@ class EatAction : ActionBase
     
     public override void Execute(Creature creature, ActionContext context = null)
     {
-        List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.FoodTypes);
+        List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.foodTypes);
         if (edibleTargets.Count > 0)
         {
             Edible food = edibleTargets[Random.Range(0, Mathf.Min(edibleTargets.Count, 6))];
@@ -49,7 +49,7 @@ class EatAction : ActionBase
                     {
                         //Debug.Log("eat");
                         food.Eaten();
-                        creature.Hunger = Mathf.Min(creature.Hunger + food.NutritionalValue, creature.MaxHunger);
+                        creature.RestoreHunger(food.NutritionalValue);
                     }
                     else
                     {

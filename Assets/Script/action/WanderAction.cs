@@ -33,7 +33,7 @@ public class MoveAction : ActionBase
         //Debug.Log("move");
         // 隨機移動到鄰近位置
         Vector2Int currentPosition = creature.GetRoundedPosition();
-        int rangeInt = Mathf.FloorToInt(creature.PerceptionRange);
+        int rangeInt = Mathf.FloorToInt(creature.perceptionRange);
         Vector2Int randomDisplacement = new(Random.Range(-rangeInt, rangeInt + 1), Random.Range(-rangeInt, rangeInt + 1));
         //Vector2Int randomDisplacement = new(Random.Range(-MoveDistance, MoveDistance + 1), Random.Range(-MoveDistance, MoveDistance + 1));
         Vector2Int newPosition = currentPosition + randomDisplacement;

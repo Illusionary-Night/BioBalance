@@ -87,7 +87,7 @@ public partial class Creature : MonoBehaviour, ITickable
 
                 // 1. 計算方向與預期速度
                 Vector2 direction = (target - currentActualPos).normalized;
-                Vector2 desiredVelocity = direction * owner.Speed;
+                Vector2 desiredVelocity = direction * owner.speed;
 
                 // 2. 執行移動：直接給予物理速度
                 // 這樣碰撞時，物理引擎可以自動把生物推開，而不會像 MovePosition 那樣硬擠
@@ -97,7 +97,7 @@ public partial class Creature : MonoBehaviour, ITickable
                 float actualMovedThisTick = Vector2.Distance(lastRecordedPosition, currentActualPos);
 
                 // 物理系統中，如果被擋住，速度會被抵消，位移會變小
-                if (actualMovedThisTick < (owner.Speed * Time.fixedDeltaTime) * 0.5f)
+                if (actualMovedThisTick < (owner.speed * Time.fixedDeltaTime) * 0.5f)
                 {
                     stuck++;
                 }
@@ -147,7 +147,7 @@ public partial class Creature : MonoBehaviour, ITickable
                 Vector2 target = path[currentPathIndex];
 
                 // 2. 計算這一幀「預期」要到的位置
-                Vector2 nextPos = Vector2.MoveTowards(currentActualPos, target, owner.Speed * Time.fixedDeltaTime);
+                Vector2 nextPos = Vector2.MoveTowards(currentActualPos, target, owner.speed * Time.fixedDeltaTime);
 
                 // --- Stuck 判定邏輯修正 ---
                 // 我們檢查「從上次記錄位置到現在」，生物到底有沒有真的在動
@@ -155,7 +155,7 @@ public partial class Creature : MonoBehaviour, ITickable
 
                 // 如果實際位移遠小於「應該移動的距離」(Speed * dt)，就判定為卡住
                 // 注意：這裡比對的是上一幀的移動結果
-                if (awake && actualMovedThisTick < (owner.Speed * Time.fixedDeltaTime) * 0.8f)
+                if (awake && actualMovedThisTick < (owner.speed * Time.fixedDeltaTime) * 0.8f)
                 {
                     stuck++;
                 }
