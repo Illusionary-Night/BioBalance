@@ -10,7 +10,7 @@ public class AttackAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
 	{
-		return Perception.Creatures.HasTarget(creature, creature.PreyIDList);
+		return Perception.Creatures.HasTarget(creature, creature.preyIDList);
 	}
 
 	public override float GetWeight(Creature creature)
@@ -20,12 +20,12 @@ public class AttackAction : ActionBase
 
 	public override bool IsSuccess(Creature creature)
 	{
-		return Random.Range(0,100)<=70;
+		return Random.Range(0,9)<7;
 	}
 
 	public override void Execute(Creature creature, ActionContext context = null)
 	{
-        List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.PreyIDList);
+        List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.preyIDList);
         if (optionalTargets.Count > 0)
         {
             Creature target = optionalTargets[Random.Range(0, Mathf.Min(optionalTargets.Count, 6))];
@@ -49,7 +49,7 @@ public class AttackAction : ActionBase
                     if (target != null)
                     {
                         Debug.Log("Attack!");
-                        target.Hurt(creature.AttackPower, creature.transform.position);
+                        target.Hurt(creature.attackPower, creature.transform.position);
                     }
                     else
                     {

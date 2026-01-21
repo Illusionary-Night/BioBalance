@@ -43,30 +43,15 @@ public enum FoodType
 [System.Serializable]
 public struct CreatureAttributes
 {
-    public int species_ID;
     public float size;
     public float speed;
-    public float base_health;
+    public float max_health;
     public float reproduction_rate;
     public float attack_power;
     public float lifespan;
-    public float variation;
     public float perception_range;
     public int sleeping_head;
     public int sleeping_tail;
-    public List<FoodType> foodTypes;
-    public BodyType Body { get; set; }     //最終體型
-    public List<int> prey_ID_list;       //新增食物列表
-    public List<int> predator_ID_list;   //新增天敵列表
-    public List<ActionType> action_list;
-    public Dictionary<ActionType, int> action_max_CD;
-    public CreatureBase creautreBase;
-}
-[System.Serializable]
-public struct Species
-{
-    public CreatureAttributes attributes;
-    public List<Creature> creatures;
 }
 public static class AttributesCalculator{
     public static float CalculateHungerRate(float size, float speed, float attack_power)

@@ -9,25 +9,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 556b1ea2414ef9343a4927a70e53b982, type: 3}
+  m_Script: {fileID: 11500000, guid: 039a7fe6f95bb1b48974ee2ba3d3b757, type: 3}
   m_Name: Slime
-  m_EditorClassIdentifier: Assembly-CSharp::_Species
-  attributes:
-    species_ID: 2
-    size: 1
-    speed: 7.1
-    base_health: 79.3
-    reproduction_rate: 0.882
-    attack_power: 22.3
-    lifespan: 4860
-    variation: 0.1
-    perception_range: 15
-    sleeping_head: 16
-    sleeping_tail: 23
-    foodTypes: 0000000001000000
-    prey_ID_list: 00000000
-    predator_ID_list: 01000000
-    action_list: 000000000100000002000000040000000600000003000000
-    creautreBase: 0
-  _cdKeys: 000000000100000004000000020000000600000003000000
-  _cdValues: 140000003c000000c8000000280000001400000032000000
+  m_EditorClassIdentifier: Assembly-CSharp::Species
+  speciesID: 2
+  creatureBase: 0
+  foodTypes: 00000000
+  preyIDList: 
+  predatorIDList: 
+  actionList: 00000000010000000200000004000000
+  variation: 0
+  baseSize: 1
+  baseSpeed: 5
+  baseMaxHealth: 100
+  baseReproductionRate: 0.5
+  baseAttackPower: 0
+  baseLifespan: 2000
+  basePerceptionRange: 10
+  baseSleepingHead: 200
+  baseSleepingTail: 600
+  _cdKeys: 00000000010000000200000004000000
+  _cdValues: 14000000500000003200000064000000

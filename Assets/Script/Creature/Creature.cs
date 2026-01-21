@@ -32,11 +32,12 @@ public partial class Creature : MonoBehaviour, ITickable
 
     private bool isInvincible = false;
     public bool IsInvincible => isInvincible;
-    public void Initialize(CreatureAttributes creatureAttributes, GameObject creature_object)
+    public void Initialize(Species species, CreatureAttributes creatureAttributes, GameObject creature_object)
     {
-        AttributeInheritance(creatureAttributes, creature_object);
+        mySpecies = species;
+        AttributeInheritance(species, creatureAttributes, creature_object);
         //個體編號
-        _UUID = System.Guid.NewGuid().ToString();
+        UUID = System.Guid.NewGuid().ToString();
         isDead = false;
         //角色物件調適
         transform.localScale = new Vector3(size * constantData.NORMALSIZE, size * constantData.NORMALSIZE, 1f);
@@ -44,7 +45,7 @@ public partial class Creature : MonoBehaviour, ITickable
         // 初始化狀態機
         actionStateMachine = new ActionStateMachine(this);
         // 生物圖片
-        SetCreatureSprite(creautre_base);
+        SetCreatureSprite(species.creatureBase);
         OnEnable();
     }
     public void DoAction()
@@ -98,7 +99,7 @@ public partial class Creature : MonoBehaviour, ITickable
     {
         isDead = false;
         isInvincible = false;
-        under_attack_direction = Direction.None;
+        underAttackDirection = Direction.None;
         
         // 重置狀態機
         actionStateMachine = null;
@@ -113,44 +114,37 @@ public partial class Creature : MonoBehaviour, ITickable
         // 安全檢查
         if (isDead || this == null) return;
 
-        //test
-        if (movement != null && movement.path != null)
-        {
-            //Debug.Log("path exist: " + (movement.path != null));
-            //Debug.Log("Des:" + movement.GetDestination());
-        }
-
         //殺死
-        if (Health > 0)
+        if (health > 0)
         {
-            Health += HealthRegeneration;
+            health += healthRegeneration;
         }
         else
         {
             if (isInvincible)
             {
-                Health = 0.1f;
+                health = 0.1f;
             }
             else
             {
-                //Debug.Log("殺死");
+                Debug.Log("殺死");
                 Die();
                 return;
             }
         }
-        Health = Mathf.Min(Health, BaseHealth);
+        health = Mathf.Min(health, maxHealth);
 
         //餓死
         hunger = Mathf.Min(hunger, maxHunger);
-        if (Hunger > 0)
+        if (hunger > 0)
         {
-            Hunger -= HungerRate;
+            hunger -= hungerRate;
         }
         else
         {
             if (isInvincible)
             {
-                Hunger = 0;
+                hunger = 0;
             }
             else
             {
@@ -162,15 +156,15 @@ public partial class Creature : MonoBehaviour, ITickable
 
         //老死
         age = Mathf.Max(age, 0);
-        if (Age < Lifespan)
+        if (age < lifespan)
         {
-            Age += 1;
+            age += 1;
         }
         else
         {
             if (isInvincible)
             {
-                Age = Lifespan;
+                age = lifespan;
             }
             else
             {
@@ -181,9 +175,9 @@ public partial class Creature : MonoBehaviour, ITickable
         }
         
         //行動冷卻
-        if (ActionCooldown > 0)
+        if (actionCooldown > 0)
         {
-            ActionCooldown -= 1;
+            actionCooldown -= 1;
         }
 
         foreach (var key in actionCD.Keys.ToList())
@@ -194,7 +188,7 @@ public partial class Creature : MonoBehaviour, ITickable
             }
         }
 
-        if (ActionCooldown <= 0)
+        if (actionCooldown <= 0)
         {
             DoAction();
         }
@@ -205,7 +199,7 @@ public partial class Creature : MonoBehaviour, ITickable
     }
     public void ResetAllCooldowns()
     {
-        ActionCooldown = 0;
+        actionCooldown = 0;
         // 清空字典中的冷卻
         var keys = new List<ActionType>(actionCD.Keys);
         foreach (var key in keys) actionCD[key] = 0;
@@ -221,7 +215,7 @@ public partial class Creature : MonoBehaviour, ITickable
     /// <summary> 執行基礎傷害扣血，並確保生命值不低於 0 </summary>
     public void Hurt(float damage)
     {
-        under_attack_direction = Direction.None;
+        underAttackDirection = Direction.None;
         health -= damage;
         health = Mathf.Max(health, 0);
     }
@@ -231,7 +225,7 @@ public partial class Creature : MonoBehaviour, ITickable
     {
         // 計算攻擊者相對於自己的方位向量
         Vector2 direction = attackerPosition - (Vector2)transform.position;
-        under_attack_direction = GetDirectionFromVector(direction);
+        underAttackDirection = GetDirectionFromVector(direction);
         health -= damage;
         health = Mathf.Max(health, 0);
     }
@@ -259,20 +253,20 @@ public partial class Creature : MonoBehaviour, ITickable
     /// <summary> 檢查目前是否處於受擊狀態（方位不為 None 代表受擊中） </summary>
     public bool UnderAttack()
     {
-        return under_attack_direction != Direction.None;
+        return underAttackDirection != Direction.None;
     }
 
     /// <summary> 取得受擊方位</summary>
     public Direction GetUnderAttackDirection()
     {
-        return under_attack_direction;
+        return underAttackDirection;
     }
 
     /// <summary> 取得受擊方位並立刻重置狀態，確保單次受傷僅觸發一次反應 </summary>
     public Direction GetAndResetUnderAttackDirection()
     {
-        Direction result = under_attack_direction;
-        under_attack_direction = Direction.None;
+        Direction result = underAttackDirection;
+        underAttackDirection = Direction.None;
         return result;
     }
     //Hurt Section-------------------------------------------------------------------------

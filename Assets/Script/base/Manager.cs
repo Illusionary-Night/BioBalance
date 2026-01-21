@@ -5,16 +5,15 @@ public class Manager : MonoBehaviour
 {
     // Singleton instance
     public static Manager Instance { get; private set; }
-    // List of all species in the simulation
-    [SerializeField]
-    private readonly List<Species> species = new();
-    public List<Species> Species => species;
+
     // Initialize the EnvEntityManager
     public EnvEntityManager EnvEntityManager { get; private set; }
 
-    // «K§QÄÝ©Ê¡G´£¨Ñ¹ï EnvironmentEntities ªº³X°Ý
+    // ï¿½Kï¿½Qï¿½Ý©Ê¡Gï¿½ï¿½ï¿½Ñ¹ï¿½ EnvironmentEntities ï¿½ï¿½ï¿½Xï¿½ï¿½
     public Transform EnvironmentEntities => EnvEntityManager?.EnvironmentEntities;
 
+    [SerializeField] private readonly Dictionary<int, Species> species = new();
+    public Dictionary<int, Species> Species => species;
     void Start()
     {
         Initialize();
@@ -30,8 +29,8 @@ public class Manager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        
-        // ¦b Awake ¤¤ªì©l¤Æ EnvEntityManager¡A½T«O¦b¨ä¥L¸}¥»ªº Start ¤§«e¥i¥Î
+
+        // ï¿½b Awake ï¿½ï¿½ï¿½ï¿½lï¿½ï¿½ EnvEntityManagerï¿½Aï¿½Tï¿½Oï¿½bï¿½ï¿½Lï¿½}ï¿½ï¿½ï¿½ï¿½ Start ï¿½ï¿½ï¿½eï¿½iï¿½ï¿½
         EnvEntityManager = new EnvEntityManager();
     }
     private void Initialize()
@@ -41,8 +40,8 @@ public class Manager : MonoBehaviour
         {
             new GameObject("TickManager").AddComponent<TickManager>();
         }
-        
-        // ±Ò¥Î EnvEntityManager ªº Tick ­q¾\
+
+        // ï¿½Ò¥ï¿½ EnvEntityManager ï¿½ï¿½ Tick ï¿½qï¿½\
         EnvEntityManager?.OnEnable();
     }
 
@@ -53,100 +52,99 @@ public class Manager : MonoBehaviour
 
     private void PredatorUpdate(Creature new_creature)
     {
-        foreach (var each_species in species)
+        // ï¿½ï¿½ï¿½oï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø©wï¿½q
+        var newSpecies = new_creature.mySpecies;
+
+        // --- ï¿½Ä¤@ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½ï¿½Xï¿½Ö¬Oï¿½oï¿½ï¿½ï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½Ñ¼ï¿½ ---
+        foreach (var speciesEntry in Manager.Instance.Species.Values)
         {
-            if (each_species.creatures.Count == 0) continue;
-            foreach (var each_prey_ID in each_species.creatures[0].PreyIDList)
+            // ï¿½pï¿½Gï¿½oï¿½Óªï¿½ï¿½Øªï¿½ï¿½yï¿½ï¿½ï¿½Mï¿½ï¿½]ï¿½tï¿½sï¿½Íªï¿½ï¿½ï¿½ IDï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½Oï¿½Ñ¼ï¿½
+            if (speciesEntry.preyIDList.Contains(newSpecies.speciesID))
             {
-                if (each_prey_ID != new_creature.SpeciesID) continue;
-                new_creature.PredatorIDList.Add(each_species.attributes.species_ID);
+                // ï¿½Nï¿½Óªï¿½ï¿½ï¿½ ID ï¿½[ï¿½Jï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½Ñ¼Ä²Mï¿½ï¿½ (ï¿½pï¿½Gï¿½Ù¨Sï¿½[ï¿½L)
+                if (!new_creature.predatorIDList.Contains(speciesEntry.speciesID))
+                {
+                    new_creature.predatorIDList.Add(speciesEntry.speciesID);
+                }
             }
         }
-        foreach (var each_species in species)
+
+        // --- ï¿½Ä¤Gï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½iï¿½ï¿½ï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½Aï¿½sï¿½Íªï¿½ï¿½Oï¿½ï¿½ï¿½Ìªï¿½ï¿½Ñ¼ï¿½ ---
+        foreach (var preyID in newSpecies.preyIDList)
         {
-            foreach (var each_creature in each_species.creatures)
+            // ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            if (Manager.Instance.Species.TryGetValue(preyID, out var preySpecies))
             {
-                foreach (var each_prey_ID in new_creature.PreyIDList)
+                // ï¿½Mï¿½ï¿½ï¿½Óªï¿½ï¿½Øªï¿½ï¿½Ò¦ï¿½ï¿½ï¿½ï¿½ï¿½
+                foreach (var preyCreature in preySpecies.creatures.Values)
                 {
-                    if (each_prey_ID != each_creature.SpeciesID) continue;
-                    bool is_duplicate = false;
-                    foreach (var each_predator_ID in each_creature.PredatorIDList)
+                    // ï¿½iï¿½Dï¿½yï¿½ï¿½ï¿½Gï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¬Oï¿½Aï¿½ï¿½ï¿½Ñ¼ï¿½
+                    if (!preyCreature.predatorIDList.Contains(newSpecies.speciesID))
                     {
-                        if (each_predator_ID == each_creature.SpeciesID) is_duplicate = true;
+                        preyCreature.predatorIDList.Add(newSpecies.speciesID);
                     }
-                    if (!is_duplicate) each_creature.PredatorIDList.Add(new_creature.SpeciesID);
                 }
             }
         }
     }
-    public void RegisterCreature(Creature new_creature)
+    public void RegisterCreature(Creature newCreature)
     {
-        //Debug.Log($"[Manager] ½Ð¨Dµù¥U¥Íª«, ID: {new_creature.SpeciesID}_{new_creature.UUID}");
-        Species itsSpecies = new();
-        bool is_new_species = true;
-        foreach (var each_species in species)
+        int id = newCreature.speciesID;
+
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½
+        if (!species.TryGetValue(id, out var speciesData))
         {
-            if (each_species.attributes.species_ID == new_creature.SpeciesID)
-            {
-                is_new_species = false;
-                itsSpecies = each_species;
-            }
+            // ï¿½oï¿½Oï¿½sï¿½ï¿½ï¿½ï¿½
+            speciesData = newCreature.mySpecies;
+            species.Add(id, speciesData);
+
+            // --- ï¿½Û°Ê¤Æ®eï¿½ï¿½ï¿½Í¦ï¿½ ---
+            // ï¿½b EnvironmentEntities ï¿½Uï¿½Ø¥ß¤@ï¿½Ó¥Hï¿½ï¿½ï¿½Ø©Rï¿½Wï¿½ï¿½ï¿½Åªï¿½ï¿½ï¿½
+            GameObject container = new GameObject($"{speciesData.name}_Container");
+            container.transform.SetParent(this.EnvironmentEntities);
+
+            // ï¿½Aï¿½Æ¦Ü¥iï¿½Hï¿½ï¿½oï¿½ï¿½ Transform ï¿½sï¿½i Species ï¿½ï¿½ï¿½ó¤¤¡]ï¿½pï¿½G Species ï¿½ï¿½ï¿½wï¿½dï¿½ï¿½ï¿½^
+            // speciesData.runtimeContainer = container.transform; 
+
+            Debug.Log($"[Manager] ï¿½ï¿½ï¿½Uï¿½sï¿½ï¿½ï¿½Ø¨Ã«Ø¥ß®eï¿½ï¿½: {speciesData.name}");
         }
-        if (is_new_species)
+
+        // ï¿½Î¤@ï¿½Bï¿½z Parent ï¿½ï¿½ï¿½
+        // ï¿½oï¿½Ì´Mï¿½ï¿½ï¿½~ï¿½Ø¥ß©Î¤wï¿½sï¿½bï¿½ï¿½ï¿½eï¿½ï¿½
+        Transform targetContainer = EnvironmentEntities.Find($"{speciesData.name}_Container");
+        if (targetContainer != null)
         {
-            itsSpecies = new();
-            itsSpecies.creatures = new();
-            itsSpecies.attributes = new_creature.ToCreatureAttribute();
-            species.Add(itsSpecies);
+            newCreature.transform.SetParent(targetContainer);
         }
-        itsSpecies.creatures.Add(new_creature);
-        //PredatorUpdate(new_creature);
-        // ¦C¦L¥Ø«eªº±Ú¸s²{ªp
-        //foreach (var s in species)
-        //{
-        //    Debug.Log($"±Ú¸s {s.attributes.species_ID} ·í«e³Ñ¾l: {s.creatures.Count}");
-        //    foreach(var c in s.creatures)
-        //    {
-        //        Debug.Log($"±Ú¸s {s.attributes.species_ID} ¥Íª« {c.UUID}");
-        //    }
-        //}
+        else
+        {
+            Debug.LogWarning($"container miss! {speciesData.name}_Container");
+        }
+
+        // ï¿½[ï¿½Jï¿½rï¿½ï¿½
+        if (!speciesData.creatures.TryAdd(newCreature.UUID, newCreature))
+        {
+            return;
+        }
+
+        PredatorUpdate(newCreature);
     }
-    public void UnregisterCreature(Creature dead_creature)
+    public void UnregisterCreature(Creature deadCreature)
     {
-        if (dead_creature == null) return;
+        int id = deadCreature.speciesID;
 
-        //Debug.Log($"[Manager] ½Ð¨Dµù¾P¥Íª«, ID: {dead_creature.SpeciesID}_{dead_creature.UUID}");
-        bool success = false;
-
-        // ¨Ï¥Î for °j°éª½±µ³z¹L¯Á¤Þ¦s¨ú List ¤º³¡ªº struct
-        for (int i = 0; i < species.Count; i++)
+        if (species.TryGetValue(id, out var speciesData))
         {
-            if (species[i].attributes.species_ID == dead_creature.SpeciesID)
+            if (speciesData.creatures.Remove(deadCreature.UUID))
             {
-                for(int j = 0; j < species[i].creatures.Count; j++)
-                {
-                    if (species[i].creatures[j].UUID == dead_creature.UUID)
-                    {
-                        species[i].creatures.RemoveAt(j);
-                    }
-                }
-                success = true; // ­×¥¿¡G°O±o¼Ð°O¦¨¥\
+                // ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½~ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¿ï¿½
+                // ï¿½Ò¦pï¿½Gï¿½Mï¿½Å¸Ó¥Íªï¿½ï¿½ï¿½ CD ï¿½rï¿½ï¿½Îªï¿½ï¿½Aï¿½Aï¿½×§Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½Ý¯dï¿½Â¸ï¿½ï¿½
+                // deadCreature.OnRecycle(); 
             }
         }
-
-        if (!success)
+        else
         {
-            Debug.LogError($"[Manager] µù¾P¥¢±Ñ¡I§ä¤£¨ì SpeciesID ¬° {dead_creature.SpeciesID} ªº±Ú¸s");
+            Debug.LogWarning($"[Manager] ï¿½ï¿½ï¿½Õµï¿½ï¿½Pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øªï¿½ï¿½Íªï¿½: {id}");
         }
-
-        // ¦C¦L¥Ø«eªº±Ú¸s²{ªp
-        //foreach (var s in species)
-        //{
-        //    Debug.Log($"±Ú¸s {s.attributes.species_ID} ·í«e³Ñ¾l: {s.creatures.Count}");
-        //    foreach (var c in s.creatures)
-        //    {
-        //        Debug.Log($"±Ú¸s {s.attributes.species_ID} ¥Íª« {c.UUID}");
-        //    }
-        //}
     }
 }

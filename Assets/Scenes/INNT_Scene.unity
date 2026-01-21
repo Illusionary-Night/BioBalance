@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestRunner
   ManualControl: 0
-  goat: {fileID: 11400000, guid: 5fccf5b44f4c8e040999e493a7404c96, type: 2}
+  goat: {fileID: 11400000, guid: 7518b6743146baf4facbf30eda33fb51, type: 2}
   slime: {fileID: 11400000, guid: 6dfd3791039972441a7a50251b8a457f, type: 2}
   GoatParent: {fileID: 1411218008}
   SlimeParent: {fileID: 1950367070}

@@ -10,8 +10,8 @@ public class ReproduceAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
     {
-        if (creature.Age < creature.Lifespan * 0.2f) return false;
-        if (creature.Hunger < creature.MaxHunger * 0.5f) return false;
+        if (creature.age < creature.lifespan * 0.2f) return false;
+        if (creature.hunger < creature.maxHunger * 0.5f) return false;
         return true;
     }
 
@@ -29,7 +29,7 @@ public class ReproduceAction : ActionBase
 
         // 核心公式：使用 Sigmoid 的變體或簡單的線性下降
         // 這裡使用 1 / (1 + e^(N-T)) 的邏輯簡化版
-        int kindredCount = Perception.Creatures.CountTargetNumber(creature, creature.SpeciesID);
+        int kindredCount = Perception.Creatures.CountTargetNumber(creature, creature.speciesID);
         float crowdPressure = Mathf.Pow(kindredCount / crowdThreshold, steepness);
         float finalChance = maxChance * (1f - Mathf.Clamp01(crowdPressure));
 
@@ -40,21 +40,10 @@ public class ReproduceAction : ActionBase
 
     public override void Execute(Creature creature, ActionContext context = null)
     {
-        int creature_num = 0;
-        //Manager.Instance.RegisterCreature(creature);
-        creature.MoveTo(creature.GetRoundedPosition());
-        foreach (var each_species in Manager.Instance.Species)
-        {
-            if (each_species.attributes.species_ID == creature.SpeciesID)
-            {
-                creature_num = each_species.creatures.Count - 1;
-            }
-        }
-
         // 使用物件池取得新生物
         Vector3 spawnPosition = creature.transform.position + new Vector3(Random.value % 100 / 100f, Random.value % 100 / 100f, 0);
-        Creature new_creature = CreaturePool.GetCreature(creature.ToCreatureAttribute(), spawnPosition);
-        new_creature.gameObject.name = "creature_" + new_creature.SpeciesID + "_" + new_creature.UUID;
+        Creature new_creature = CreaturePool.GetCreature(creature.mySpecies, creature.ToCreatureAttribute(), spawnPosition);
+        new_creature.gameObject.name = new_creature.creatureBase+ "_" + new_creature.UUID;
         Manager.Instance.RegisterCreature(new_creature);
 
         // 繁殖是立即完成的 Action

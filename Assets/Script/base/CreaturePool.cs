@@ -46,12 +46,13 @@
  *   - 回傳：Creature 實例（需要手動呼叫 Initialize）
  *   - 用法：
  *       Creature creature = CreaturePool.GetCreature();
- *       creature.Initialize(attributes, creature.gameObject);
+ *       creature.Initialize(species, attributes, creature.gameObject);
  *       creature.transform.position = spawnPosition;
  * 
- * ● GetCreature(CreatureAttributes attributes, Vector3 position, Transform parent = null)
+ * ● GetCreature(species, CreatureAttributes attributes, Vector3 position, Transform parent = null)
  *   - 說明：從池中取得一個已初始化的 Creature（推薦使用）
  *   - 參數：
+ *       species    - 生物的種族
  *       attributes - 生物的遺傳屬性
  *       position   - 生成位置（世界座標）
  *       parent     - 父物件（可選，預設為 null）
@@ -175,10 +176,11 @@ public static class CreaturePool
     /// <summary>
     /// 從池中取得並初始化一個 Creature
     /// </summary>
+    /// <param name="species">生物種族</param>
     /// <param name="attributes">生物屬性</param>
     /// <param name="position">生成位置</param>
     /// <param name="parent">父物件（可選）</param>
-    public static Creature GetCreature(CreatureAttributes attributes, Vector3 position, Transform parent = null)
+    public static Creature GetCreature(Species species, CreatureAttributes attributes, Vector3 position, Transform parent = null)
     {
         EnsureInitialized();
         
@@ -193,7 +195,7 @@ public static class CreaturePool
         creature.transform.rotation = Quaternion.identity;
         
         // 初始化生物
-        creature.Initialize(attributes, creature.gameObject);
+        creature.Initialize(species, attributes, creature.gameObject);
         
         return creature;
     }
