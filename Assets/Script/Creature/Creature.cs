@@ -19,11 +19,11 @@ public partial class Creature : MonoBehaviour, ITickable
 {
     public void OnEnable()
     {
-        Manager.OnTick += OnTick;
+        TickManager.Instance.RegisterTickable(OnTick);
     }
     public void OnDisable()
     {
-        Manager.OnTick -= OnTick;
+        TickManager.Instance.UnregisterTickable(OnTick);
     }
 
     // 防止重複銷毀和訪問已銷毀物件的標記
@@ -70,17 +70,16 @@ public partial class Creature : MonoBehaviour, ITickable
         // 重要：先取消訂閱事件
         OnDisable();
 
-        if (Manager.Instance != null)
+        if (Manager.Instance != null && Manager.Instance.EnvironmentEntities != null)
         {
             // Spawn food item
             GameObject meat_prefab = Resources.Load<GameObject>("Prefabs/Edible/Meat");
-            Instantiate(meat_prefab, transform.position, Quaternion.identity, Manager.Instance.EnvironmentEntities)
-                .GetComponent<Edible>()
-                .Initialize();
-        }
-        else
-        {
-            Debug.LogWarning("MeatPrefab is null");
+            if (meat_prefab != null)
+            {
+                var meatObj = Instantiate(meat_prefab, transform.position, Quaternion.identity, Manager.Instance.EnvironmentEntities);
+                var edible = meatObj.GetComponent<Edible>();
+                edible?.Initialize();
+            }
         }
         
         if (Manager.Instance != null)

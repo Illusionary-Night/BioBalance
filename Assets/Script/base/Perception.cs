@@ -1,8 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
-using static UnityEngine.GraphicsBuffer;
-using static Perception;
 
 public static class Perception
 {
@@ -97,77 +95,183 @@ public static class Perception
         }
     }
 
-    public class Items
+    public static class Items
     {
+        // 輔助方法：取得所有指定類型的食物實體
+        private static List<Vector2Int> GetAllIntPos(Vector2Int pos, float radius)
+        {
+            float r2 = radius * radius;
+            int radiusInt = Mathf.FloorToInt(radius);
+            List<Vector2Int> positions = new();
+
+            for (int dx = -radiusInt; dx <= radiusInt; dx++)
+            {
+                float remaining = r2 - dx * dx;
+
+                if (remaining < 0) continue;
+                int dy_limit = Mathf.FloorToInt(Mathf.Sqrt(remaining));
+                int x = pos.x + dx;
+                for (int dy = -dy_limit; dy <= dy_limit; dy++)
+                {
+                    int y = pos.y + dy;
+                    positions.Add(new Vector2Int(x, y));
+                }
+            }
+                
+            return positions;
+        }
+
         // Checks if there is at least one food item of the specified type within perception range
         public static bool HasTarget(Creature creature, FoodType food_type)
         {
-            //Debug.Log("HasTarget?");
-            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
+            EntityData.SpawnableEntityType? spawnabletype = (EntityData.SpawnableEntityType)EntityData.FoodType2SpawnableType(food_type);
+            if (spawnabletype == null)
             {
-                float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
-                //Debug.Log("Position: "+each_dropped_item+" ,Distance: "+distance);
-                if (distance > creature.PerceptionRange) continue;
-                if (each_dropped_item.Type != food_type) continue;
+                Debug.LogError("Invalid food type: " + food_type.ToString());
+                return false;
+            }
+
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange))
+            {
+                
+                
+                Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+                if (edible == null || !edible.gameObject.activeInHierarchy) continue;
+                if (edible.Type != food_type) continue;
                 return true;
             }
             return false;
         }
+
         // Checks if there is at least one food item from the list of types within perception range
         public static bool HasTarget(Creature creature, List<FoodType> food_type_list)
         {
-            //Debug.Log("HasAllKindTarget");
-            //if (food_type_list == null) Debug.Log("food type list null");
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange);
+
             foreach (var food_type in food_type_list)
             {
-                //Debug.Log("foodType: ");
-                if (HasTarget(creature, food_type)) return true;
+                EntityData.SpawnableEntityType? spawnabletype = (EntityData.SpawnableEntityType)EntityData.FoodType2SpawnableType(food_type);
+                if (spawnabletype == null)
+                {
+                    Debug.LogError("Invalid food type: " + food_type.ToString());
+                    continue;
+                }
+
+                foreach (var ediblePos in allPos)
+                {
+                    Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+                    if (edible == null || !edible.gameObject.activeInHierarchy) continue;
+                    if (edible.Type != food_type) continue;
+                    return true;
+                }
             }
             return false;
         }
+
         // Counts the number of food items of the specified type within perception range
         public static int CountTargetNumber(Creature creature, FoodType food_type)
         {
             int count = 0;
-            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
+
+            EntityData.SpawnableEntityType? spawnabletype = (EntityData.SpawnableEntityType)EntityData.FoodType2SpawnableType(food_type);
+            if (spawnabletype == null)
             {
-                float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
-                if (distance > creature.PerceptionRange) continue;
-                if (each_dropped_item.Type != food_type) continue;
+                Debug.LogError("Invalid food type: " + food_type.ToString());
+                return 0;
+            }
+
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange))
+            {
+                Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+
+                if (edible == null || !edible.gameObject.activeInHierarchy) continue;
+                if (edible.Type != food_type) continue;
                 count++;
             }
             return count;
         }
+
         // Counts the total number of food items from the list of types within perception range
         public static int CountTarget(Creature creature, List<FoodType> food_type_list)
         {
             int count = 0;
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange);
+
             foreach (var food_type in food_type_list)
             {
-                count += CountTargetNumber(creature, food_type);
+                EntityData.SpawnableEntityType? spawnabletype = (EntityData.SpawnableEntityType)EntityData.FoodType2SpawnableType(food_type);
+                if (spawnabletype == null)
+                {
+                    Debug.LogError("Invalid food type: " + food_type.ToString());
+                    continue;
+                }
+
+                foreach (var ediblePos in allPos)
+                {
+                    Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+
+                    if (edible == null || !edible.gameObject.activeInHierarchy) continue;
+                    if (edible.Type != food_type) continue;
+                    count++;
+                }
             }
             return count;
         }
+
         // Retrieves a list of all food items of the specified type within perception range
         public static List<Edible> GetAllTargets(Creature creature, FoodType food_type)
         {
             List<Edible> targets = new();
-            foreach (var each_dropped_item in Manager.Instance.FoodItems.Values)
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange);
+
+            EntityData.SpawnableEntityType? spawnabletype = (EntityData.SpawnableEntityType)EntityData.FoodType2SpawnableType(food_type);
+            if (spawnabletype == null)
             {
-                float distance = Vector2.Distance(creature.transform.position, each_dropped_item.transform.position);
-                if (distance > creature.PerceptionRange) continue;
-                if (each_dropped_item.Type != food_type) continue;
-                targets.Add(each_dropped_item);
+                Debug.LogError("Invalid food type: " + food_type.ToString());
+                return targets;
             }
+
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange))
+            {
+                Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+
+                if (edible == null || !edible.gameObject.activeInHierarchy) continue;
+                if (edible.Type != food_type) continue;
+                targets.Add(edible);
+            }
+
+            targets.Sort((x, y) => {
+                float distanceX = Vector2.Distance(creature.transform.position, x.transform.position);
+                float distanceY = Vector2.Distance(creature.transform.position, y.transform.position);
+                return distanceX.CompareTo(distanceY);
+            });
             return targets;
         }
+
         // Retrieves a sorted list of all food items from the list of types within perception range
         public static List<Edible> GetAllTargets(Creature creature, List<FoodType> food_type_list)
         {
             List<Edible> targets = new();
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.PerceptionRange);
+
             foreach (var food_type in food_type_list)
             {
-                targets.AddRange(GetAllTargets(creature, food_type));
+                EntityData.SpawnableEntityType? spawnabletype = (EntityData.SpawnableEntityType)EntityData.FoodType2SpawnableType(food_type);
+                if (spawnabletype == null)
+                {
+                    Debug.LogError("Invalid food type: " + food_type.ToString());
+                    continue;
+                }
+
+                foreach (var ediblePos in allPos)
+                {
+                    Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+
+                    if (edible == null || !edible.gameObject.activeInHierarchy) continue;
+                    if (edible.Type != food_type) continue;
+                    targets.Add(edible);
+                }
+
             }
             targets.Sort((x, y) => {
                 float distanceX = Vector2.Distance(creature.transform.position, x.transform.position);

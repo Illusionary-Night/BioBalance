@@ -222,8 +222,6 @@ public static class CreaturePool
         }
         
         prefab = null;
-        
-        Debug.Log("CreaturePool: Pool cleared.");
     }
 
     /// <summary>
@@ -289,10 +287,7 @@ public static class CreaturePool
     private static void ActionOnRelease(Creature creature)
     {
         if (creature == null) return;
-        
-        // 取消事件訂閱（避免重複訂閱）
-        creature.OnDisable();
-        
+               
         // 停止所有協程
         creature.StopAllCoroutines();
         
