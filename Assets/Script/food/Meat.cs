@@ -6,4 +6,8 @@ public class Meat : Edible
     public override float NutritionalValue => 30f;
     public override FoodType Type => FoodType.Meat;
 
+    protected override EntityData.SpawnableEntityType GetEntityType()
+    {
+        return EntityData.SpawnableEntityType.Meat;
+    }
 }

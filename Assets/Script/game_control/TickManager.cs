@@ -7,7 +7,8 @@ public class TickManager: MonoBehaviour
     public static TickManager Instance { get; private set; }
     public int CurrentHour { get; private set; }
     public int CurrentDay { get; private set; }
-    public TickManager()
+
+    private void Awake()
     {
         if (Instance != null && Instance != this)
         {
@@ -15,6 +16,7 @@ public class TickManager: MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     private readonly List<Action> tickable = new(); 
@@ -45,7 +47,10 @@ public class TickManager: MonoBehaviour
         CurrentHour = total_hours % constantData.HOURS_PER_DAY;
         CurrentDay = (total_hours / constantData.HOURS_PER_DAY) + 1;
 
-        foreach (var t in tickable)
+        // Create a copy of the list to avoid modification during iteration
+        var tickOnTime = new List<Action>(tickable);
+
+        foreach (var t in tickOnTime)
         {
             t?.Invoke();
         }
