@@ -48,7 +48,7 @@ public class AttackAction : ActionBase
                     // 檢查目標是否仍然存在
                     if (target != null)
                     {
-                        Debug.Log("Attack!");
+                        Debug.Log(creature.name + " Attack!");
                         target.Hurt(creature.attackPower, creature.transform.position);
                     }
                     else

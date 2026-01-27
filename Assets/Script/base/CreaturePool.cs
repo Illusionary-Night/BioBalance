@@ -191,6 +191,12 @@ public static class CreaturePool
         {
             creature.transform.SetParent(parent);
         }
+
+        if (species.parentObject != null)
+        {
+            creature.transform.SetParent(species.parentObject);
+        }
+
         creature.transform.position = position;
         creature.transform.rotation = Quaternion.identity;
         

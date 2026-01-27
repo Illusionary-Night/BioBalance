@@ -137,8 +137,7 @@ public class EnvEntityManager : ITickable
     private void Initialize()
     {
         // 創建環境實體的父物件
-        GameObject env_entites_prefab = Resources.Load<GameObject>("Prefabs/Parents/EnvironmentEntities");
-        EnvironmentEntities = UnityEngine.Object.Instantiate(env_entites_prefab).transform;
+        EnvironmentEntities = new GameObject("EnvironmentEntities").transform;
 
         // 為每種實體類型初始化字典和物件池
         foreach (EntityData.SpawnableEntityType type in Enum.GetValues(typeof(EntityData.SpawnableEntityType)))
@@ -309,6 +308,47 @@ public class EnvEntityManager : ITickable
             }
         }
         return null;
+    }
+
+    //  ========= 公開方法多載 =========
+    private Vector2Int V3toV2Int(Vector3 v3)
+    {
+        return new Vector2Int(Mathf.RoundToInt(v3.x), Mathf.RoundToInt(v3.y));
+    }
+
+    private Vector2Int V2toV2Int(Vector2 v2)
+    {
+        return new Vector2Int(Mathf.RoundToInt(v2.x), Mathf.RoundToInt(v2.y));
+    }
+
+    public bool SpawnEntity(EntityData.SpawnableEntityType spawnableType, Vector3 pos)
+    {
+        return SpawnEntity(spawnableType, V3toV2Int(pos));
+    }
+
+    public bool SpawnEntity(EntityData.SpawnableEntityType spawnableType, Vector2 pos)
+    {
+        return SpawnEntity(spawnableType, V2toV2Int(pos));
+    }
+
+    public bool RemoveEntity(EntityData.SpawnableEntityType spawnableType, Vector3 pos)
+    {
+        return RemoveEntity(spawnableType, V3toV2Int(pos));
+    }
+
+    public bool RemoveEntity(EntityData.SpawnableEntityType spawnableType, Vector2 pos)
+    {
+        return RemoveEntity(spawnableType, V2toV2Int(pos));
+    }
+
+    public T GetEntity<T>(EntityData.SpawnableEntityType spawnableType, Vector3 position) where T : MonoBehaviour
+    {
+        return GetEntity<T>(spawnableType, V3toV2Int(position));
+    }
+
+    public T GetEntity<T>(EntityData.SpawnableEntityType spawnableType, Vector2 position) where T : MonoBehaviour
+    {
+        return GetEntity<T>(spawnableType, V2toV2Int(position));
     }
 
     /// <summary>

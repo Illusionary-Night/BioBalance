@@ -10,4 +10,10 @@ public class Meat : Edible
     {
         return EntityData.SpawnableEntityType.Meat;
     }
+
+    protected override void NaturalDespawn()
+    {
+        Manager.Instance?.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Carrion, transform.position);
+        base.NaturalDespawn();
+    }
 }

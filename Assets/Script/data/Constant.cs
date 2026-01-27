@@ -81,7 +81,7 @@ public enum TerrainType
 {
     Grass,      // 草地
     Sand,       // 沙地
-    Rock,       // 俗頭，91度，是個斜坡
+    Rock,       // 岩石
     Swamp,      // 沼澤
     Barrier,    // 障礙物，不可通行
     Water,      // 水域
@@ -113,5 +113,6 @@ public enum Direction
 public enum CreatureBase
 {
     Slime,
-    Goat
+    Goat, 
+    IceDragon,
 }
