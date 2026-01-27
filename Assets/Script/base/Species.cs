@@ -12,6 +12,7 @@ public class Species : ScriptableObject, ISerializationCallbackReceiver
     public List<int> predatorIDList = new List<int>();
     public List<ActionType> actionList = new List<ActionType>();
     public float variation; // 變異率
+    public Transform parentObject = null;
 
     [Header("遺傳基準值 (個體變異的起點)")]
     // 將原本屬性結構中的基礎數值放在這裡作為「範本」

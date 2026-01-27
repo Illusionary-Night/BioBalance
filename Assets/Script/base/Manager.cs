@@ -3,24 +3,26 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
-    // Singleton instance
+    // ³æ¨Ò¹ê¨Ò
     public static Manager Instance { get; private set; }
 
-    // Initialize the EnvEntityManager
+    // Àô¹Ò¹êÅéºÞ²z¾¹
     public EnvEntityManager EnvEntityManager { get; private set; }
 
-    // ï¿½Kï¿½Qï¿½Ý©Ê¡Gï¿½ï¿½ï¿½Ñ¹ï¿½ EnvironmentEntities ï¿½ï¿½ï¿½Xï¿½ï¿½
-    public Transform EnvironmentEntities => EnvEntityManager?.EnvironmentEntities;
+    // ª«ºØÁ`¤÷ª«¥ó
+    public Transform Creature_Container { get; private set; }
 
     [SerializeField] private readonly Dictionary<int, Species> species = new();
     public Dictionary<int, Species> Species => species;
+
     void Start()
     {
         Initialize();
     }
+
     private void Awake()
     {
-        // One instance only
+        // ½T«O¥u¦³¤@­Ó¹ê¨Ò
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -30,18 +32,22 @@ public class Manager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // ï¿½b Awake ï¿½ï¿½ï¿½ï¿½lï¿½ï¿½ EnvEntityManagerï¿½Aï¿½Tï¿½Oï¿½bï¿½ï¿½Lï¿½}ï¿½ï¿½ï¿½ï¿½ Start ï¿½ï¿½ï¿½eï¿½iï¿½ï¿½
+        // ¦b Awake ¤¤ªì©l¤Æ EnvEntityManager¡A½T«O¦b¨ä¥L¸}¥»ªº Start ¤§«e¥i¥Î
         EnvEntityManager = new EnvEntityManager();
     }
+
     private void Initialize()
     {
-        // Ensure TickManager exists
+        // ·s«Øª«ºØÁ`¤÷ª«¥óCreature_Container
+        Creature_Container = new GameObject("Creature_Container").transform;
+
+        // ½T«O TickManager ¦s¦b
         if (TickManager.Instance == null)
         {
             new GameObject("TickManager").AddComponent<TickManager>();
         }
 
-        // ï¿½Ò¥ï¿½ EnvEntityManager ï¿½ï¿½ Tick ï¿½qï¿½\
+        // ±Ò¥Î EnvEntityManager ªº Tick ­q¾\
         EnvEntityManager?.OnEnable();
     }
 
@@ -50,18 +56,21 @@ public class Manager : MonoBehaviour
         EnvEntityManager?.OnDisable();
     }
 
+    /// <summary>
+    /// §ó·s¤Ñ¼ÄÃö«Y
+    /// </summary>
     private void PredatorUpdate(Creature new_creature)
     {
-        // ï¿½ï¿½ï¿½oï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø©wï¿½q
+        // ¨ú±o·s¥Íª«ªºª«ºØ©w¸q
         var newSpecies = new_creature.mySpecies;
 
-        // --- ï¿½Ä¤@ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½ï¿½Xï¿½Ö¬Oï¿½oï¿½ï¿½ï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½Ñ¼ï¿½ ---
+        // --- ²Ä¤@¶¥¬q¡G§ä¥X½Ö¬O³o°¦·s¥Íª«ªº¤Ñ¼Ä ---
         foreach (var speciesEntry in Manager.Instance.Species.Values)
         {
-            // ï¿½pï¿½Gï¿½oï¿½Óªï¿½ï¿½Øªï¿½ï¿½yï¿½ï¿½ï¿½Mï¿½ï¿½]ï¿½tï¿½sï¿½Íªï¿½ï¿½ï¿½ IDï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½Oï¿½Ñ¼ï¿½
+            // ¦pªG³o­Óª«ºØªºÂyª«²M³æ¥]§t·s¥Íª«ªº ID¡A¨º¨e´N¬O¤Ñ¼Ä
             if (speciesEntry.preyIDList.Contains(newSpecies.speciesID))
             {
-                // ï¿½Nï¿½Óªï¿½ï¿½ï¿½ ID ï¿½[ï¿½Jï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½Ñ¼Ä²Mï¿½ï¿½ (ï¿½pï¿½Gï¿½Ù¨Sï¿½[ï¿½L)
+                // ±N¸Óª«ºØ ID ¥[¤J·s¥Íª«ªº¤Ñ¼Ä²M³æ¡]¦pªGÁÙ¨S¥[¹L¡^
                 if (!new_creature.predatorIDList.Contains(speciesEntry.speciesID))
                 {
                     new_creature.predatorIDList.Add(speciesEntry.speciesID);
@@ -69,16 +78,16 @@ public class Manager : MonoBehaviour
             }
         }
 
-        // --- ï¿½Ä¤Gï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½iï¿½ï¿½ï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½Aï¿½sï¿½Íªï¿½ï¿½Oï¿½ï¿½ï¿½Ìªï¿½ï¿½Ñ¼ï¿½ ---
+        // --- ²Ä¤G¶¥¬q¡G§iª¾·s¥Íª«ªºÂyª«¡A·s¥Íª«¬O¨e­Ìªº¤Ñ¼Ä ---
         foreach (var preyID in newSpecies.preyIDList)
         {
-            // ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // §ä¥Ø¼ÐÂyª«ª«ºØ
             if (Manager.Instance.Species.TryGetValue(preyID, out var preySpecies))
             {
-                // ï¿½Mï¿½ï¿½ï¿½Óªï¿½ï¿½Øªï¿½ï¿½Ò¦ï¿½ï¿½ï¿½ï¿½ï¿½
+                // ¹M¾ú¸Óª«ºØªº©Ò¦³¥Íª«
                 foreach (var preyCreature in preySpecies.creatures.Values)
                 {
-                    // ï¿½iï¿½Dï¿½yï¿½ï¿½ï¿½Gï¿½sï¿½Íªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¬Oï¿½Aï¿½ï¿½ï¿½Ñ¼ï¿½
+                    // §i¶DÂyª«¡G·s¥Íª«³o­Óª«ºØ¬O§Aªº¤Ñ¼Ä
                     if (!preyCreature.predatorIDList.Contains(newSpecies.speciesID))
                     {
                         preyCreature.predatorIDList.Add(newSpecies.speciesID);
@@ -87,41 +96,34 @@ public class Manager : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// µù¥U·s¥Íª«
+    /// </summary>
     public void RegisterCreature(Creature newCreature)
     {
         int id = newCreature.speciesID;
 
-        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½
+        // ¹Á¸Õ¨ú±oª«ºØ¸ê®Æ
         if (!species.TryGetValue(id, out var speciesData))
         {
-            // ï¿½oï¿½Oï¿½sï¿½ï¿½ï¿½ï¿½
+            // ³o¬O·sª«ºØ
             speciesData = newCreature.mySpecies;
             species.Add(id, speciesData);
 
-            // --- ï¿½Û°Ê¤Æ®eï¿½ï¿½ï¿½Í¦ï¿½ ---
-            // ï¿½b EnvironmentEntities ï¿½Uï¿½Ø¥ß¤@ï¿½Ó¥Hï¿½ï¿½ï¿½Ø©Rï¿½Wï¿½ï¿½ï¿½Åªï¿½ï¿½ï¿½
+            // --- ¦Û°Ê¤Æ®e¾¹¥Í¦¨ ---
+            // ¦b EnvironmentEntities ¤U«Ø¥ß¤@­Ó¥Hª«ºØ©R¦WªºªÅª«¥ó
             GameObject container = new GameObject($"{speciesData.name}_Container");
-            container.transform.SetParent(this.EnvironmentEntities);
+            container.transform.SetParent(this.Creature_Container);
+            speciesData.parentObject = container.transform;
 
-            // ï¿½Aï¿½Æ¦Ü¥iï¿½Hï¿½ï¿½oï¿½ï¿½ Transform ï¿½sï¿½i Species ï¿½ï¿½ï¿½ó¤¤¡]ï¿½pï¿½G Species ï¿½ï¿½ï¿½wï¿½dï¿½ï¿½ï¿½^
+            // ¬Æ¦Ü¥i¥H§â³o­Ó Transform ¦s¶i Species ª«¥ó¤¤¡]¦pªG Species ¦³¹w¯dÄæ¦ì¡^
             // speciesData.runtimeContainer = container.transform; 
 
-            Debug.Log($"[Manager] ï¿½ï¿½ï¿½Uï¿½sï¿½ï¿½ï¿½Ø¨Ã«Ø¥ß®eï¿½ï¿½: {speciesData.name}");
+            Debug.Log($"[Manager] µù¥U·sª«ºØ¨Ã«Ø¥ß®e¾¹: {speciesData.name}");
         }
 
-        // ï¿½Î¤@ï¿½Bï¿½z Parent ï¿½ï¿½ï¿½
-        // ï¿½oï¿½Ì´Mï¿½ï¿½ï¿½~ï¿½Ø¥ß©Î¤wï¿½sï¿½bï¿½ï¿½ï¿½eï¿½ï¿½
-        Transform targetContainer = EnvironmentEntities.Find($"{speciesData.name}_Container");
-        if (targetContainer != null)
-        {
-            newCreature.transform.SetParent(targetContainer);
-        }
-        else
-        {
-            Debug.LogWarning($"container miss! {speciesData.name}_Container");
-        }
-
-        // ï¿½[ï¿½Jï¿½rï¿½ï¿½
+        // ¥[¤J¦r¨å
         if (!speciesData.creatures.TryAdd(newCreature.UUID, newCreature))
         {
             return;
@@ -129,6 +131,10 @@ public class Manager : MonoBehaviour
 
         PredatorUpdate(newCreature);
     }
+
+    /// <summary>
+    /// µù¾P¤w¦º¤`ªº¥Íª«
+    /// </summary>
     public void UnregisterCreature(Creature deadCreature)
     {
         int id = deadCreature.speciesID;
@@ -137,14 +143,14 @@ public class Manager : MonoBehaviour
         {
             if (speciesData.creatures.Remove(deadCreature.UUID))
             {
-                // ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½~ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¿ï¿½
-                // ï¿½Ò¦pï¿½Gï¿½Mï¿½Å¸Ó¥Íªï¿½ï¿½ï¿½ CD ï¿½rï¿½ï¿½Îªï¿½ï¿½Aï¿½Aï¿½×§Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½Ý¯dï¿½Â¸ï¿½ï¿½
+                // ¥u¦³¦b²¾°£¦¨¥\«á¤~°µ²M²zÅÞ¿è
+                // ¨Ò¦p¡G²M²z¸Ó¥Íª«ªº CD ¦r¨å©Îª¬ºA¡AÁ×§Kª«¥ó¦À¦^¦¬«á´Ý¯dÂÂ¸ê®Æ
                 // deadCreature.OnRecycle(); 
             }
         }
         else
         {
-            Debug.LogWarning($"[Manager] ï¿½ï¿½ï¿½Õµï¿½ï¿½Pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øªï¿½ï¿½Íªï¿½: {id}");
+            Debug.LogWarning($"[Manager] ¹Á¸Õµù¾P¤£¦s¦bª«ºØªº¥Íª«: {id}");
         }
     }
 }

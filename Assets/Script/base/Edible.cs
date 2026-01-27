@@ -5,8 +5,10 @@ using UnityEngine;
 // Abstract base class for all edible objects
 public abstract class Edible : MonoBehaviour, ITickable
 {
+    [SerializeField]
     // Unique identifier for the edible object
     public string UUID { get; protected set; }
+    [SerializeField]
     // The remaining lifespan of the object (tick)
     public abstract int LifeSpan { get; protected set; }
 
@@ -36,13 +38,18 @@ public abstract class Edible : MonoBehaviour, ITickable
         LifeSpan--;
         if (LifeSpan <= 0)
         {
-            RemoveFromManager();
+            NaturalDespawn();
         }
     }
 
     public void OnDisable()
     {
         TickManager.Instance?.UnregisterTickable(OnTick);
+    }
+
+    protected virtual void NaturalDespawn ()
+    {
+        RemoveFromManager();
     }
 
     public virtual void Eaten()

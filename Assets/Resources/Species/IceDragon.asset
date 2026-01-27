@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 039a7fe6f95bb1b48974ee2ba3d3b757, type: 3}
-  m_Name: Goat
+  m_Name: IceDragon
   m_EditorClassIdentifier: Assembly-CSharp::Species
-  speciesID: 1
-  creatureBase: 1
-  foodTypes: 00000000
-  preyIDList: 02000000
-  predatorIDList: 03000000
-  actionList: 000000000100000002000000040000000500000003000000
-  variation: 0
+  speciesID: 3
+  creatureBase: 2
+  foodTypes: 01000000
+  preyIDList: 0100000002000000
+  predatorIDList: 
+  actionList: 0000000001000000020000000400000005000000
+  variation: 0.5
   parentObject: {fileID: 0}
   baseSize: 1
-  baseSpeed: 5
+  baseSpeed: 4
   baseMaxHealth: 100
-  baseReproductionRate: 0.5
-  baseAttackPower: 10
-  baseLifespan: 2000
-  basePerceptionRange: 10
-  baseSleepingHead: 200
+  baseReproductionRate: 0.2
+  baseAttackPower: 50
+  baseLifespan: 5000
+  basePerceptionRange: 100
+  baseSleepingHead: 193
   baseSleepingTail: 600
   _cdKeys: 000000000500000002000000040000000100000003000000
-  _cdValues: 140000003c000000320000002c0100005000000014000000
+  _cdValues: 140000001400000064000000f40100005000000014000000

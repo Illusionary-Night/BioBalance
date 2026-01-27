@@ -71,18 +71,9 @@ public partial class Creature : MonoBehaviour, ITickable
         // 重要：先取消訂閱事件
         OnDisable();
 
-        if (Manager.Instance != null && Manager.Instance.EnvironmentEntities != null)
-        {
-            // Spawn food item
-            GameObject meat_prefab = Resources.Load<GameObject>("Prefabs/Edible/Meat");
-            if (meat_prefab != null)
-            {
-                var meatObj = Instantiate(meat_prefab, transform.position, Quaternion.identity, Manager.Instance.EnvironmentEntities);
-                var edible = meatObj.GetComponent<Edible>();
-                edible?.Initialize();
-            }
-        }
-        
+        //生成肉
+        Manager.Instance?.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Meat, transform.position);
+
         if (Manager.Instance != null)
         {
             Manager.Instance.UnregisterCreature(this);

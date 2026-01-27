@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Species
   speciesID: 2
   creatureBase: 0
-  foodTypes: 00000000
+  foodTypes: 000000000100000002000000
   preyIDList: 
-  predatorIDList: 01000000
+  predatorIDList: 0100000003000000
   actionList: 000000000100000002000000040000000600000003000000
   variation: 0
+  parentObject: {fileID: 0}
   baseSize: 1
   baseSpeed: 5
   baseMaxHealth: 100
