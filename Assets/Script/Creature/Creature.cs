@@ -17,14 +17,7 @@ using System.IO;
 
 public partial class Creature : MonoBehaviour, ITickable
 {
-    public void OnEnable()
-    {
-        TickManager.Instance.RegisterTickable(OnTick);
-    }
-    public void OnDisable()
-    {
-        TickManager.Instance.UnregisterTickable(OnTick);
-    }
+    private ActionStateMachine actionStateMachine;
 
     // 防止重複銷毀和訪問已銷毀物件的標記
     private bool isDead = false;
@@ -40,7 +33,7 @@ public partial class Creature : MonoBehaviour, ITickable
         UUID = System.Guid.NewGuid().ToString();
         isDead = false;
         //角色物件調適
-        transform.localScale = new Vector3(size * constantData.NORMALSIZE, size * constantData.NORMALSIZE, 1f);
+        transform.localScale = new Vector3(size * constantData.NORMAL_SIZE, size * constantData.NORMAL_SIZE, 1f);
         movement = new Movement(this);
         // 初始化狀態機
         actionStateMachine = new ActionStateMachine(this);
@@ -48,6 +41,17 @@ public partial class Creature : MonoBehaviour, ITickable
         SetCreatureSprite(species.creatureBase);
         OnEnable();
     }
+
+    public void OnEnable()
+    {
+        TickManager.Instance.RegisterTickable(OnTick);
+    }
+    public void OnDisable()
+    {
+        TickManager.Instance.UnregisterTickable(OnTick);
+    }
+
+
     public void DoAction()
     {
         if (isDead) return;
@@ -280,5 +284,4 @@ public partial class Creature : MonoBehaviour, ITickable
             Debug.LogError($"找不到對應圖片: Sprites/{spriteName}");
         }
     }
-
 }

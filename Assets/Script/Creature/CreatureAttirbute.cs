@@ -97,7 +97,7 @@ public partial class Creature : MonoBehaviour, ITickable {
             actionCD[actionType] = 0;
         }
 
-        actionCooldown = 20;
+        actionCooldown = constantData.UNIVERSAL_ACTION_COOLDOWN;
     }
 
     public int GetActionCooldown(ActionType actionType)
@@ -131,5 +131,17 @@ public partial class Creature : MonoBehaviour, ITickable {
     public void SetCurrentAction(ActionType type)
     {
         currentAction = type;
+    }
+    //----
+    public void SetHunger(float value) {
+        hunger = Mathf.Clamp(value, 0, maxHunger);
+    }
+    public void SetHealth(float value)
+    {
+        health = Mathf.Clamp(value, 0, maxHealth);
+    }
+    public void SetAge(float value)
+    {
+        age = Mathf.Clamp(value, 0, lifespan);
     }
 }

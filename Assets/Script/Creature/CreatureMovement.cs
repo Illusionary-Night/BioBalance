@@ -10,7 +10,6 @@ using System.IO;
 public partial class Creature : MonoBehaviour, ITickable
 {
     private Movement movement;
-    private ActionStateMachine actionStateMachine;
 
     // 移動完成事件
     public event System.Action<Vector2Int> OnMovementComplete;

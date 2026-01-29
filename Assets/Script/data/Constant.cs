@@ -8,11 +8,14 @@ using UnityEngine;
 
 public class constantData : MonoBehaviour
 {
-    public const int NORMALSIZE = 1;
-    public const int STOCKLIMIT = 5;
+    public const int NORMAL_SIZE = 1;
+    public const int STOCK_LIMIT = 5;
 
     public const int TICKS_PER_HOUR = 60;   // 每小時 60 Ticks
     public const int HOURS_PER_DAY = 30;
+
+    public const int UNIVERSAL_ACTION_COOLDOWN = 20;
+
 }
 
 

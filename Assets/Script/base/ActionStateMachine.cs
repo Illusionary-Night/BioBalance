@@ -13,8 +13,14 @@ public class ActionStateMachine
     //給creature editor那邊監控用---
     public bool HasMovementCallback => currentMovementCallback != null;
     public string CurrentActionName => currentContext?.ActionType.ToString() ?? "None";
-    //----------
-
+    
+    // 用於 Creature Editor 監控的快取數據
+    public struct ActionDebugInfo
+    {
+        public bool isConditionMet;
+        public float weight;
+    }
+    public Dictionary<ActionType, ActionDebugInfo> DebugInfoCache = new();
 
     // 用於追蹤哪些事件處理器需要在清理時移除
     private List<System.Delegate> registeredCallbacks = new();
@@ -32,17 +38,24 @@ public class ActionStateMachine
     /// </summary>
     public void EvaluateAndExecute()
     {
-        
+        DebugInfoCache.Clear();
 
         // 收集可用的 Actions
         List<KeyValuePair<ActionType, float>> availableActions = new List<KeyValuePair<ActionType, float>>();
 
         for (int i = 0; i < owner.actionList.Count; i++)
         {
-            if (ActionSystem.IsConditionMet(owner, owner.actionList[i]))
+            // 加入存取一些給Creature Editor監測的數據
+            ActionType type = owner.actionList[i];
+            bool met = ActionSystem.IsConditionMet(owner, type);
+            float weight = met ? ActionSystem.GetWeight(owner, type) : 0;
+
+            // 存入快取供 Editor 讀取
+            DebugInfoCache[type] = new ActionDebugInfo { isConditionMet = met, weight = weight };
+
+            if (met)
             {
-                float weight = ActionSystem.GetWeight(owner, owner.actionList[i]);
-                availableActions.Add(new KeyValuePair<ActionType, float>(owner.actionList[i], weight));
+                availableActions.Add(new KeyValuePair<ActionType, float>(type, weight));
             }
         }
 
