@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +11,7 @@ public class constantData : MonoBehaviour
     public const int NORMAL_SIZE = 1;
     public const int STOCK_LIMIT = 5;
 
-    public const int TICKS_PER_HOUR = 60;   // 每小時 60 Ticks
+    public const int TICKS_PER_HOUR = 60;   // �C�p�� 60 Ticks
     public const int HOURS_PER_DAY = 30;
 
     public const int UNIVERSAL_ACTION_COOLDOWN = 20;
@@ -80,17 +80,17 @@ public static class AttributesCalculator{
     }
 }
 
-// 地形類型定義
+// �a�������w�q
 public enum TerrainType
 {
-    Grass,      // 草地
-    Sand,       // 沙地
-    Rock,       // 岩石
-    Swamp,      // 沼澤
-    Barrier,    // 障礙物，不可通行
-    Water,      // 水域
-    Lava,       // 熔岩
-    Ice         // 冰面
+    Grass,      // ��a
+    Sand,       // �F�a
+    Rock,       // ����
+    Swamp,      // �h�A
+    Barrier,    // ��ê���A���i�q��
+    Water,      // ����
+    Lava,       // ����
+    Ice         // �B��
 }
 
 public static class DefaultTerrainCosts
@@ -101,8 +101,8 @@ public static class DefaultTerrainCosts
         { TerrainType.Sand, 1.5f },
         { TerrainType.Rock, 10f },
         { TerrainType.Swamp, 2.5f },
-        { TerrainType.Barrier, float.MaxValue }, // 不可通行
-        { TerrainType.Water, 2.5f }, // 不可通行
+        { TerrainType.Barrier, float.MaxValue }, // ���i�q��
+        { TerrainType.Water, 2.5f }, // ���i�q��
         { TerrainType.Lava, 10.0f },
         { TerrainType.Ice, 1.2f }
     };
