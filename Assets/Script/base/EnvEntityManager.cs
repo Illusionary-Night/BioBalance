@@ -233,7 +233,7 @@ public class EnvEntityManager : ITickable
         // 檢查地形是否允許生成
         if (entityData.SpawnableTerrain != null && entityData.SpawnableTerrain.Count > 0)
         {
-            TerrainType currentTerrain = TerrainGenerator.Instance.GetDefinitionMap().GetTerrain(pos);
+            TerrainType currentTerrain = MapPipeline.Instance.OutputMap.GetTerrain(pos);
             bool canSpawn = false;
             
             foreach (var terrainType in entityData.SpawnableTerrain)

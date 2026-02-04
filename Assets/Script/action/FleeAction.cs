@@ -3,35 +3,35 @@ using UnityEngine;
 
 public class FleeAction : ActionBase
 {
-    // °k¶]Ä²µoªº«Â¯Ù¶ZÂ÷ìH­È
+    // ï¿½kï¿½]Ä²ï¿½oï¿½ï¿½ï¿½Â¯Ù¶Zï¿½ï¿½ï¿½Hï¿½ï¿½
     private const float THREAT_DISTANCE_THRESHOLD = 5f;
-    // °k¶]®Éªº»ÙÃªª«°jÁ×¨¤«×¡]¥Î©ó¸úÁ×¡^
+    // ï¿½kï¿½]ï¿½Éªï¿½ï¿½ï¿½Ãªï¿½ï¿½ï¿½jï¿½×¨ï¿½ï¿½×¡]ï¿½Î©ï¿½ï¿½ï¿½×¡^
     private const float OBSTACLE_AVOIDANCE_ANGLE = 30f;
-    // °k¶]¶ZÂ÷¡]·Pª¾½d³ò¤ºªº¤ñ¨Ò¡^
+    // ï¿½kï¿½]ï¿½Zï¿½ï¿½ï¿½]ï¿½Pï¿½ï¿½ï¿½dï¿½ò¤ºªï¿½ï¿½ï¿½Ò¡^
     private const float MIN_FLEE_RATE = 0.4f;
     private const float MAX_FLEE_RATE = 0.7f;
 
     public override ActionType Type => ActionType.Flee;
 
     /// <summary>
-    /// «e¸m±ø¥óÀË¬d¡G
-    /// 1. ¥¿¦b³Q§ðÀ»¡]§ðÀ»¤è¦V¤£¬° None¡^
-    /// 2. ·Pª¾½d³ò¤º¦³±°­¹ªÌ¡]±°­¹ªÌªºª«ºØID¦b²M³æ¤¤¡]§t¦Û¤v¡^¡B¶ZÂ÷§C©óìH­È¡^
+    /// ï¿½eï¿½mï¿½ï¿½ï¿½ï¿½ï¿½Ë¬dï¿½G
+    /// 1. ï¿½ï¿½ï¿½bï¿½Qï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½ï¿½ Noneï¿½^
+    /// 2. ï¿½Pï¿½ï¿½ï¿½dï¿½ò¤º¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¡]ï¿½ï¿½ï¿½ï¿½ï¿½Ìªï¿½ï¿½ï¿½ï¿½ï¿½IDï¿½bï¿½Mï¿½æ¤¤ï¿½]ï¿½tï¿½Û¤vï¿½^ï¿½Bï¿½Zï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½Hï¿½È¡^
     /// </summary>
     public override bool IsConditionMet(Creature creature)
     {
-        // ±ø¥ó 1¡G¥¿¦b³Q§ðÀ»
+        // ï¿½ï¿½ï¿½ï¿½ 1ï¿½Gï¿½ï¿½ï¿½bï¿½Qï¿½ï¿½ï¿½ï¿½
         if (creature.UnderAttack())
         {
             return true;
         }
 
-        // ±ø¥ó 2¡G·Pª¾½d³ò¤º¦³±°­¹ªÌ¥B¶ZÂ÷¹Lªñ
+        // ï¿½ï¿½ï¿½ï¿½ 2ï¿½Gï¿½Pï¿½ï¿½ï¿½dï¿½ò¤º¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¥Bï¿½Zï¿½ï¿½ï¿½Lï¿½ï¿½
         List<Creature> predators = GetNearbyPredators(creature);
         if (predators.Count > 0)
         {
-            // ÀË¬d³Ìªñªº±°­¹ªÌ¶ZÂ÷¬O§_§C©óìH­È
-            Creature nearestPredator = predators[0]; // ¤w«ö¶ZÂ÷±Æ¦C
+            // ï¿½Ë¬dï¿½Ìªñªº±ï¿½ï¿½ï¿½ï¿½Ì¶Zï¿½ï¿½ï¿½Oï¿½_ï¿½Cï¿½ï¿½ï¿½Hï¿½ï¿½
+            Creature nearestPredator = predators[0]; // ï¿½wï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½Æ¦C
             float distance = Vector2.Distance(creature.transform.position, nearestPredator.transform.position);
             return distance < THREAT_DISTANCE_THRESHOLD;
         }
@@ -41,7 +41,7 @@ public class FleeAction : ActionBase
 
     public override float GetWeight(Creature creature)
     {
-        // °k¶]Àu¥ý¯Å³Ì°ª¡A¯S§O¬O¦b³Q§ðÀ»®É
+        // ï¿½kï¿½]ï¿½uï¿½ï¿½ï¿½Å³Ì°ï¿½ï¿½Aï¿½Sï¿½Oï¿½Oï¿½bï¿½Qï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (creature.UnderAttack())
         {
             return 5.0f;
@@ -51,48 +51,48 @@ public class FleeAction : ActionBase
 
     public override bool IsSuccess(Creature creature)
     {
-        // °k¶]¦æ¬°¥Ã»·µø¬°¦¨¥\
+        // ï¿½kï¿½]ï¿½æ¬°ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\
         return true;
     }
 
     public override void Execute(Creature creature, ActionContext context = null)
     {
-        // ­«¸m³Q§ðÀ»ª¬ºA¡AÁ×§K§ðÀ»½w½Ä°Ïº¡®É¾É­P­«½ÆÄ²µo
+        // ï¿½ï¿½ï¿½mï¿½Qï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½Aï¿½×§Kï¿½ï¿½ï¿½ï¿½ï¿½wï¿½Ä°Ïºï¿½ï¿½É¾É­Pï¿½ï¿½ï¿½ï¿½Ä²ï¿½o
         creature.GetAndResetUnderAttackDirection();
 
-        // ­pºâ«Â¯Ù°Ñ¦ÒÂI
+        // ï¿½pï¿½ï¿½Â¯Ù°Ñ¦ï¿½ï¿½I
         Vector2 threatPosition = GetThreatReferencePoint(creature);
 
-        // ­pºâ°k¶]¤è¦V¡]¤Ï¤è¦V¡^
+        // ï¿½pï¿½ï¿½kï¿½]ï¿½ï¿½Vï¿½]ï¿½Ï¤ï¿½Vï¿½^
         Vector2 fleeDirection = CalculateFleeDirection(creature, threatPosition);
 
-        // ­pºâ°k¶]¥Ø¼Ð¦ì¸m
+        // ï¿½pï¿½ï¿½kï¿½]ï¿½Ø¼Ð¦ï¿½m
         Vector2Int fleeTarget = CalculateFleeTarget(creature, fleeDirection);
 
-        // ÀË¬d¥Ø¼Ð¬O§_¦³®Ä
+        // ï¿½Ë¬dï¿½Ø¼Ð¬Oï¿½_ï¿½ï¿½ï¿½ï¿½
         Vector2Int currentPos = creature.GetRoundedPosition();
         if (fleeTarget == currentPos)
         {
-            // µLªk°k¶]¡Aª½±µ§¹¦¨
+            // ï¿½Lï¿½kï¿½kï¿½]ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             context?.Complete();
             return;
         }
 
-        // ¨Ï¥Îª¬ºA¾÷µù¥U²¾°Ê¦^½Õ
+        // ï¿½Ï¥Îªï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Uï¿½ï¿½ï¿½Ê¦^ï¿½ï¿½
         var stateMachine = creature.GetStateMachine();
 
-        // ¨Ï¥Î flag ¨¾¤î­«½ÆÄ²µo
+        // ï¿½Ï¥ï¿½ flag ï¿½ï¿½ï¿½î­«ï¿½ï¿½Ä²ï¿½o
         bool hasCompleted = false;
 
         System.Action<Vector2Int> onArrived = (arrivedPosition) =>
         {
-            // ¨¾¤î­«½ÆÄ²µo
+            // ï¿½ï¿½ï¿½î­«ï¿½ï¿½Ä²ï¿½o
             if (hasCompleted)
             {
                 return;
             }
 
-            // ÀË¬d Context ¬O§_¤´µM¦³®Ä
+            // ï¿½Ë¬d Context ï¿½Oï¿½_ï¿½ï¿½ï¿½Mï¿½ï¿½ï¿½ï¿½
             if (context != null && !context.IsValid)
             {
                 return;
@@ -100,17 +100,17 @@ public class FleeAction : ActionBase
 
             hasCompleted = true;
 
-            // ¼Ð°O Action §¹¦¨
+            // ï¿½Ð°O Action ï¿½ï¿½ï¿½ï¿½
             context?.Complete();
         };
 
-        // ³z¹Lª¬ºA¾÷µù¥U¦^½Õ¡]¦Û°ÊºÞ²z²M²z¡^
+        // ï¿½zï¿½Lï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Uï¿½^ï¿½Õ¡]ï¿½Û°ÊºÞ²zï¿½Mï¿½zï¿½^
         stateMachine.RegisterMovementCallback(onArrived);
         creature.MoveTo(fleeTarget);
     }
 
     /// <summary>
-    /// ¨ú±oªþªñªº±°­¹ªÌ²M³æ¡]«ö¶ZÂ÷±Æ§Ç¡^
+    /// ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½ñªº±ï¿½ï¿½ï¿½ï¿½Ì²Mï¿½ï¿½]ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½Æ§Ç¡^
     /// </summary>
     private List<Creature> GetNearbyPredators(Creature creature)
     {
@@ -118,36 +118,36 @@ public class FleeAction : ActionBase
     }
 
     /// <summary>
-    /// ¨ú±o«Â¯Ù°Ñ¦ÒÂI¡G
-    /// - ³Q¦h­Ó±°­¹ªÌ°l³v®É¡A¨ú³Ìªñªº§@¬°°Ñ¦Ò
-    /// - ¥¿¦b³Q§ðÀ»®É¡A¨Ï¥Î§ðÀ»¤è¦V
+    /// ï¿½ï¿½ï¿½oï¿½Â¯Ù°Ñ¦ï¿½ï¿½Iï¿½G
+    /// - ï¿½Qï¿½hï¿½Ó±ï¿½ï¿½ï¿½ï¿½Ì°lï¿½vï¿½É¡Aï¿½ï¿½ï¿½Ìªñªº§@ï¿½ï¿½ï¿½Ñ¦ï¿½
+    /// - ï¿½ï¿½ï¿½bï¿½Qï¿½ï¿½ï¿½ï¿½ï¿½É¡Aï¿½Ï¥Î§ï¿½ï¿½ï¿½ï¿½ï¿½V
     /// </summary>
     private Vector2 GetThreatReferencePoint(Creature creature)
     {
         Vector2 creaturePos = creature.transform.position;
 
-        // ³B²z±°­¹ªÌ«Â¯Ù¡]Àu¥ý¡A¦]¬°§ðÀ»¤è¦V¤w³Q­«¸m¡^
+        // ï¿½Bï¿½zï¿½ï¿½ï¿½ï¿½ï¿½Ì«Â¯Ù¡]ï¿½uï¿½ï¿½ï¿½Aï¿½]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Vï¿½wï¿½Qï¿½ï¿½ï¿½mï¿½^
         List<Creature> predators = GetNearbyPredators(creature);
         if (predators.Count > 0)
         {
-            // ¨ú³Ìªñªº±°­¹ªÌ§@¬°«Â¯Ù°Ñ¦ÒÂI
+            // ï¿½ï¿½ï¿½Ìªñªº±ï¿½ï¿½ï¿½ï¿½Ì§@ï¿½ï¿½ï¿½Â¯Ù°Ñ¦ï¿½ï¿½I
             return predators[0].transform.position;
         }
 
-        // µL©ú½T«Â¯Ù®É¡AÀH¾÷¿ï¾Ü¤@­Ó¤è¦V°k¶]
+        // ï¿½Lï¿½ï¿½ï¿½Tï¿½Â¯Ù®É¡Aï¿½Hï¿½ï¿½ï¿½ï¿½Ü¤@ï¿½Ó¤ï¿½Vï¿½kï¿½]
         float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
         return creaturePos + new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
     }
 
     /// <summary>
-    /// ­pºâ°k¶]¤è¦V¡]«Â¯Ùªº¤Ï¤è¦V¡^
+    /// ï¿½pï¿½ï¿½kï¿½]ï¿½ï¿½Vï¿½]ï¿½Â¯Ùªï¿½ï¿½Ï¤ï¿½Vï¿½^
     /// </summary>
     private Vector2 CalculateFleeDirection(Creature creature, Vector2 threatPosition)
     {
         Vector2 creaturePos = creature.transform.position;
         Vector2 fleeDirection = (creaturePos - threatPosition).normalized;
 
-        // ¦pªG¤è¦V¬°¹s¦V¶q¡AÀH¾÷¿ï¾Ü¤@­Ó¤è¦V
+        // ï¿½pï¿½Gï¿½ï¿½Vï¿½ï¿½ï¿½sï¿½Vï¿½qï¿½Aï¿½Hï¿½ï¿½ï¿½ï¿½Ü¤@ï¿½Ó¤ï¿½V
         if (fleeDirection.sqrMagnitude < 0.001f)
         {
             float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
@@ -158,20 +158,20 @@ public class FleeAction : ActionBase
     }
 
     /// <summary>
-    /// ­pºâ°k¶]¥Ø¼Ð¦ì¸m¡A¥]§t»ÙÃªª«°jÁ×ÅÞ¿è
+    /// ï¿½pï¿½ï¿½kï¿½]ï¿½Ø¼Ð¦ï¿½mï¿½Aï¿½]ï¿½tï¿½ï¿½Ãªï¿½ï¿½ï¿½jï¿½ï¿½ï¿½Þ¿ï¿½
     /// </summary>
     private Vector2Int CalculateFleeTarget(Creature creature, Vector2 fleeDirection)
     {
         Vector2 creaturePos = creature.transform.position;
         float fleeDistance = Random.Range(creature.perceptionRange * MIN_FLEE_RATE, creature.perceptionRange * MAX_FLEE_RATE);
 
-        // ¹Á¸Õª½½u°k¶]¤è¦V
+        // ï¿½ï¿½ï¿½Õªï¿½ï¿½uï¿½kï¿½]ï¿½ï¿½V
         Vector2Int targetPos = Vector2Int.RoundToInt(creaturePos + fleeDirection * fleeDistance);
 
-        // ­Y«e¤è¦³»ÙÃª¡A¹Á¸Õ°jÁ×¤è¦V
+        // ï¿½Yï¿½eï¿½è¦³ï¿½ï¿½Ãªï¿½Aï¿½ï¿½ï¿½Õ°jï¿½×¤ï¿½V
         if (!IsPositionWalkable(targetPos))
         {
-            // ¹Á¸Õ¥ªÃä
+            // ï¿½ï¿½ï¿½Õ¥ï¿½ï¿½ï¿½
             Vector2 leftDirection = RotateVector(fleeDirection, OBSTACLE_AVOIDANCE_ANGLE);
             Vector2Int leftTarget = Vector2Int.RoundToInt(creaturePos + leftDirection * fleeDistance);
             if (IsPositionWalkable(leftTarget))
@@ -179,7 +179,7 @@ public class FleeAction : ActionBase
                 return leftTarget;
             }
 
-            // ¹Á¸Õ¥kÃä
+            // ï¿½ï¿½ï¿½Õ¥kï¿½ï¿½
             Vector2 rightDirection = RotateVector(fleeDirection, -OBSTACLE_AVOIDANCE_ANGLE);
             Vector2Int rightTarget = Vector2Int.RoundToInt(creaturePos + rightDirection * fleeDistance);
             if (IsPositionWalkable(rightTarget))
@@ -187,7 +187,7 @@ public class FleeAction : ActionBase
                 return rightTarget;
             }
 
-            // ­Y¨âÃä³£¤£¥i¦æ¡AÁYµu°k¶]¶ZÂ÷
+            // ï¿½Yï¿½ï¿½ï¿½ä³£ï¿½ï¿½ï¿½iï¿½ï¿½Aï¿½Yï¿½uï¿½kï¿½]ï¿½Zï¿½ï¿½
             fleeDistance *= 0.5f;
             targetPos = Vector2Int.RoundToInt(creaturePos + fleeDirection * fleeDistance);
         }
@@ -196,7 +196,7 @@ public class FleeAction : ActionBase
     }
 
     /// <summary>
-    /// ±ÛÂà¦V¶q«ü©w¨¤«×
+    /// ï¿½ï¿½ï¿½ï¿½Vï¿½qï¿½ï¿½ï¿½wï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private Vector2 RotateVector(Vector2 v, float degrees)
     {
@@ -210,13 +210,13 @@ public class FleeAction : ActionBase
     }
 
     /// <summary>
-    /// ÀË¬d¦ì¸m¬O§_¥i³q¦æ
+    /// ï¿½Ë¬dï¿½ï¿½mï¿½Oï¿½_ï¿½iï¿½qï¿½ï¿½
     /// </summary>
     private bool IsPositionWalkable(Vector2Int position)
     {
-        // ©e°Uµ¹¹ê»Úªº¦a§ÎÀË¬d¨t²Î
+        // ï¿½eï¿½Uï¿½ï¿½ï¿½ï¿½Úªï¿½ï¿½aï¿½ï¿½ï¿½Ë¬dï¿½tï¿½ï¿½
         if (TerrainGenerator.Instance == null) return true;
 
-        return TerrainGenerator.Instance.GetDefinitionMap().IsWalkable(position);
+        return MapPipeline.Instance.OutputMap.IsWalkable(position);
     }
 }

@@ -129,8 +129,8 @@ GameObject:
   m_Component:
   - component: {fileID: 244281955}
   - component: {fileID: 244281954}
-  - component: {fileID: 244281953}
   - component: {fileID: 244281956}
+  - component: {fileID: 244281957}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -138,18 +138,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &244281953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 244281952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4502c7a75c432c849af7ec6b497d512f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Manager
 --- !u!114 &244281954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +182,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IndicatorController
   allIndicators: []
+--- !u!114 &244281957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244281952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4502c7a75c432c849af7ec6b497d512f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Manager
 --- !u!1 &357938609
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,8 +204,8 @@ GameObject:
   m_Component:
   - component: {fileID: 357938613}
   - component: {fileID: 357938612}
-  - component: {fileID: 357938611}
   - component: {fileID: 357938610}
+  - component: {fileID: 357938614}
   m_Layer: 0
   m_Name: Generator
   m_TagString: Untagged
@@ -244,33 +244,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 45b6d3bd25e4f6343931fbbddbb0917a, type: 2}
   simpleTileDataList:
   - {fileID: 11400000, guid: 9ad0564cbce707e49b4930c9b82c1cd9, type: 2}
---- !u!114 &357938611
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 357938609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6786c033f25ea840bc4cae42a058402, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TerrainGenerator
-  mapWidth: 500
-  mapHeight: 500
-  noiseScale: 20
-  octaves: 6
-  persistence: 0.5
-  lacunarity: 2
-  mapSeed: -1930340793
-  noiseOffset: {x: -4382.0586, y: -7837.541}
-  terrainThresholds:
-  - threshold: 0.3
-    terrain: 5
-  - threshold: 0.75
-    terrain: 0
-  - threshold: 1
-    terrain: 2
 --- !u!114 &357938612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283,8 +256,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f3068f3eda9bdb41a0c820ffeeabb1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapManager
-  generator: {fileID: 357938611}
+  pipeline: {fileID: 357938614}
   visualizer: {fileID: 357938610}
+  heightStep:
+    noiseScale: 20
+    octaves: 4
+    persistence: 0.5
+    lacunarity: 2
+    enabled: 1
+  decisionStep:
+    thresholds:
+    - threshold: 0.3
+      terrain: 5
+    - threshold: 0.75
+      terrain: 0
+    - threshold: 1
+      terrain: 2
+    heightLayer: Height
+    enabled: 1
+  renderStep:
+    visualizer: {fileID: 0}
+    renderDebug: 1
+    renderDualGrid: 1
+    enabled: 0
 --- !u!4 &357938613
 Transform:
   m_ObjectHideFlags: 0
@@ -300,6 +294,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &357938614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357938609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6d0ea6dbcb214e4fbf73fb7286d82a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapPipeline
+  mapWidth: 500
+  mapHeight: 500
+  mapSeed: 1337
+  logTiming: 1
 --- !u!1 &375739565
 GameObject:
   m_ObjectHideFlags: 0

@@ -40,14 +40,14 @@ public class TerrainGenerator : MonoBehaviour
         public TerrainType terrain;
     }
 
-    void Awake()
-    {
-        if (Instance != null && Instance != this) Destroy(this.gameObject);
-        else Instance = this;
+    //void Awake()
+    //{
+    //    if (Instance != null && Instance != this) Destroy(this.gameObject);
+    //    else Instance = this;
 
-        definitionLayerMap = new TerrainMap(TerrainType.Water);
-        GenerateMapData();
-    }
+    //    definitionLayerMap = new TerrainMap(TerrainType.Water);
+    //    GenerateMapData();
+    //}
 
     public TerrainMap GetDefinitionMap()
     {

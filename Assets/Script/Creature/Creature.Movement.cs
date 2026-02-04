@@ -211,7 +211,7 @@ public partial class Creature : MonoBehaviour, ITickable
 
             // 假設 AStar.FindPath 回傳 List<Vector2Int> 或 null
             // 使用 A* 演算法尋找路徑
-            List<Vector2Int> rawPath = AStar.FindPath(start, goal, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
+            List<Vector2Int> rawPath = AStar.FindPath(start, goal, MapPipeline.Instance.OutputMap.GetTerrainWeight);
             if (rawPath == null || rawPath.Count == 0)
             {
                 path = null;
