@@ -8,21 +8,18 @@ using UnityEngine;
 
 public class constantData : MonoBehaviour
 {
-    public const int NORMALSIZE = 1;
-    public const int STOCKLIMIT = 5;
+    public const int NORMAL_SIZE = 1;
+    public const int STOCK_LIMIT = 5;
 
-    public const int TICKS_PER_HOUR = 60;   // ¨C¤p®É 60 Ticks
+    public const int TICKS_PER_HOUR = 60;   // ï¿½Cï¿½pï¿½ï¿½ 60 Ticks
     public const int HOURS_PER_DAY = 30;
+
+    public const int UNIVERSAL_ACTION_COOLDOWN = 20;
+
 }
 
 
-public static class MapConstants
-{
-    public const int MAP_WIDTH = 200;
-    public const int MAP_HEIGHT = 200;
-}
-
-
+public enum LifeState { Infant, Juvenile, Adult, Elder }
 public enum BodyType
 {
     Small,
@@ -83,17 +80,17 @@ public static class AttributesCalculator{
     }
 }
 
-// ¦a§ÎÃþ«¬©w¸q
+// ï¿½aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½q
 public enum TerrainType
 {
-    Grass,      // ¯ó¦a
-    Sand,       // ¨F¦a
-    Rock,       // ©¥¥Û
-    Swamp,      // ªh¿A
-    Barrier,    // »ÙÃªª«¡A¤£¥i³q¦æ
-    Water,      // ¤ô°ì
-    Lava,       // º²©¥
-    Ice         // ¦B­±
+    Grass,      // ï¿½ï¿½a
+    Sand,       // ï¿½Fï¿½a
+    Rock,       // ï¿½ï¿½ï¿½ï¿½
+    Swamp,      // ï¿½hï¿½A
+    Barrier,    // ï¿½ï¿½Ãªï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½iï¿½qï¿½ï¿½
+    Water,      // ï¿½ï¿½ï¿½ï¿½
+    Lava,       // ï¿½ï¿½ï¿½ï¿½
+    Ice         // ï¿½Bï¿½ï¿½
 }
 
 public static class DefaultTerrainCosts
@@ -104,8 +101,8 @@ public static class DefaultTerrainCosts
         { TerrainType.Sand, 1.5f },
         { TerrainType.Rock, 10f },
         { TerrainType.Swamp, 2.5f },
-        { TerrainType.Barrier, float.MaxValue }, // ¤£¥i³q¦æ
-        { TerrainType.Water, 2.5f }, // ¤£¥i³q¦æ
+        { TerrainType.Barrier, float.MaxValue }, // ï¿½ï¿½ï¿½iï¿½qï¿½ï¿½
+        { TerrainType.Water, 2.5f }, // ï¿½ï¿½ï¿½iï¿½qï¿½ï¿½
         { TerrainType.Lava, 10.0f },
         { TerrainType.Ice, 1.2f }
     };

@@ -9,8 +9,6 @@ using System.IO;
 
 public partial class Creature : MonoBehaviour, ITickable
 {
-    private Movement movement;
-    private ActionStateMachine actionStateMachine;
 
     // 移動完成事件
     public event System.Action<Vector2Int> OnMovementComplete;
@@ -251,42 +249,6 @@ public partial class Creature : MonoBehaviour, ITickable
         {
             return stuck;
         }
-    }
-    public void MoveTo(Vector2Int destination)
-    {
-        if (isDead || movement == null) return;
-        movement.SetDestination(destination);
-    }
-
-    public void ForceNavigate()
-    {
-        if (isDead || movement == null) return;
-        movement.Navigate();
-    }
-
-    public Vector2Int GetRoundedPosition()
-    {
-        if (movement == null) return Vector2Int.zero;
-        return movement.GetVector2IntCurrentPosition();
-    }
-    public float GetDistanceToDestination()
-    {
-        // 如果 movement 沒啟動、或是沒在動 (awake 為 false)，就回傳 -1
-        // 這裡我們用反射或是在 Movement 加個 getter
-        if (movement == null || movement.GetDestination() == null) { 
-            return -1f;
-        }
-        Vector2 currentPos = transform.position; // 或是 rb.position
-        Vector2 dest = new Vector2(movement.GetDestination().x, movement.GetDestination().y);
-
-        return Vector2.Distance(currentPos, dest);
-    }
-    public Vector2Int GetMovementDestination()
-    {
-        return movement.GetDestination();
-    }
-    public int GetMovementStuckTimes() { 
-        return movement.GetStuckTimes();
     }
 
 }

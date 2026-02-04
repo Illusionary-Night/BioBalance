@@ -1,378 +1,347 @@
-﻿//using static UnityEngine.GraphicsBuffer;
-//using UnityEditor;
-//using UnityEngine;
-//using System.Collections.Generic;
-//using System.Collections;
-//using System.Reflection;
-//using static Perception;
-
-//[CustomEditor(typeof(Creature))]
-//public class CreatureEditor : Editor
-//{
-//    // 用來紀錄目前選中的分頁索引
-//    private int tabIndex = 0;
-//    private string[] tabNames = { "Dashboard", "Genetic Data", "Debug Tools", "Event Subscription" };
-
-//    // 一些function內部的變數，為了不被刷新只能定在這裡
-//    private Vector2Int testPos = Vector2Int.zero;
-//    private float testAngle = 0f;
-//    public override void OnInspectorGUI()
-//    {
-//        Creature creature = (Creature)target;
-
-//        // 1. 繪製頂部分頁按鈕 (Toolbar)
-//        tabIndex = GUILayout.Toolbar(tabIndex, tabNames);
-
-//        EditorGUILayout.Space(10);
-
-//        // 2. 根據選中的分頁顯示內容
-//        switch (tabIndex)
-//        {
-//            case 0:
-//                DrawDashboardTab(creature);
-//                break;
-//            case 1:
-//                DrawGeneticTab(creature);
-//                break;
-//            case 2:
-//                DrawDebugTab(creature);
-//                DrawIndicatorButton(creature);
-//                break;
-//            case 3:
-//                DrawEventSubscriptionMonitor(creature);
-//                break;
-//        }
-
-//        // 執行模式下自動刷新
-//        if (Application.isPlaying) Repaint();
-//    }
-
-//    // --- 第一頁：可視化儀表板 ---
-//    private void DrawDashboardTab(Creature creature)
-//    {
-//        EditorGUILayout.LabelField("Live Status Monitor", EditorStyles.boldLabel);
-
-//        // --- 1. 血量進度條 (動態變色：綠 -> 紅) ---
-//        float healthPct = Mathf.Clamp01(creature.Health / creature.BaseHealth);
-//        Color hpColor = Color.Lerp(Color.red, Color.green, healthPct);
-//        Rect hpRect = EditorGUILayout.GetControlRect(false, 20);
-//        DrawColoredProgressBar(hpRect, healthPct, $"Health: {creature.Health:F1} ({healthPct * 100:F0}%)", hpColor);
-
-//        EditorGUILayout.Space(5);
-
-//        // --- 2. 飢餓度進度條 (固定橘色) ---
-//        float hungerPct = Mathf.Clamp01(creature.Hunger / creature.MaxHunger);
-//        Color hungerColor = new Color(1f, 0.6f, 0f); // 橘色
-//        Rect hungerRect = EditorGUILayout.GetControlRect(false, 20);
-//        DrawColoredProgressBar(hungerRect, hungerPct, $"Hunger: {creature.Hunger:F1} ({hungerPct * 100:F0}%)", hungerColor);
-
-//        EditorGUILayout.Space(5);
-
-//        // --- 3. 年齡進度條 (固定灰色) ---
-//        float agePct = Mathf.Clamp01(creature.Age / creature.Lifespan);
-//        Rect ageRect = EditorGUILayout.GetControlRect(false, 20);
-//        DrawColoredProgressBar(ageRect, agePct, $"Age: {creature.Age:F0} ({agePct * 100:F0}%)", Color.gray);
-//        EditorGUILayout.Space(10);
-//        EditorGUILayout.LabelField("Action Cooldowns", EditorStyles.boldLabel);
-
-//        // --- 4. 行動進度條 ---
-//        var actionCDs = creature.GetActionCDList(); 
-//        var actionMaxCDs = creature.GetActionMaxCDList();
-
-//        if (actionCDs == null || actionCDs.Count == 0)
-//        {
-//            EditorGUILayout.HelpBox("No active action cooldowns.", MessageType.None);
-//            return;
-//        }
-
-//        foreach(var action in actionMaxCDs)
-//        {
-//            int maxCD = action.Value;
-//            int CD = 0;
-//            actionCDs.TryGetValue(action.Key, out CD);
-//            float progress = Mathf.Clamp01( (float)CD / maxCD);
-
-//            Rect rect = EditorGUILayout.GetControlRect(false, 18);
-
-//            // 使用冷調的紫色或藍色來區分於血條
-//            Color cdColor = new Color(0.5f, 0.5f, 1f);
-
-//            DrawColoredProgressBar(rect, progress, $"{action.Key}: {CD} Ticks / {maxCD} Ticks", cdColor);
-//            EditorGUILayout.Space(2);
-//        }
-//        EditorGUILayout.Space(10);
-//        EditorGUILayout.LabelField("Brain State", EditorStyles.boldLabel);
-
-//        EditorGUILayout.LabelField($"Global Action CD: {creature.ActionCooldown}");
-
-//        EditorGUILayout.LabelField($"Current Action: {creature.CurrentAction}");
-
-//        EditorGUILayout.LabelField($"Distance: {creature.GetDistanceToDestination()}");
-
-//        EditorGUILayout.LabelField($"StuckTimes: {creature.GetMovementStuckTimes()}");
-
-//        // 讓畫面在執行時動態刷新
-//        if (Application.isPlaying) Repaint();
-//    }
-
-//    // --- 第二頁：原始遺傳資料 ---
-//    private void DrawGeneticTab(Creature creature)
-//    {
-//        EditorGUILayout.LabelField("Base Genetic Attributes", EditorStyles.boldLabel);
-
-//        // 顯示原本的 Inspector 內容（或者你手動排版變數）
-//        // 如果只想顯示部分，可以用 EditorGUILayout.PropertyField
-//        base.OnInspectorGUI();
-//    }
-
-//    // --- 第三頁：上帝權限工具 ---
-//    private void DrawDebugTab(Creature creature)
-//    {
-//        // --- Section: Life & Health ---
-//        EditorGUILayout.BeginVertical("box");
-//        EditorGUILayout.LabelField("Life Management", EditorStyles.boldLabel);
-
-//        EditorGUILayout.BeginHorizontal();
-//        if (GUILayout.Button("Full Restore"))
-//        {
-//            creature.health = creature.maxHealth;
-//            creature.hunger = creature.maxHunger;
-//        }
-
-//        if (GUILayout.Button("Set Hunger 40%"))
-//        {
-//            creature.hunger = creature.maxHunger * 0.4f;
-//        }
-
-//        if (GUILayout.Button("Set Health 40%"))
-//        {
-//            creature.health = creature.maxHealth * 0.4f;
-//        }
-//        EditorGUILayout.EndHorizontal();
-
-//        GUI.backgroundColor = new Color(1f, 0.4f, 0.4f);
-//        if (GUILayout.Button("Kill Immediately", GUILayout.Height(25)))
-//        {
-//            creature.Die();
-//        }
-//        GUI.backgroundColor = Color.white;
-//        EditorGUILayout.EndVertical();
-
-//        EditorGUILayout.Space(10);
-
-//        // --- Section: Special States ---
-//        EditorGUILayout.BeginVertical("box");
-//        EditorGUILayout.LabelField("Special States", EditorStyles.boldLabel);
-
-//        // 1. 先用一個暫存變數讀取目前的勾選狀態，並獲取使用者的點擊結果
-//        bool nextInvincible = EditorGUILayout.Toggle("Invincible Mode", creature.IsInvincible);
-
-//        // 2. 判斷使用者有沒有「點擊」動作（數值是否改變）
-//        if (nextInvincible != creature.IsInvincible)
-//        {
-//            // 3. 透過你的接口來修改數值，這樣可以確保如果有任何 Set 邏輯（例如特效開關）也會被觸發
-//            creature.SetInvincible(nextInvincible);
-//        }
-//        EditorGUILayout.HelpBox("God Mode: No HP loss, No Hunger loss, No Death from old age.", MessageType.None);
-//        EditorGUILayout.EndVertical();
-
-//        EditorGUILayout.Space(10);
-
-//        // --- Section: Time & Cycles ---
-//        EditorGUILayout.BeginVertical("box");
-//        EditorGUILayout.LabelField("Time & Evolution", EditorStyles.boldLabel);
-
-//        EditorGUILayout.BeginHorizontal();
-//        if (GUILayout.Button("Age +10%"))
-//        {
-//            creature.age += creature.lifespan * 0.1f;
-//            creature.age = Mathf.Min(creature.age, creature.lifespan);
-//        }
-//        if (GUILayout.Button("Age -10%"))
-//        {
-//            creature.age -= creature.lifespan * 0.1f;
-//            creature.age = Mathf.Max(creature.age, 0);
-//        }
-//        EditorGUILayout.EndHorizontal();
-
-//        if (GUILayout.Button("Reset All Cooldowns"))
-//        {
-//            creature.ResetAllCooldowns(); // Call the method we planned to add in Creature.cs
-//        }
-//        EditorGUILayout.EndVertical();
-
-//        EditorGUILayout.Space(10);
-
-//        // --- Section: AI & Navigation ---
-//        EditorGUILayout.BeginVertical("box");
-//        EditorGUILayout.LabelField("AI Intervention", EditorStyles.boldLabel);
-
-//        creature.currentAction = (ActionType)EditorGUILayout.EnumPopup("Current Action", creature.currentAction);
-
-//        testPos = EditorGUILayout.Vector2IntField("Target Coordinates", testPos);
-//        if (GUILayout.Button("Force Move to Target"))
-//        {
-//            creature.MoveTo(testPos);
-//        }
-//        EditorGUILayout.EndVertical();
-
-//        DrawUnderAttackTest(creature);
-//    }
-
-//    private void DrawUnderAttackTest(Creature creature) {
-
-//        EditorGUILayout.LabelField("Direction Test", EditorStyles.boldLabel);
-
-//        EditorGUILayout.LabelField($"Under Attack Direction: {creature.GetUnderAttackDirection()}");
-//        EditorGUILayout.LabelField($"Remain HP: {creature.health}");
-
-//        // 1. 使用滑桿調整角度
-//        testAngle = EditorGUILayout.Slider("Test Angle", testAngle, 0, 360);
-
-//        // 2. 繪製一個簡易的視覺化小圓盤
-//        Rect rect = GUILayoutUtility.GetRect(80, 80);
-//        if (Event.current.type == EventType.Repaint)
-//        {
-//            Vector2 center = rect.center;
-//            Handles.color = Color.grey;
-//            Handles.DrawWireDisc(center, Vector3.forward, 35f); // 畫圓圈
-
-//            // 畫出指針
-//            float rad = testAngle * Mathf.Deg2Rad;
-//            Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
-//            Handles.color = Color.red;
-//            Handles.DrawLine(center, center + dir * 35f);
-//        }
-
-//        if (GUILayout.Button("Hurt from that Angle"))
-//        {
-//            float rad = testAngle * Mathf.Deg2Rad;
-//            Vector2 spawnPos = (Vector2)creature.transform.position + new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
-//            creature.Hurt(10, spawnPos);
-//        }
-//        if (GUILayout.Button("Hurt without Direction"))
-//        {
-//            creature.Hurt(10);
-//        }
-
-//        // 讓畫面在執行時動態刷新
-//        if (Application.isPlaying) Repaint();
-//    }
-//    private void DrawColoredProgressBar(Rect rect, float value, string text, Color barColor)
-//    {
-//        // 畫背景 (深灰色)
-//        EditorGUI.DrawRect(rect, new Color(0.1f, 0.1f, 0.1f));
-
-//        // 畫填充層 (使用傳進來的顏色)
-//        Rect fillRect = new Rect(rect.x, rect.y, rect.width * value, rect.height);
-//        EditorGUI.DrawRect(fillRect, barColor);
-
-//        // 設定文字樣式 (置中、粗體、白色)
-//        GUIStyle textStyle = new GUIStyle();
-//        textStyle.alignment = TextAnchor.MiddleCenter;
-//        textStyle.normal.textColor = Color.white;
-//        textStyle.fontStyle = FontStyle.Bold;
-
-//        // 畫文字
-//        EditorGUI.LabelField(rect, text, textStyle);
-//    }
-//    private void DrawEventSubscriptionMonitor(Creature creature)
-//    {
-//        var sm = creature.GetStateMachine(); // 假設你公開了狀態機獲取
-
-//        EditorGUILayout.BeginVertical("helpbox");
-//        EditorGUILayout.LabelField("🔗 Event Lifecycle Monitor", EditorStyles.boldLabel);
-
-//        // 1. Context 狀態
-//        Color contextColor = sm.IsExecuting ? Color.green : Color.gray;
-//        GUI.color = contextColor;
-//        EditorGUILayout.LabelField($"Context Status: {(sm.IsExecuting ? "ACTIVE" : "IDLE")}");
-//        GUI.color = Color.white;
-
-//        // 2. 訂閱狀況
-//        EditorGUILayout.BeginHorizontal();
-//        EditorGUILayout.LabelField("Movement Callback:", GUILayout.Width(120));
-//        if (sm.HasMovementCallback)
-//        {
-//            GUI.color = Color.cyan;
-//            EditorGUILayout.LabelField("CONNECTED [✓]", EditorStyles.boldLabel);
-//        }
-//        else
-//        {
-//            GUI.color = Color.red;
-//            EditorGUILayout.LabelField("DISCONNECTED [X]");
-//        }
-//        GUI.color = Color.white;
-//        EditorGUILayout.EndHorizontal();
-
-//        // 3. 追蹤列表 (registeredCallbacks)
-//        // 透過反射拿到 sm.registeredCallbacks.Count
-//        int callbackCount = GetPrivateFieldCount(sm, "registeredCallbacks");
-//        EditorGUILayout.LabelField($"Pending Callbacks: {callbackCount}");
-
-//        if (sm.IsExecuting && !sm.HasMovementCallback && sm.CurrentActionName == "Move")
-//        {
-//            EditorGUILayout.HelpBox("CRITICAL: Logic Deadlock! Action is Move but no Callback is registered!", MessageType.Error);
-//        }
-
-//        EditorGUILayout.EndVertical();
-//    }
-//    private int GetPrivateFieldCount(object obj, string fieldName)
-//    {
-//        if (obj == null) return 0;
-
-//        // 取得該物件的類別型態
-//        System.Type type = obj.GetType();
-
-//        // 尋找私有變數
-//        FieldInfo field = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-
-//        if (field != null)
-//        {
-//            // 取得該變數的內容並轉型為 ICollection (List 繼承自它，有 Count 屬性)
-//            var value = field.GetValue(obj) as ICollection;
-//            return value?.Count ?? 0;
-//        }
-
-//        return 0;
-//    }
-//    private void DrawIndicatorButton(Creature creature)
-//    {
-//        EditorGUILayout.BeginVertical("box");
-//        EditorGUILayout.LabelField("World Visualizer", EditorStyles.boldLabel);
-
-//        if (GUILayout.Button("Show Destination In Scene", GUILayout.Height(30)))
-//        {
-//            Vector2Int dest = creature.GetMovementDestination();
-
-//            if (IndicatorController.Instance != null)
-//            {
-//                var destIndicator = IndicatorController.Instance.GetIndicator<DestinationIndicator>();
-//                if (destIndicator != null)
-//                {
-//                    destIndicator.SetTarget(creature);
-//                    destIndicator.Show();
-//                }
-//                else
-//                {
-//                    Debug.Log("destIndicator is null");
-//                }
-
-//            }
-//            else
-//            {
-//                Debug.LogWarning("IndicatorController not found in scene!");
-//            }
-//        }
-
-//        if (GUILayout.Button("Hide Indicator"))
-//        {
-//            var destIndicator = IndicatorController.Instance.GetIndicator<DestinationIndicator>();
-//            if (destIndicator != null)
-//            { 
-//                destIndicator.Hide();
-//            }
-//        }
-//        EditorGUILayout.EndVertical();
-//    }
-//}
+﻿using UnityEditor;
+using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
+using System.Reflection;
+
+[CustomEditor(typeof(Creature))]
+public class CreatureEditor : Editor
+{
+    // 分頁索引與名稱
+    private int tabIndex = 0;
+    private string[] tabNames = { "Dashboard", "Debug Tools" };
+
+    // 內部測試變數 (持久化於 Editor 實例)
+    private Vector2Int testPos = Vector2Int.zero;
+    private float testAngle = 0f;
+
+    public override void OnInspectorGUI()
+    {
+        Creature creature = (Creature)target;
+        if (creature == null) return;
+
+        // 1. 繪製導覽列
+        tabIndex = GUILayout.Toolbar(tabIndex, tabNames);
+        EditorGUILayout.Space(10);
+
+        // 2. 根據選中分頁切換顯示邏輯
+        switch (tabIndex)
+        {
+            case 0:
+                DrawDashboardTab(creature);
+                break;
+            case 1:
+                DrawDebugTab(creature);
+                break;
+        }
+
+        // 運行模式下自動重繪以維持進度條動畫
+        if (Application.isPlaying) Repaint();
+    }
+
+    #region --- Dashboard 分頁渲染 ---
+
+    /// <summary>
+    /// 繪製儀表板分頁：包含狀態條、行動冷卻與大腦狀態
+    /// </summary>
+    private void DrawDashboardTab(Creature creature)
+    {
+        DrawVitalStatusBars(creature);
+        EditorGUILayout.Space(10);
+
+        DrawActionIntelligence(creature);
+        EditorGUILayout.Space(10);
+
+        DrawBrainStateMonitor(creature);
+    }
+
+    /// <summary>
+    /// 繪製核心生存數值進度條 (血量、飢餓、年齡)
+    /// </summary>
+    private void DrawVitalStatusBars(Creature creature)
+    {
+        EditorGUILayout.LabelField("Live Status Monitor", EditorStyles.boldLabel);
+
+        // 血量 (動態變色)
+        float healthPct = Mathf.Clamp01(creature.health / creature.maxHealth);
+        Color hpColor = Color.Lerp(Color.red, Color.green, healthPct);
+        DrawProgressBar("Health", creature.health, healthPct, hpColor);
+
+        // 飢餓 (橘色)
+        float hungerPct = Mathf.Clamp01(creature.hunger / creature.maxHunger);
+        DrawProgressBar("Hunger", creature.hunger, hungerPct, new Color(1f, 0.6f, 0f));
+
+        // 年齡 (灰色)
+        float agePct = Mathf.Clamp01(creature.age / creature.lifespan);
+        DrawProgressBar("Age", creature.age, agePct, Color.gray);
+    }
+
+    /// <summary>
+    /// 繪製行動冷卻與決策權重系統
+    /// </summary>
+    private void DrawActionIntelligence(Creature creature)
+    {
+        // 防禦性檢查：確保大腦跟冷卻字典都已經準備好
+        if (creature.GetStateMachine() == null || creature.GetActionCDList() == null)
+        {
+            EditorGUILayout.HelpBox("Creature Brain or Cooldowns not initialized.", MessageType.Warning);
+            return;
+        }
+        EditorGUILayout.LabelField("Action Intelligence", EditorStyles.boldLabel);
+
+        // 1. 通用全域冷卻 (Universal CD)
+        int maxUCD = Mathf.Max(1, constantData.UNIVERSAL_ACTION_COOLDOWN);
+        float ucdPct = Mathf.Clamp01((float)creature.actionCooldown / maxUCD);
+        DrawProgressBar("Universal CD", creature.actionCooldown, ucdPct, Color.gray);
+
+        EditorGUILayout.Space(5);
+
+        // 2. 個別動作冷卻與條件檢查
+        var actionCDs = creature.GetActionCDList();
+        var actionMaxCDs = creature.GetActionMaxCDList();
+        var debugCache = creature.GetStateMachine().DebugInfoCache;
+
+        foreach (var action in actionMaxCDs)
+        {
+            ActionType type = action.Key;
+            int currentCD = 0;
+            actionCDs.TryGetValue(type, out currentCD);
+
+            bool isMet = false;
+            float weight = 0;
+            if (debugCache.TryGetValue(type, out var info))
+            {
+                isMet = info.isConditionMet;
+                weight = info.weight;
+            }
+
+            // 判斷狀態配色邏輯
+            Color barColor;
+            string label;
+            float progress;
+
+            if (currentCD > 0)
+            {
+                barColor = new Color(0.44f, 0.5f, 0.56f); // 冷卻中：石板藍
+                label = $"{type} ({currentCD}t)";
+                progress = Mathf.Clamp01((float)currentCD / action.Value);
+            }
+            else
+            {
+                progress = 1.0f; // 就緒狀態填滿條以顯示顏色
+                if (isMet)
+                {
+                    barColor = new Color(0.53f, 0.66f, 0.42f); // 可執行：鼠尾草綠
+                    label = $"{type} [W: {weight:F1}]";
+                }
+                else
+                {
+                    barColor = new Color(0.69f, 0.49f, 0.49f); // 邏輯阻斷：莫蘭迪紅
+                    label = $"{type} [Blocked]";
+                }
+            }
+
+            Rect rect = EditorGUILayout.GetControlRect(false, 18);
+            DrawColoredProgressBar(rect, progress, label, barColor);
+            EditorGUILayout.Space(2);
+        }
+    }
+
+    /// <summary>
+    /// 繪製大腦運行時的變數監測
+    /// </summary>
+    private void DrawBrainStateMonitor(Creature creature)
+    {
+        EditorGUILayout.LabelField("Brain State", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField($"Current Action:", creature.currentAction.ToString());
+        EditorGUILayout.LabelField($"Distance to Target:", creature.GetDistanceToDestination().ToString("F2"));
+        EditorGUILayout.LabelField($"Stuck Times:", creature.GetMovementStuckTimes().ToString());
+        EditorGUILayout.EndVertical();
+    }
+
+    #endregion
+
+    #region --- Debug Tab 分頁渲染 ---
+
+    /// <summary>
+    /// 繪製上帝工具分頁：包含屬性修改與戰鬥測試
+    /// </summary>
+    private void DrawDebugTab(Creature creature)
+    {
+        DrawLifeManagementTools(creature);
+        EditorGUILayout.Space(10);
+
+        DrawSpecialStateTools(creature);
+        EditorGUILayout.Space(10);
+
+        DrawEvolutionTools(creature);
+        EditorGUILayout.Space(10);
+
+        DrawUnderAttackTest(creature);
+        EditorGUILayout.Space(10);
+
+        DrawIndicatorButton(creature);
+    }
+
+    private void DrawLifeManagementTools(Creature creature)
+    {
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("Life Management", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Full Restore"))
+        {
+            creature.SetHealth(creature.maxHealth);
+            creature.SetHunger(creature.maxHunger);
+        }
+        if (GUILayout.Button("Set 40%"))
+        {
+            creature.SetHealth(creature.maxHealth * 0.4f);
+            creature.SetHunger(creature.maxHunger * 0.4f);
+        }
+        EditorGUILayout.EndHorizontal();
+
+        GUI.backgroundColor = new Color(1f, 0.4f, 0.4f);
+        if (GUILayout.Button("Kill Immediately", GUILayout.Height(25))) creature.Die();
+        GUI.backgroundColor = Color.white;
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawSpecialStateTools(Creature creature)
+    {
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("Special States", EditorStyles.boldLabel);
+        bool nextInvincible = EditorGUILayout.Toggle("Invincible Mode", creature.isInvincible);
+        if (nextInvincible != creature.isInvincible) creature.SetInvincible(nextInvincible);
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawEvolutionTools(Creature creature)
+    {
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("Evolution & Time", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Age +10%")) creature.SetAge(creature.age + creature.lifespan * 0.1f);
+        if (GUILayout.Button("Age -10%")) creature.SetAge(creature.age - creature.lifespan * 0.1f);
+        EditorGUILayout.EndHorizontal();
+        if (GUILayout.Button("Reset All Cooldowns")) creature.ResetAllCooldowns();
+        EditorGUILayout.EndVertical();
+    }
+
+
+    private void DrawUnderAttackTest(Creature creature)
+    {
+        EditorGUILayout.LabelField("Direction Test (Counter-Clockwise)", EditorStyles.boldLabel);
+
+        EditorGUILayout.LabelField($"Under Attack Direction: {creature.GetUnderAttackDirection()}");
+        EditorGUILayout.LabelField($"Remain HP: {creature.health:F1}");
+
+        // 1. Slider 調整：0度在右側(X+), 90度在上方(Y+)
+        testAngle = EditorGUILayout.Slider("Test Angle (deg)", testAngle, 0, 360);
+
+        // 2. 繪製視覺化小圓盤
+        Rect rect = GUILayoutUtility.GetRect(80, 80);
+        if (Event.current.type == EventType.Repaint)
+        {
+            Vector2 center = rect.center;
+            Handles.color = new Color(0.3f, 0.3f, 0.3f);
+            Handles.DrawWireDisc(center, Vector3.forward, 35f);
+
+            // 核心邏輯：將角度轉換為弧度
+            float rad = testAngle * Mathf.Deg2Rad;
+
+            // 在 Unity Editor UI 中，Y 軸是向下增長的，但 Handles 繪製座標系略有不同
+            // 為了確保「逆時針為正」，我們計算出方向向量
+            Vector2 dir = new Vector2(Mathf.Cos(rad), -Mathf.Sin(rad)); // 這裡加負號是因為 GUI 座標系 Y 軸向下
+
+            Handles.color = Color.red;
+            Handles.DrawLine(center, center + dir * 35f);
+
+            // 畫一個小箭頭或點代表方向頭部
+            Handles.DrawSolidDisc(center + dir * 35f, Vector3.forward, 3f);
+        }
+
+        // 3. 測試按鈕
+        if (GUILayout.Button("Hurt from that Angle"))
+        {
+            float rad = testAngle * Mathf.Deg2Rad;
+            // 在世界座標中，+Y 通常是往上，所以不需要負號
+            Vector2 worldDir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
+            Vector2 spawnPos = (Vector2)creature.transform.position + worldDir;
+            Debug.Log("Hurt from "+worldDir);
+            creature.Hurt(10, spawnPos);
+        }
+    }
+
+
+    private void DrawIndicatorButton(Creature creature)
+    {
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("World Visualizer", EditorStyles.boldLabel);
+
+        if (GUILayout.Button("Show Destination In Scene", GUILayout.Height(30)))
+        {
+            Vector2Int dest = creature.GetMovementDestination();
+
+            if (IndicatorController.Instance != null)
+            {
+                var destIndicator = IndicatorController.Instance.GetIndicator<DestinationIndicator>();
+                if (destIndicator != null)
+                {
+                    destIndicator.SetTarget(creature);
+                    destIndicator.Show();
+                }
+                else
+                {
+                    Debug.Log("destIndicator is null");
+                }
+
+            }
+            else
+            {
+                Debug.LogWarning("IndicatorController not found in scene!");
+            }
+        }
+
+        if (GUILayout.Button("Hide Indicator"))
+        {
+            var destIndicator = IndicatorController.Instance.GetIndicator<DestinationIndicator>();
+            if (destIndicator != null)
+            {
+                destIndicator.Hide();
+            }
+        }
+        EditorGUILayout.EndVertical();
+    }
+
+    #endregion
+
+    #region --- 通用繪製工具 ---
+
+    /// <summary>
+    /// 封裝好的進度條繪製邏輯
+    /// </summary>
+    private void DrawProgressBar(string label, float current, float pct, Color color)
+    {
+        Rect rect = EditorGUILayout.GetControlRect(false, 20);
+        DrawColoredProgressBar(rect, pct, $"{label}: {current:F1} ({pct * 100:F0}%)", color);
+        EditorGUILayout.Space(2);
+    }
+
+    private void DrawColoredProgressBar(Rect rect, float value, string text, Color barColor)
+    {
+        EditorGUI.DrawRect(rect, new Color(0.1f, 0.1f, 0.1f)); // 背景
+        Rect fillRect = new Rect(rect.x, rect.y, rect.width * value, rect.height);
+        EditorGUI.DrawRect(fillRect, barColor); // 填充
+
+        GUIStyle textStyle = new GUIStyle()
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fontStyle = FontStyle.Bold
+        };
+        textStyle.normal.textColor = Color.white;
+        EditorGUI.LabelField(rect, text, textStyle);
+    }
+
+    #endregion
+}

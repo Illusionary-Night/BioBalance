@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Carrion : Edible
 {
-    public override int LifeSpan { get; protected set; } = 500;
+    public override int LifeTime { get; protected set; } = 500;
     public override float NutritionalValue => 20f;
 	public override FoodType Type => FoodType.Carrion;
 
