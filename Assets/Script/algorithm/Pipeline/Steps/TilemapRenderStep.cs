@@ -9,7 +9,7 @@ public class TilemapRenderStep : IMapPipelineStep
     [SerializeField] private MapVisualizer visualizer;
     [SerializeField] private bool renderDebug = true;
     [SerializeField] private bool renderDualGrid = true;
-    [SerializeField] private bool enabled = true;
+    [SerializeField] private bool enabled = false;
     
     public string StepName => "Tilemap Render";
     public PipelinePhase Phase => PipelinePhase.Visualization;

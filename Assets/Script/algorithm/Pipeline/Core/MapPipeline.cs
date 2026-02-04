@@ -8,8 +8,8 @@ public class MapPipeline : MonoBehaviour
     public static MapPipeline Instance { get; private set; }
     
     [Header("Map Settings")]
-    [SerializeField] private int mapWidth = 100;
-    [SerializeField] private int mapHeight = 100;
+    [SerializeField] private int mapWidth = 500;
+    [SerializeField] private int mapHeight = 500;
     [SerializeField] private int mapSeed = 1337;
     
     [Header("Debug")]
