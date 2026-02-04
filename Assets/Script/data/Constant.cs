@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,8 +11,15 @@ public class constantData : MonoBehaviour
     public const int NORMALSIZE = 1;
     public const int STOCKLIMIT = 5;
 
-    public const int TICKS_PER_HOUR = 60;   // æ¯å°æ™‚ 60 Ticks
+    public const int TICKS_PER_HOUR = 60;   // ¨C¤p®É 60 Ticks
     public const int HOURS_PER_DAY = 30;
+}
+
+
+public static class MapConstants
+{
+    public const int MAP_WIDTH = 200;
+    public const int MAP_HEIGHT = 200;
 }
 
 
@@ -76,17 +83,17 @@ public static class AttributesCalculator{
     }
 }
 
-// åœ°å½¢é¡å‹å®šç¾©
+// ¦a§ÎÃş«¬©w¸q
 public enum TerrainType
 {
-    Grass,      // è‰åœ°
-    Sand,       // æ²™åœ°
-    Rock,       // å²©çŸ³
-    Swamp,      // æ²¼æ¾¤
-    Barrier,    // éšœç¤™ç‰©ï¼Œä¸å¯é€šè¡Œ
-    Water,      // æ°´åŸŸ
-    Lava,       // ç†”å²©
-    Ice         // å†°é¢
+    Grass,      // ¯ó¦a
+    Sand,       // ¨F¦a
+    Rock,       // ©¥¥Û
+    Swamp,      // ªh¿A
+    Barrier,    // »ÙÃªª«¡A¤£¥i³q¦æ
+    Water,      // ¤ô°ì
+    Lava,       // º²©¥
+    Ice         // ¦B­±
 }
 
 public static class DefaultTerrainCosts
@@ -97,8 +104,8 @@ public static class DefaultTerrainCosts
         { TerrainType.Sand, 1.5f },
         { TerrainType.Rock, 10f },
         { TerrainType.Swamp, 2.5f },
-        { TerrainType.Barrier, float.MaxValue }, // ä¸å¯é€šè¡Œ
-        { TerrainType.Water, 2.5f }, // ä¸å¯é€šè¡Œ
+        { TerrainType.Barrier, float.MaxValue }, // ¤£¥i³q¦æ
+        { TerrainType.Water, 2.5f }, // ¤£¥i³q¦æ
         { TerrainType.Lava, 10.0f },
         { TerrainType.Ice, 1.2f }
     };
