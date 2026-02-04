@@ -2,6 +2,7 @@
  * [目前版本] 無分辨獵物種類先後順序，只以遠近定論
 */
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AttackAction : ActionBase
@@ -28,8 +29,12 @@ public class AttackAction : ActionBase
         List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.preyIDList);
         if (optionalTargets.Count > 0)
         {
-            Creature target = optionalTargets[Random.Range(0, Mathf.Min(optionalTargets.Count, 6))];
+            Creature target = optionalTargets[0];
             Vector2Int targetPosition = Vector2Int.RoundToInt(target.transform.position);
+            Collider2D targetCollider = target.GetComponent<Collider2D>();
+            if (targetCollider == null) {
+                Debug.LogWarning("collider missing");
+            }
 
             // 使用狀態機註冊移動回調
             var stateMachine = creature.GetStateMachine();
@@ -42,8 +47,12 @@ public class AttackAction : ActionBase
                     return;
                 }
 
-                // 確認到達的是目標位置
-                if (Vector2.Distance(arrivedPosition, targetPosition) < 1.8f)
+                int creatureLayerMask = LayerMask.GetMask("Creature");
+                Collider2D[] potentialTargets = Physics2D.OverlapCircleAll(creature.transform.position, 2.0f, creatureLayerMask);//會卡再改
+                bool hasTarget = potentialTargets.Any(c=>c == targetCollider);
+
+                // 確認是否有目標碰撞箱
+                if (hasTarget)
                 {
                     // 檢查目標是否仍然存在
                     if (target != null)

@@ -81,6 +81,12 @@ public class CreatureEditor : Editor
     /// </summary>
     private void DrawActionIntelligence(Creature creature)
     {
+        // 防禦性檢查：確保大腦跟冷卻字典都已經準備好
+        if (creature.GetStateMachine() == null || creature.GetActionCDList() == null)
+        {
+            EditorGUILayout.HelpBox("Creature Brain or Cooldowns not initialized.", MessageType.Warning);
+            return;
+        }
         EditorGUILayout.LabelField("Action Intelligence", EditorStyles.boldLabel);
 
         // 1. 通用全域冷卻 (Universal CD)
@@ -205,8 +211,8 @@ public class CreatureEditor : Editor
     {
         EditorGUILayout.BeginVertical("box");
         EditorGUILayout.LabelField("Special States", EditorStyles.boldLabel);
-        bool nextInvincible = EditorGUILayout.Toggle("Invincible Mode", creature.IsInvincible);
-        if (nextInvincible != creature.IsInvincible) creature.SetInvincible(nextInvincible);
+        bool nextInvincible = EditorGUILayout.Toggle("Invincible Mode", creature.isInvincible);
+        if (nextInvincible != creature.isInvincible) creature.SetInvincible(nextInvincible);
         EditorGUILayout.EndVertical();
     }
 
