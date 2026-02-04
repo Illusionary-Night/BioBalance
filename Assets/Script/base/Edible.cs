@@ -9,8 +9,10 @@ public abstract class Edible : MonoBehaviour, ITickable
     // Unique identifier for the edible object
     public string UUID { get; protected set; }
     [SerializeField]
+    public abstract int LifeTime { get; protected set; }
+    [SerializeField]
     // The remaining lifespan of the object (tick)
-    public abstract int LifeSpan { get; protected set; }
+    protected int LifeSpan { get; private set; }
 
     // The amount of hunger this object restores when eaten.
     public abstract float NutritionalValue { get; }
@@ -25,6 +27,7 @@ public abstract class Edible : MonoBehaviour, ITickable
     {
         UUID = System.Guid.NewGuid().ToString();
         spawnPosition = Vector2Int.RoundToInt(transform.position);
+        LifeSpan = LifeTime;
     }
 
     public void OnEnable()
