@@ -19,6 +19,7 @@ public class constantData : MonoBehaviour
 }
 
 
+public enum LifeState { Infant, Juvenile, Adult, Elder }
 public enum BodyType
 {
     Small,

@@ -12,7 +12,7 @@ public class SpeciesEditor : Editor
     {
         species = (Species)target;
         // 加上這行可以自動處理多數欄位的 Undo
-        serializedObject.Update();
+        //serializedObject.Update();
 
 
         // 檢測 GUI 是否有變動
@@ -61,7 +61,7 @@ public class SpeciesEditor : Editor
         }
 
         // 將序列化物件的更改套用（雖然你用 target 轉型修改，但這行是好習慣）
-        serializedObject.ApplyModifiedProperties();
+        //serializedObject.ApplyModifiedProperties();
     }
     public void DrawBaseAttributes()
     {

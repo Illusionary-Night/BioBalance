@@ -19,7 +19,7 @@ public static class Perception
             float rangeSq = range * range; // �w����n�d�򪺥���
 
             return target_species.creatures.Values.Any(c =>
-                c != null && !c.IsDead && c != current_creature &&
+                c != null && !c.isDead && c != current_creature &&
                 (current_creature.transform.position - c.transform.position).sqrMagnitude < rangeSq
             );
         }
@@ -38,7 +38,7 @@ public static class Perception
             float rangeSq = range * range; // �w����n�d�򪺥���
 
             return target_species.creatures.Values.Count(c =>
-                c != null && !c.IsDead && c != current_creature &&
+                c != null && !c.isDead && c != current_creature &&
                 (current_creature.transform.position - c.transform.position).sqrMagnitude < rangeSq
             );
         }
@@ -58,7 +58,7 @@ public static class Perception
             float rangeSq = range * range; // �w�⥭��H�u�Ʈį�
 
             return target_species.creatures.Values
-                .Where(c => c != null && !c.IsDead && c != current_creature) // �L�o�L�ĥؼ�
+                .Where(c => c != null && !c.isDead && c != current_creature) // �L�o�L�ĥؼ�
                 .Where(c => (currentPos - (Vector2)c.transform.position).sqrMagnitude < rangeSq) // �d��P�w
                 .OrderBy(c => (currentPos - (Vector2)c.transform.position).sqrMagnitude) // �Ѫ�컷�Ƨ�
                 .ToList(); // ��^ List

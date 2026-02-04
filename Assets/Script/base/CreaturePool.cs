@@ -239,7 +239,7 @@ public static class CreaturePool
     {
         if (prefab == null)
         {
-            prefab = Resources.Load<GameObject>("Species/EmptyCreature");
+            prefab = Resources.Load<GameObject>("Prefabs/EmptyCreature");
             if (prefab == null)
             {
                 Debug.LogError("CreaturePool: Failed to load EmptyCreature prefab");
