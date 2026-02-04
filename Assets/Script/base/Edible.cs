@@ -29,7 +29,7 @@ public abstract class Edible : MonoBehaviour, ITickable
 
     public void OnEnable()
     {
-        TickManager.Instance?.RegisterTickable(OnTick);
+        Manager.Instance.TickManager?.RegisterTickable(OnTick);
     }
 
     // This method is called once per tick by the Manager.
@@ -44,7 +44,7 @@ public abstract class Edible : MonoBehaviour, ITickable
 
     public void OnDisable()
     {
-        TickManager.Instance?.UnregisterTickable(OnTick);
+        Manager.Instance.TickManager?.UnregisterTickable(OnTick);
     }
 
     protected virtual void NaturalDespawn ()

@@ -4,25 +4,14 @@ using System;
 
 public class TickManager: MonoBehaviour
 {
-    public static TickManager Instance { get; private set; }
     public int CurrentHour { get; private set; }
     public int CurrentDay { get; private set; }
 
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Debug.LogError("TickManeger instance already exists!");
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-
     private readonly List<Action> tickable = new(); 
     private int tickCount = 0;
-    private const int TicksPerSecond = 30;
+    private int TicksPerSecond = 30;
     private float realtime_counter = 0;
+    private bool isPaused = false;
 
     public void RegisterTickable(Action onTick)
     {
@@ -38,6 +27,17 @@ public class TickManager: MonoBehaviour
         {
             this.tickable.Remove(onTick);
         }
+    }
+
+    public void SetTPS(int TPS)
+    {
+        if (TPS > 0) TicksPerSecond = TPS;
+    }
+
+    public void SetPause(bool? pause = null)
+    {
+        if (!pause.HasValue) isPaused = !isPaused;
+        else isPaused = (bool)pause;
     }
 
     private void Tick()
@@ -61,7 +61,7 @@ public class TickManager: MonoBehaviour
 
     private void Update()
     {
-        realtime_counter += Time.deltaTime;
+        if (!isPaused) realtime_counter += Time.deltaTime;
 
         while (realtime_counter >= 1f / TicksPerSecond)
         {

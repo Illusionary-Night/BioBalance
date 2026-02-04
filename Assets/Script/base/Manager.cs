@@ -9,6 +9,9 @@ public class Manager : MonoBehaviour
     // 環境實體管理器
     public EnvEntityManager EnvEntityManager { get; private set; }
 
+    // 時間管理器
+    public TickManager TickManager { get; private set; }
+
     // 物種總父物件
     public Transform Creature_Container { get; private set; }
 
@@ -41,14 +44,14 @@ public class Manager : MonoBehaviour
         // 新建物種總父物件Creature_Container
         Creature_Container = new GameObject("Creature_Container").transform;
 
-        // 確保 TickManager 存在
-        if (TickManager.Instance == null)
-        {
-            new GameObject("TickManager").AddComponent<TickManager>();
-        }
+        // 新建 TickManager 
+        TickManager = new GameObject("TickManager").AddComponent<TickManager>();
 
         // 啟用 EnvEntityManager 的 Tick 訂閱
         EnvEntityManager?.OnEnable();
+
+        // 紀錄初始化完成
+        LogManager.Log("[Manager] 初始化完成");
     }
 
     private void OnDisable()
