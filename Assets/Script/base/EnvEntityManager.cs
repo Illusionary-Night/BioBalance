@@ -167,7 +167,7 @@ public class EnvEntityManager : ITickable
     /// </summary>
     public void OnEnable()
     {
-        TickManager.Instance.RegisterTickable(OnTick);
+        Manager.Instance.TickManager?.RegisterTickable(OnTick);
     }
 
     /// <summary>
@@ -175,7 +175,7 @@ public class EnvEntityManager : ITickable
     /// </summary>
     public void OnDisable()
     {
-        TickManager.Instance.UnregisterTickable(OnTick);
+        Manager.Instance.TickManager?.UnregisterTickable(OnTick);
     }
 
     /// <summary>

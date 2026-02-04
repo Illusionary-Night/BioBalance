@@ -44,11 +44,11 @@ public partial class Creature : MonoBehaviour, ITickable
 
     public void OnEnable()
     {
-        TickManager.Instance.RegisterTickable(OnTick);
+        Manager.Instance.TickManager?.RegisterTickable(OnTick);
     }
     public void OnDisable()
     {
-        TickManager.Instance.UnregisterTickable(OnTick);
+        Manager.Instance.TickManager?.UnregisterTickable(OnTick);
     }
 
 
