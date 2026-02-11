@@ -35,7 +35,8 @@ public enum ActionType
     Sleep,
     Reproduce,
     Attack,
-    Flee
+    Flee,
+    Retaliate
 }
 
 public enum FoodType
@@ -119,4 +120,5 @@ public enum CreatureBase
     Slime,
     Goat, 
     IceDragon,
+    Tiger
 }

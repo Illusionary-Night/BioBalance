@@ -50,6 +50,18 @@ public partial class Creature : MonoBehaviour
         if (loadedSprite != null)
         {
             GetComponent<SpriteRenderer>().sprite = loadedSprite;
+
+            var col = GetComponent<CircleCollider2D>();
+            if (col != null)
+            {
+                col.radius = 1.3f;
+
+
+                //    // 取圖片寬高之中較大的一半作為半徑，確保能包覆
+                //    float maxDim = Mathf.Max(loadedSprite.bounds.size.x, loadedSprite.bounds.size.y);
+                //    col.radius = maxDim / 2f * 0.95f;
+                //    col.offset = loadedSprite.bounds.center;
+            }
         }
         else
         {
@@ -116,7 +128,6 @@ public partial class Creature : MonoBehaviour
         UpdateLifeState(lifePercentage);
 
         // --- 2. 執行視覺成長 (假設幼體從基因 size 的 60% 長到 100%) ---
-        // 你可以根據需求調整這個曲線
         float growthMultiplier = Mathf.Lerp(0.6f, 1.0f, Mathf.Min(lifePercentage * 2f, 1.0f));
         float currentAbsoluteSize = size * growthMultiplier;
 

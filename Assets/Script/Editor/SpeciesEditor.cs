@@ -30,7 +30,7 @@ public class SpeciesEditor : Editor
         // --- 3. 生態關係 ---
         EditorGUILayout.BeginVertical("box");
         DrawIntList(species.preyIDList, "Prey IDs");
-        DrawIntList(species.predatorIDList, "Predator IDs");
+        //DrawIntList(species.predatorIDList, "Predator IDs");
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.Space(10);
@@ -72,7 +72,7 @@ public class SpeciesEditor : Editor
         EditorGUILayout.LabelField("Core Statistics", EditorStyles.miniBoldLabel);
         species.creatureBase = (CreatureBase)EditorGUILayout.EnumPopup("Creature Base Type", species.creatureBase);
         species.speciesID = EditorGUILayout.IntField("Species ID", species.speciesID);
-        species.baseSize = EditorGUILayout.Slider("Size", species.baseSize, 0.1f, 1f);
+        species.baseSize = EditorGUILayout.Slider("Size", species.baseSize, 0.1f, 5f);
         species.baseSpeed = EditorGUILayout.Slider("Speed", species.baseSpeed, 0f, 20f);
         species.baseMaxHealth = EditorGUILayout.Slider("Base Health", species.baseMaxHealth, 0f, 100f);
         species.baseReproductionRate = EditorGUILayout.Slider("Reproduction Rate", species.baseReproductionRate, 0f, 1f);

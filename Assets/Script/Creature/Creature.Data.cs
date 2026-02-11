@@ -37,12 +37,15 @@ public partial class Creature : MonoBehaviour, ITickable {
     public float health { get; private set; }
     public float age { get; private set; }
     public int actionCooldown { get; private set; }
+    public float stunTimer { get; private set; } = 0f;
     public bool isSleeping { get; private set; } = false;
     public bool isDead { get; private set; } = false;
     public bool isInvincible { get; private set; } = false;
+    public bool isStunned { get; private set; } = false;
     public ActionType currentAction { get; private set; }
     public BodyType currentBodyType { get; private set; }
     public Direction underAttackDirection { get; private set; }
     public LifeState currentLifeState { get; private set; }
     public Dictionary<ActionType, int> actionCD { get; private set; } = new();
+    public Creature enemy { get; private set; }
 }

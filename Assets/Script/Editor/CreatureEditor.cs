@@ -154,9 +154,24 @@ public class CreatureEditor : Editor
     {
         EditorGUILayout.LabelField("Brain State", EditorStyles.boldLabel);
         EditorGUILayout.BeginVertical("box");
+
+        // 保存原本的寬度
+        float oldWidth = EditorGUIUtility.labelWidth;
+        // 強制設定標題欄寬度為 120 像素 (視需求調整)
+        EditorGUIUtility.labelWidth = 120;
+
         EditorGUILayout.LabelField($"Current Action:", creature.currentAction.ToString());
-        EditorGUILayout.LabelField($"Distance to Target:", creature.GetDistanceToDestination().ToString("F2"));
+        EditorGUILayout.LabelField($"Distance:", creature.GetDistanceToDestination().ToString("F2"));
         EditorGUILayout.LabelField($"Stuck Times:", creature.GetMovementStuckTimes().ToString());
+        EditorGUILayout.LabelField($"Attack Dir:", creature.underAttackDirection.ToString());
+
+        string uuid = creature.enemy?.UUID ?? "None";
+        string lastFive = uuid.Length >= 5 ? uuid.Substring(uuid.Length - 5) : uuid;
+        EditorGUILayout.LabelField("Enemy ID (Last 5):", lastFive);
+
+        // 恢復寬度，以免影響到後面的渲染
+        EditorGUIUtility.labelWidth = oldWidth;
+
         EditorGUILayout.EndVertical();
     }
 

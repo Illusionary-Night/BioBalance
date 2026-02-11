@@ -14,12 +14,12 @@ class EatAction : ActionBase
     
     public override float GetWeight(Creature creature)
     {
-        return 1;
+        return Mathf.Sqrt(Mathf.Sqrt(1-creature.hunger/creature.maxHunger));
     }
     
     public override bool IsSuccess(Creature creature)
     {
-        return Random.Range(0,10)<=7;
+        return Random.Range(0,9)< 9;
     }
     
     public override void Execute(Creature creature, ActionContext context = null)

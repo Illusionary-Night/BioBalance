@@ -77,7 +77,18 @@ public partial class Creature : MonoBehaviour, ITickable
 
         UpdateVitalSigns();
         UpdateCooldowns();
-        //UpdateGrowth();
+        UpdateGrowth();
+
+        if (stunTimer > 0)
+        {
+            isStunned = true;
+            stunTimer--;
+        }
+        else
+        {
+            isStunned= false;
+        }
+
 
         if (actionCooldown <= 0)DoAction();
 
