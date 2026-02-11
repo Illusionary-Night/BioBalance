@@ -166,6 +166,7 @@ MonoBehaviour:
   goat: {fileID: 11400000, guid: 7518b6743146baf4facbf30eda33fb51, type: 2}
   slime: {fileID: 11400000, guid: 6dfd3791039972441a7a50251b8a457f, type: 2}
   icedragon: {fileID: 11400000, guid: 6e9dc253a94a31c48aaa50892b88984a, type: 2}
+  tiger: {fileID: 11400000, guid: ce9bf06ab964ac04f80d8b3c0ed2e91a, type: 2}
 --- !u!4 &244281955
 Transform:
   m_ObjectHideFlags: 0

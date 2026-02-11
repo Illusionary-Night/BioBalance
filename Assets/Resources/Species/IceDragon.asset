@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Species
   speciesID: 3
   creatureBase: 2
-  foodTypes: 01000000
-  preyIDList: 0100000002000000
+  foodTypes: 0100000002000000
+  preyIDList: 010000000200000004000000
   predatorIDList: 
   actionList: 0000000001000000020000000400000005000000
   variation: 0.5
@@ -23,9 +23,9 @@ MonoBehaviour:
   baseSize: 1
   baseSpeed: 4
   baseMaxHealth: 100
-  baseReproductionRate: 0.2
+  baseReproductionRate: 0.655
   baseAttackPower: 50
-  baseLifespan: 5000
+  baseLifespan: 3000
   basePerceptionRange: 100
   baseSleepingHead: 193
   baseSleepingTail: 600

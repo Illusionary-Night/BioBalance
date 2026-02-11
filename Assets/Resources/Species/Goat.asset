@@ -16,18 +16,18 @@ MonoBehaviour:
   creatureBase: 1
   foodTypes: 00000000
   preyIDList: 02000000
-  predatorIDList: 03000000
-  actionList: 000000000100000002000000040000000500000003000000
+  predatorIDList: 0300000004000000
+  actionList: 00000000010000000200000004000000050000000300000007000000
   variation: 0
   parentObject: {fileID: 0}
   baseSize: 1
-  baseSpeed: 5
+  baseSpeed: 8.5
   baseMaxHealth: 100
-  baseReproductionRate: 0.5
+  baseReproductionRate: 0.721
   baseAttackPower: 10
-  baseLifespan: 2000
+  baseLifespan: 922
   basePerceptionRange: 10
-  baseSleepingHead: 200
-  baseSleepingTail: 600
-  _cdKeys: 000000000500000002000000040000000100000003000000
-  _cdValues: 140000003c000000320000002c0100005000000014000000
+  baseSleepingHead: 18
+  baseSleepingTail: 23
+  _cdKeys: 0000000005000000020000000400000001000000030000000600000007000000
+  _cdValues: 140000003c000000320000009600000050000000140000002800000014000000

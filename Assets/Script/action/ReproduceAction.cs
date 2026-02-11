@@ -6,7 +6,6 @@ public class ReproduceAction : ActionBase
     public ReproduceAction() { }
 
     public override ActionType Type => ActionType.Reproduce;
-    //public override int Cooldown => 500;
 
     public override bool IsConditionMet(Creature creature)
     {

@@ -54,6 +54,20 @@ public partial class Creature : MonoBehaviour
     {
         isSleeping = false;
     }
+
+   
+
+    /// <summary>
+    /// 讓生物進入暈眩狀態
+    /// </summary>
+    /// <param name="duration">暈眩持續的時間 (單位：Tick)</param>
+    public void SetStun(float duration)
+    {
+        // 如果已經在暈眩中，可以選擇「取最大值」或「疊加」
+        stunTimer = Mathf.Max(stunTimer, duration);
+
+    }
+
     #endregion
 
     #region --- 動作與冷卻管理 ---
@@ -134,21 +148,23 @@ public partial class Creature : MonoBehaviour
     #region --- 受擊系統 ---
 
     /// <summary> 執行基礎傷害扣血，並確保生命值不低於 0 </summary>
-    public void Hurt(float damage)
+    public void Hurt(float damage, Creature attacker = null)
     {
         underAttackDirection = Direction.None;
         health -= damage;
         health = Mathf.Max(health, 0);
+        if (attacker != null)enemy = attacker;
     }
 
     /// <summary> 執行傷害並記錄攻擊來源方位，用於觸發受傷逃跑判定或者之後進一步的動畫或特效 </summary>
-    public void Hurt(float damage, Vector2 attackerPosition)
+    public void Hurt(float damage, Vector2 attackerPosition, Creature attacker = null)
     {
         // 計算攻擊者相對於自己的方位向量
         Vector2 direction = attackerPosition - (Vector2)transform.position;
         underAttackDirection = GetDirectionFromVector(direction);
         health -= damage;
         health = Mathf.Max(health, 0);
+        if (attacker != null) enemy = attacker;
     }
 
     /// <summary> 將向量轉換為 8 方向列舉，以 45 度角為一個判斷區間 </summary>
@@ -190,6 +206,17 @@ public partial class Creature : MonoBehaviour
         underAttackDirection = Direction.None;
         return result;
     }
+
+    public void Repel(Vector2 drection, float strength = 1f)
+    {
+        movement.Push(drection, strength);
+    }
+
+    public void SetEnemy(Creature enemy)
+    {
+        this.enemy = enemy;
+    }
+
     #endregion
 
     #region --- 資料轉換與系統重置 ---

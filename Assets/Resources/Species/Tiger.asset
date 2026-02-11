@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 039a7fe6f95bb1b48974ee2ba3d3b757, type: 3}
+  m_Name: Tiger
+  m_EditorClassIdentifier: Assembly-CSharp::Species
+  speciesID: 4
+  creatureBase: 3
+  foodTypes: 010000000200000000000000
+  preyIDList: 01000000
+  predatorIDList: 03000000
+  actionList: 00000000010000000200000005000000060000000400000003000000
+  variation: 0
+  parentObject: {fileID: 0}
+  baseSize: 1
+  baseSpeed: 9.5
+  baseMaxHealth: 100
+  baseReproductionRate: 0.5
+  baseAttackPower: 31.9
+  baseLifespan: 2000
+  basePerceptionRange: 38.4
+  baseSleepingHead: 21
+  baseSleepingTail: 29
+  _cdKeys: 00000000010000000200000003000000040000000500000006000000
+  _cdValues: 14000000640000001e0000001e000000c8000000460000003c000000

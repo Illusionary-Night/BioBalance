@@ -7,6 +7,7 @@ public class TestRunner : MonoBehaviour
     [SerializeField] public Species goat;
     [SerializeField] public Species slime;
     [SerializeField] public Species icedragon;
+    [SerializeField] public Species tiger;
     private Transform TestParent;
 
     private void Awake()
@@ -19,6 +20,7 @@ public class TestRunner : MonoBehaviour
         SpawnCreature1();
         SpawnCreature2();
         SpawnCreature3();
+        SpawnCreature4();
     }
 
     private void Update()
@@ -47,7 +49,7 @@ public class TestRunner : MonoBehaviour
         // 使用物件池取得新生物
         if (pos.HasValue == false)
         {
-            pos = new Vector3(300, 250, 0);
+            pos = new Vector3(260, 250, 0);
         }
         // 使用物件池取得新生物
         Creature creature = CreaturePool.GetCreature(slime, slime.ToCreatureAttributes(), (Vector3)pos, TestParent);
@@ -59,9 +61,20 @@ public class TestRunner : MonoBehaviour
         // 使用物件池取得新生物
         if (pos.HasValue == false)
         {
-            pos = new Vector3(200, 250, 0);
+            pos = new Vector3(270, 270, 0);
         }
         Creature creature = CreaturePool.GetCreature(icedragon, icedragon.ToCreatureAttributes(), (Vector3)pos, TestParent);
+        creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
+        Manager.Instance.RegisterCreature(creature);
+    }
+    private void SpawnCreature4(Vector3? pos = null)
+    {
+        // 使用物件池取得新生物
+        if (pos.HasValue == false)
+        {
+            pos = new Vector3(250, 260, 0);
+        }
+        Creature creature = CreaturePool.GetCreature(tiger, tiger.ToCreatureAttributes(), (Vector3)pos, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
         Manager.Instance.RegisterCreature(creature);
     }

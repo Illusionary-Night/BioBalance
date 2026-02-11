@@ -70,10 +70,8 @@ public partial class Creature : MonoBehaviour, ITickable
         public void MoveOnTick()
         {
             // 安全檢查
-            if (owner == null || owner.isDead || !awake || path == null)
+            if (owner == null || owner.isDead || !awake || path == null || owner.isStunned)
             {
-                // 如果不移動了，就把速度歸零，否則會因為慣性一直滑
-                //if (rb != null) rb.linearVelocity = Vector2.zero;
                 return;
             }
 
@@ -131,73 +129,6 @@ public partial class Creature : MonoBehaviour, ITickable
                 owner.OnMovementComplete?.Invoke(Destination);
             }
         }
-        public void MoveOnTick2()
-        {
-            // 安全檢查
-            if (owner == null || owner.isDead || !awake || path == null) return;
-            // 1.取得當前的真實物理位置(這是上一幀 MovePosition 執行後的結果)
-            Vector2 currentActualPos = GetAuthoritativePosition();
-
-            PreventDrifting();
-
-            if (currentPathIndex < path.Count)
-            {
-                Vector2 target = path[currentPathIndex];
-
-                // 2. 計算這一幀「預期」要到的位置
-                Vector2 nextPos = Vector2.MoveTowards(currentActualPos, target, owner.speed * Time.fixedDeltaTime);
-
-                // --- Stuck 判定邏輯修正 ---
-                // 我們檢查「從上次記錄位置到現在」，生物到底有沒有真的在動
-                float actualMovedThisTick = Vector2.Distance(lastRecordedPosition, currentActualPos);
-
-                // 如果實際位移遠小於「應該移動的距離」(Speed * dt)，就判定為卡住
-                // 注意：這裡比對的是上一幀的移動結果
-                if (awake && actualMovedThisTick < (owner.speed * Time.fixedDeltaTime) * 0.8f)
-                {
-                    stuck++;
-                }
-                else
-                {
-                    stuck = 0;
-                }
-
-                // 3. 更新最後記錄的位置，供「下一次」Tick 比對
-                lastRecordedPosition = currentActualPos;
-
-                // 4. 執行位移與轉向
-                rb.MovePosition(nextPos);
-
-                Vector2 direction = (nextPos - currentActualPos).normalized;
-                if (direction.sqrMagnitude > 0.0001f)
-                {
-                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                    owner.transform.rotation = Quaternion.Euler(0, 0, angle);
-                }
-
-                if (Vector2.Distance(nextPos, target) < 0.05f)
-                {
-                    currentPathIndex++;
-                }
-            }
-            else if (awake && path != null && currentPathIndex >= path.Count)
-            {
-                // 路徑走完，檢查是否到達目的地
-                Vector2 currentPos = GetAuthoritativePosition();
-                //Debug.Log("Distance: " + Vector2.Distance(currentPos, Destination));
-                if (Vector2.Distance(currentPos, Destination) < 1.5f)
-                {
-                    //Debug.Log("Path end");
-                    awake = false;
-                    owner.OnMovementComplete?.Invoke(Destination);
-                }
-            }
-            else
-            {
-                Debug.Log("awake/path is null" + awake + " " + path);
-            }
-        }
-
 
         // 導航呼叫 A* 或其它尋路系統
         public void Navigate()
@@ -248,6 +179,10 @@ public partial class Creature : MonoBehaviour, ITickable
         public int GetStuckTimes()
         {
             return stuck;
+        }
+        public void Push(Vector2 direction, float strength)
+        {
+            rb.AddForce(direction.normalized * strength, ForceMode2D.Impulse);
         }
     }
 
