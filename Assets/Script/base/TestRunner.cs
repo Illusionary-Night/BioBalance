@@ -9,6 +9,11 @@ public class TestRunner : MonoBehaviour
     [SerializeField] public Species icedragon;
     private Transform TestParent;
 
+    [SerializeField] private Camera cam;
+    private Material originalMaterial;
+    [SerializeField] private Material highlightMaterial;
+    [SerializeField] private GameObject currentSelected;
+
     private void Awake()
     {
         TestParent = new GameObject("!!!TestParent!!!").transform;
@@ -102,10 +107,51 @@ public class TestRunner : MonoBehaviour
         {
             Manager.Instance.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Carrion, mousePos);
         }
-        // 
+        // 按下等於鍵暫停/繼續遊戲
         if (Input.GetKeyDown(KeyCode.Equals))
         {
             Manager.Instance.TickManager.SetPause();
         }
+        // 按下 Z 鍵將遊戲速度設置為 60 TPS
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Manager.Instance.TickManager.SetTPS(60);
+        }
+        // 按下 X 鍵將遊戲速度設置為 30 TPS
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            Manager.Instance.TickManager.SetTPS(30);
+        }
+        // 按下 C 鍵將遊戲速度設置為 15 TPS
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            Manager.Instance.TickManager.SetTPS(15);
+        }
+        // 按下滑鼠左鍵高亮物件
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector2 mousePos2D = cam.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+
+            if (hit.collider != null)
+            {
+                SelectObject(hit.collider.gameObject);
+            }
+        }
+    }
+
+    void SelectObject(GameObject obj)
+    {
+        // Restore previous
+        if (currentSelected != null)
+        {
+            currentSelected.GetComponent<Renderer>().material = originalMaterial;
+        }
+
+        currentSelected = obj;
+
+        Renderer renderer = obj.GetComponent<Renderer>();
+        originalMaterial = renderer.material;
+        renderer.material = highlightMaterial;
     }
 }
