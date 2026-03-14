@@ -85,7 +85,7 @@ public class AttackAction : ActionBase
 
         // 透過狀態機註冊回調（自動管理清理）
         stateMachine.RegisterMovementCallback(onArrived);
-        creature.MoveTo(targetPosition);
+        creature.MoveTo(targetPosition, true);
     }
     protected virtual bool IsInAttackArrange(Creature creature, Creature target, Collider2D targetCollider)
     {

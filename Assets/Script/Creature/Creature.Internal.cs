@@ -6,8 +6,7 @@ public partial class Creature : MonoBehaviour
     private void UpdateVitalSigns()
     {
         // 飢餓處理
-        float currentHungerDepletion = isSleeping ? hungerRate * 0.5f : hungerRate;
-        hunger = Mathf.Clamp(hunger - currentHungerDepletion, 0, maxHunger);
+        hunger = Mathf.Clamp(hunger - GetCurrentHungerDrain(), 0, maxHunger);
 
         // 回血處理
         float currentRegen = isSleeping ? healthRegeneration * 2.0f : healthRegeneration;
@@ -152,5 +151,39 @@ public partial class Creature : MonoBehaviour
         if (currentSize < 1.5f) currentBodyType = BodyType.Small;
         else if (currentSize < 4.0f) currentBodyType = BodyType.Medium;
         else currentBodyType = BodyType.Large;
+    }
+
+    /// <summary>
+    /// 計算當前狀態下的飢餓消耗量
+    /// </summary>
+    /// <returns>回傳每秒消耗的飢餓值</returns>
+    public float GetCurrentHungerDrain()
+    {
+        float multiplier = 1f;
+
+        // 1. 根據移動狀態決定倍率
+        switch (movementState)
+        {
+            case CreatureMovementState.Sleep:
+                multiplier = 0.5f;
+                break;
+            case CreatureMovementState.Idle:
+                multiplier = 0.8f;
+                break;
+            case CreatureMovementState.Walk:
+                multiplier = 1.0f;
+                break;
+            case CreatureMovementState.Run:
+                multiplier = 2.0f;
+                break;
+            case CreatureMovementState.Stunned:
+                multiplier = 1.2f;
+                break;
+            default:
+                multiplier = 1.0f;
+                break;
+        }
+
+        return hungerRate * multiplier;
     }
 }

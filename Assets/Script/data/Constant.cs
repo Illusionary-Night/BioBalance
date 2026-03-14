@@ -36,7 +36,9 @@ public enum ActionType
     Reproduce,
     Attack,
     Flee,
-    Retaliate
+    Retaliate,
+    Flock,
+    Mating
 }
 
 public enum FoodType
@@ -121,4 +123,22 @@ public enum CreatureBase
     Goat, 
     IceDragon,
     Tiger
+}
+
+
+public enum CreatureMovementState
+{
+    None = 0,
+    Sleep =1,
+    Idle = 2,          // 待機
+    Walk = 3,        // 散步
+    Run = 4,       // 跑步
+    Stunned = 5,      // 暈眩 (AI 停用，物理接管)
+}
+
+public enum Gender 
+{
+    None,
+    Male,
+    Female,
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 using static Perception;
 
 public partial class Creature : MonoBehaviour, ITickable {
@@ -48,4 +49,11 @@ public partial class Creature : MonoBehaviour, ITickable {
     public LifeState currentLifeState { get; private set; }
     public Dictionary<ActionType, int> actionCD { get; private set; } = new();
     public Creature enemy { get; private set; }
+    public CreatureMovementState movementState { get; private set; }
+    public Gender gender;
+    public Creature matingPartner; // 目前鎖定的配對對象
+    public float reproductionCD; // 成功繁殖的冷卻
+    public string fatherID { get; private set; }
+    public string motherID { get; private set; }
+    
 }

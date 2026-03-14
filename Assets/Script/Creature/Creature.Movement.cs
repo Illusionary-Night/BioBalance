@@ -49,7 +49,7 @@ public partial class Creature : MonoBehaviour, ITickable
         }
 
         // 設定目的地（格座）
-        public void SetDestination(Vector2Int destination)
+        public void SetDestination(Vector2Int destination, bool isRunning = false)
         {
             // 安全檢查
             if (owner == null || owner.isDead) return;
@@ -57,6 +57,10 @@ public partial class Creature : MonoBehaviour, ITickable
             //Debug.Log("SetDestination");
             Destination = destination;
             awake = true;
+
+            owner.movementState = isRunning ? CreatureMovementState.Run : CreatureMovementState.Walk;
+
+
             Navigate();
         }
 
@@ -83,7 +87,8 @@ public partial class Creature : MonoBehaviour, ITickable
 
                 // 1. 計算方向與預期速度
                 Vector2 direction = (target - currentActualPos).normalized;
-                Vector2 desiredVelocity = direction * owner.speed;
+                Vector2 desiredVelocity = direction * GetCurrentSpeed();
+
 
                 // 2. 執行移動：直接給予物理速度
                 // 這樣碰撞時，物理引擎可以自動把生物推開，而不會像 MovePosition 那樣硬擠
@@ -183,6 +188,23 @@ public partial class Creature : MonoBehaviour, ITickable
         public void Push(Vector2 direction, float strength)
         {
             rb.AddForce(direction.normalized * strength, ForceMode2D.Impulse);
+        }
+        public float GetCurrentSpeed()
+        {
+            float CurrentSpeed = 0f;
+            switch (owner.movementState)
+            {
+                case CreatureMovementState.Run:
+                    CurrentSpeed = owner.speed * 2; 
+                    break;
+                case CreatureMovementState.Walk:
+                    CurrentSpeed = owner.speed; 
+                    break;
+                default:
+                    CurrentSpeed = 0f;
+                    break;
+            }
+            return CurrentSpeed;
         }
     }
 

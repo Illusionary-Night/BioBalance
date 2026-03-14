@@ -106,7 +106,7 @@ public class FleeAction : ActionBase
 
         // �z�L���A�����U�^�ա]�۰ʺ޲z�M�z�^
         stateMachine.RegisterMovementCallback(onArrived);
-        creature.MoveTo(fleeTarget);
+        creature.MoveTo(fleeTarget, true);
     }
 
     /// <summary>

@@ -68,6 +68,7 @@ public partial class Creature : MonoBehaviour
 
     }
 
+
     #endregion
 
     #region --- 動作與冷卻管理 ---
@@ -207,6 +208,10 @@ public partial class Creature : MonoBehaviour
         return result;
     }
 
+    public void ResetUnderAttackDirection()
+    {
+        underAttackDirection=Direction.None;
+    }
     public void Repel(Vector2 drection, float strength = 1f)
     {
         movement.Push(drection, strength);
@@ -256,10 +261,10 @@ public partial class Creature : MonoBehaviour
     #region --- 移動控制與導航 ---
     /// <summary> 指令生物移動至目標格座座標。會自動觸發尋路與物理移動 </summary>
     /// <param name="destination"> 目標格座 (Vector2Int) </param>
-    public void MoveTo(Vector2Int destination)
+    public void MoveTo(Vector2Int destination, bool isRunning = false)
     {
         if (isDead || movement == null) return;
-        movement.SetDestination(destination);
+        movement.SetDestination(destination, isRunning);
     }
 
     /// <summary> 強制重新執行尋路演算法（A*）。用於目標位置改變或環境障礙物更新時 </summary>
@@ -267,6 +272,11 @@ public partial class Creature : MonoBehaviour
     {
         if (isDead || movement == null) return;
         movement.Navigate();
+    }
+
+    public void SetMovementState(CreatureMovementState state)
+    {
+        movementState = state;
     }
 
     #endregion
@@ -308,4 +318,19 @@ public partial class Creature : MonoBehaviour
         return movement != null ? movement.GetStuckTimes() : 0;
     }
     #endregion
+
+
+
+    public void SetMotherID(string motherID)
+    {
+        this.motherID = motherID;
+    }
+    public void SetFatherID(string fatherID)
+    {
+        this.fatherID = fatherID;
+    }
+
+
+
+
 }

@@ -164,6 +164,7 @@ public class CreatureEditor : Editor
         EditorGUILayout.LabelField($"Distance:", creature.GetDistanceToDestination().ToString("F2"));
         EditorGUILayout.LabelField($"Stuck Times:", creature.GetMovementStuckTimes().ToString());
         EditorGUILayout.LabelField($"Attack Dir:", creature.underAttackDirection.ToString());
+        EditorGUILayout.LabelField($"Movement State:", creature.movementState.ToString());
 
         string uuid = creature.enemy?.UUID ?? "None";
         string lastFive = uuid.Length >= 5 ? uuid.Substring(uuid.Length - 5) : uuid;

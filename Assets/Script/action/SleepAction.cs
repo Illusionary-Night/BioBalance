@@ -57,10 +57,8 @@ public class SleepAction : ActionBase
 
     public override void Execute(Creature creature, ActionContext context = null)
     {
-        creature.MoveTo(creature.GetRoundedPosition());
-
+        creature.SetMovementState(CreatureMovementState.Sleep);
         context?.Complete();
-        //Debug.Log($"{creature.name} start sleep. Now time¡G{TickManager.Instance.CurrentHour}:00");
     }
 
 

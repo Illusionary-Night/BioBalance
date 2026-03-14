@@ -26,5 +26,6 @@ public class RetaliateAction : AttackAction
         Vector2 drection = target.transform.position - creature.transform.position;
         target.Repel(drection, 50);
         creature.SetEnemy(null);
+        creature.ResetUnderAttackDirection();
     }
 }
