@@ -2,16 +2,50 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-public class TickManager: MonoBehaviour
+public class TickManager : MonoBehaviour
 {
     public int CurrentHour { get; private set; }
     public int CurrentDay { get; private set; }
 
-    private readonly List<Action> tickable = new(); 
+    private readonly List<Action> tickable = new();
     private int tickCount = 0;
     private int TicksPerSecond = 30;
     private float realtime_counter = 0;
     private bool isPaused = false;
+
+    private void OnEnable()
+    {
+        RegisterPauseInput();
+    }
+
+    private void OnDisable()
+    {
+        UnregisterPauseInput();
+    }
+
+    private void RegisterPauseInput()
+    {
+        if (InputManager.Instance == null)
+        {
+            LogManager.LogError("TickManager: InputManager instance not found. Pause input will not be registered.");
+            return;
+        }
+
+        InputManager.Instance.OnPausePerformed += OnPausePerformed;
+    }
+
+    private void UnregisterPauseInput()
+    {
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.OnPausePerformed -= OnPausePerformed;
+        }
+    }
+
+    private void OnPausePerformed()
+    {
+        SetPause();
+    }
 
     public void RegisterTickable(Action onTick)
     {
