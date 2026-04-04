@@ -17,7 +17,7 @@ public static class Perception
                 return false;
 
             // 檢查目標物種是否存在於 Manager 中
-            if (!Manager.Instance.Species.TryGetValue(target_ID, out var target_species))
+            if (!MainManager.inGameManager.Species.TryGetValue(target_ID, out var target_species))
                 return false;
 
             // 使用 Max(0) 因為有時我們會需要 > 1.0 的加成（如：警戒狀態 150% 視野）
@@ -52,7 +52,7 @@ public static class Perception
                 return 0;
 
             // 檢查目標物種是否存在於 Manager 中
-            if (!Manager.Instance.Species.TryGetValue(target_ID, out var target_species))
+            if (!MainManager.inGameManager.Species.TryGetValue(target_ID, out var target_species))
                 return 0;
 
             float finalMultiplier = Mathf.Max(0f, rangeMultiplier);
@@ -83,7 +83,7 @@ public static class Perception
                 return new List<Creature>();
 
             // 檢查目標物種是否存在於 Manager 中
-            if (!Manager.Instance.Species.TryGetValue(target_ID, out var target_species))
+            if (!MainManager.inGameManager.Species.TryGetValue(target_ID, out var target_species))
                 return new List<Creature>();
                 
             Vector2 currentPos = current_creature.transform.position;
@@ -172,7 +172,7 @@ public static class Perception
             {
 
 
-                Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+                Edible edible = MainManager.inGameManager.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
                 if (edible == null || !edible.gameObject.activeInHierarchy) continue;
                 if (edible.Type != food_type) continue;
                 return true;
@@ -196,7 +196,7 @@ public static class Perception
 
                 foreach (var ediblePos in allPos)
                 {
-                    Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+                    Edible edible = MainManager.inGameManager.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
                     if (edible == null || !edible.gameObject.activeInHierarchy) continue;
                     if (edible.Type != food_type) continue;
                     return true;
@@ -219,7 +219,7 @@ public static class Perception
 
             foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange))
             {
-                Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+                Edible edible = MainManager.inGameManager.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
 
                 if (edible == null || !edible.gameObject.activeInHierarchy) continue;
                 if (edible.Type != food_type) continue;
@@ -245,7 +245,7 @@ public static class Perception
 
                 foreach (var ediblePos in allPos)
                 {
-                    Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+                    Edible edible = MainManager.inGameManager?.EnvEntityManager?.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
 
                     if (edible == null || !edible.gameObject.activeInHierarchy) continue;
                     if (edible.Type != food_type) continue;
@@ -270,7 +270,7 @@ public static class Perception
 
             foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange))
             {
-                Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+                Edible edible = MainManager.inGameManager.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
 
                 if (edible == null || !edible.gameObject.activeInHierarchy) continue;
                 if (edible.Type != food_type) continue;
@@ -303,7 +303,7 @@ public static class Perception
 
                 foreach (var ediblePos in allPos)
                 {
-                    Edible edible = Manager.Instance.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
+                    Edible edible = MainManager.inGameManager.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
 
                     if (edible == null || !edible.gameObject.activeInHierarchy) continue;
                     if (edible.Type != food_type) continue;

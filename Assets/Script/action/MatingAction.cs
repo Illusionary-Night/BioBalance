@@ -132,7 +132,7 @@ public class MatingAction : ActionBase
         Vector3 spawnPosition = mother.transform.position + new Vector3(Random.value % 100 / 100f, Random.value % 100 / 100f, 0);
         Creature baby = CreaturePool.GetCreature(mother.mySpecies, mother.ToCreatureAttribute(), spawnPosition);
         baby.gameObject.name = baby.creatureBase + "_" + baby.UUID;
-        Manager.Instance.RegisterCreature(baby);
+        MainManager.inGameManager.RegisterCreature(baby);
         if (baby != null)
         {
             // 2. ¬ö¿ý¤÷¥Àªº ID

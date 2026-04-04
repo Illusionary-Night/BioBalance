@@ -27,7 +27,7 @@ public abstract class Edible : MonoBehaviour, ITickable
 
     public void OnEnable()
     {
-        Manager.Instance.TickManager?.RegisterTickable(OnTick);
+        MainManager.inGameManager.TickManager?.RegisterTickable(OnTick);
     }
 
     // This method is called once per tick by the Manager.
@@ -42,7 +42,7 @@ public abstract class Edible : MonoBehaviour, ITickable
 
     public void OnDisable()
     {
-        Manager.Instance.TickManager?.UnregisterTickable(OnTick);
+        MainManager.inGameManager.TickManager?.UnregisterTickable(OnTick);
     }
 
     protected virtual void NaturalDespawn ()
@@ -64,7 +64,7 @@ public abstract class Edible : MonoBehaviour, ITickable
         EntityData.SpawnableEntityType entityType = GetEntityType();
         
         // ³qª¾ EnvEntityManager ²¾°£
-        Manager.Instance?.EnvEntityManager?.RemoveEntity(entityType, spawnPosition);
+        MainManager.inGameManager?.EnvEntityManager?.RemoveEntity(entityType, spawnPosition);
     }
 
     /// <summary>

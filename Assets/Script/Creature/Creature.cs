@@ -32,11 +32,11 @@ public partial class Creature : MonoBehaviour, ITickable
 
     public void OnEnable()
     {
-        Manager.Instance.TickManager?.RegisterTickable(OnTick);
+        MainManager.inGameManager.TickManager?.RegisterTickable(OnTick);
     }
     public void OnDisable()
     {
-        Manager.Instance.TickManager?.UnregisterTickable(OnTick);
+        MainManager.inGameManager.TickManager?.UnregisterTickable(OnTick);
     }
 
 
@@ -58,11 +58,11 @@ public partial class Creature : MonoBehaviour, ITickable
         OnDisable();
 
         //生成肉
-        Manager.Instance?.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Meat, transform.position);
+        MainManager.inGameManager?.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Meat, transform.position);
 
-        if (Manager.Instance != null)
+        if (MainManager.inGameManager != null)
         {
-            Manager.Instance.UnregisterCreature(this);
+            MainManager.inGameManager.UnregisterCreature(this);
         }
         
         // 使用物件池回收，而不是直接銷毀

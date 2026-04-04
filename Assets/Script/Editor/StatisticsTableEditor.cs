@@ -91,7 +91,7 @@ public class StatisticsTableEditor : EditorWindow
 
     private void OnInspectorUpdate()
     {
-        if (!Application.isPlaying || !Manager.Instance) return;
+        if (!Application.isPlaying || MainManager.inGameManager != null) return;
 
         // 定時採樣：不要每幀紀錄，這很重要！
         if (Time.realtimeSinceStartup - lastUpdateTime > updateInterval)
@@ -104,7 +104,7 @@ public class StatisticsTableEditor : EditorWindow
 
     private void UpdateData()
     {
-        foreach (var species in Manager.Instance.Species)
+        foreach (var species in MainManager.inGameManager.Species)
         {
             int id = species.Value.speciesID;
 

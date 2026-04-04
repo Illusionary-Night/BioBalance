@@ -2,11 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class InputManager
 {
-    // 全域單例，供其他系統快速存取 InputManager
-    public static InputManager Instance { get; private set; }
-
     // Unity Input System 自動產生的輸入封裝
     private InGameControl inGameControl;
 
@@ -44,36 +41,17 @@ public class InputManager : MonoBehaviour
     private bool isCtrlPressed;
 
     // 初始化單例與輸入綁定
-    void Awake()
+    public InputManager()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
         inGameControl = new InGameControl();
         RegisterInputActions();
-    }
-
-    // 物件啟用時啟用整份 InputActionAsset
-    void OnEnable()
-    {
         inGameControl?.Enable();
     }
 
-    // 物件停用時停用整份 InputActionAsset
-    void OnDisable()
-    {
-        inGameControl?.Disable();
-    }
-
-    // 物件銷毀前解除事件綁定，避免殘留回呼
-    void OnDestroy()
+    ~InputManager()
     {
         UnregisterInputActions();
+        inGameControl?.Disable();
     }
 
     // 註冊所有需要的 InputAction 回呼
