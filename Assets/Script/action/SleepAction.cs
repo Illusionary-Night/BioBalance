@@ -10,7 +10,7 @@ public class SleepAction : ActionBase
     {
         int sleepHead = creature.sleepingHead;
         int sleepTail = creature.sleepingTail;
-        int nowHour = Manager.Instance.TickManager.CurrentHour;
+        int nowHour = MainManager.inGameManager.TickManager.CurrentHour;
         
         if (sleepHead > sleepTail) 
         {
@@ -29,7 +29,7 @@ public class SleepAction : ActionBase
         int sleepHead = creature.sleepingHead;
         int sleepTail = creature.sleepingTail;
         int sleepDuration = creature.sleepTime;
-        int nowHour = Manager.Instance.TickManager.CurrentHour;
+        int nowHour = MainManager.inGameManager.TickManager.CurrentHour;
         int hoursPerDay = constantData.HOURS_PER_DAY;
 
         if (sleepDuration == 0) return 0f;

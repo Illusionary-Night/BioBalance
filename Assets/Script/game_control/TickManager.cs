@@ -25,21 +25,12 @@ public class TickManager : MonoBehaviour
 
     private void RegisterPauseInput()
     {
-        if (InputManager.Instance == null)
-        {
-            LogManager.LogError("TickManager: InputManager instance not found. Pause input will not be registered.");
-            return;
-        }
-
-        InputManager.Instance.OnPausePerformed += OnPausePerformed;
+        MainManager.inputManager.OnPausePerformed += OnPausePerformed;
     }
 
     private void UnregisterPauseInput()
     {
-        if (InputManager.Instance != null)
-        {
-            InputManager.Instance.OnPausePerformed -= OnPausePerformed;
-        }
+            MainManager.inputManager.OnPausePerformed -= OnPausePerformed;
     }
 
     private void OnPausePerformed()

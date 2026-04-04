@@ -14,6 +14,6 @@ public class TimeClock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        textUI.text = $"Day {Manager.Instance.TickManager.CurrentDay} {Manager.Instance.TickManager.CurrentHour}:00";
+        textUI.text = $"Day {MainManager.inGameManager.TickManager.CurrentDay} {MainManager.inGameManager.TickManager.CurrentHour}:00";
     }
 }

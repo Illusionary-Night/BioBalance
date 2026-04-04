@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(100)]
 public class TestRunner : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -46,7 +47,7 @@ public class TestRunner : MonoBehaviour
         }
         Creature creature = CreaturePool.GetCreature(goat, goat.ToCreatureAttributes(), (Vector3)pos, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
-        Manager.Instance.RegisterCreature(creature);
+        MainManager.inGameManager.RegisterCreature(creature);
     }
 
     private void SpawnCreature2(Vector3? pos = null)
@@ -59,7 +60,7 @@ public class TestRunner : MonoBehaviour
         // 使用物件池取得新生物
         Creature creature = CreaturePool.GetCreature(slime, slime.ToCreatureAttributes(), (Vector3)pos, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
-        Manager.Instance.RegisterCreature(creature);
+        MainManager.inGameManager.RegisterCreature(creature);
     }
     private void SpawnCreature3(Vector3? pos = null)
     {
@@ -70,7 +71,7 @@ public class TestRunner : MonoBehaviour
         }
         Creature creature = CreaturePool.GetCreature(icedragon, icedragon.ToCreatureAttributes(), (Vector3)pos, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
-        Manager.Instance.RegisterCreature(creature);
+        MainManager.inGameManager.RegisterCreature(creature);
     }
     private void SpawnCreature4(Vector3? pos = null)
     {
@@ -81,7 +82,7 @@ public class TestRunner : MonoBehaviour
         }
         Creature creature = CreaturePool.GetCreature(tiger, tiger.ToCreatureAttributes(), (Vector3)pos, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
-        Manager.Instance.RegisterCreature(creature);
+        MainManager.inGameManager.RegisterCreature(creature);
     }
 
     // ======== God Mod ===========
@@ -108,37 +109,37 @@ public class TestRunner : MonoBehaviour
         // 按下數字區 1 生成草
         if (Input.GetKeyDown(KeyCode.Keypad1))
         {
-            Manager.Instance.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Grass, mousePos);
+            MainManager.inGameManager.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Grass, mousePos);
         }
         // 按下數字區 2 生成肉
         if (Input.GetKeyDown(KeyCode.Keypad2))
-        {
-            Manager.Instance.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Meat, mousePos);
+        {   
+            MainManager.inGameManager.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Meat, mousePos);
         }
         // 按下數字區 3 生成腐肉
         if (Input.GetKeyDown(KeyCode.Keypad3))
         {
-            Manager.Instance.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Carrion, mousePos);
+            MainManager.inGameManager.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Carrion, mousePos);
         }
         // 按下等於鍵暫停/繼續遊戲
         if (Input.GetKeyDown(KeyCode.Equals))
         {
-            Manager.Instance.TickManager.SetPause();
+            MainManager.inGameManager.TickManager.SetPause();
         }
         // 按下 Z 鍵將遊戲速度設置為 60 TPS
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            Manager.Instance.TickManager.SetTPS(60);
+            MainManager.inGameManager.TickManager.SetTPS(60);
         }
         // 按下 X 鍵將遊戲速度設置為 30 TPS
         if (Input.GetKeyDown(KeyCode.X))
         {
-            Manager.Instance.TickManager.SetTPS(30);
+            MainManager.inGameManager.TickManager.SetTPS(30);
         }
         // 按下 C 鍵將遊戲速度設置為 15 TPS
         if (Input.GetKeyDown(KeyCode.C))
         {
-            Manager.Instance.TickManager.SetTPS(15);
+            MainManager.inGameManager.TickManager.SetTPS(15);
         }
         // 按下滑鼠左鍵高亮物件
         if (Input.GetMouseButtonDown(0))

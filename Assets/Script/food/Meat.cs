@@ -13,7 +13,7 @@ public class Meat : Edible
 
     protected override void NaturalDespawn()
     {
-        Manager.Instance?.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Carrion, transform.position);
+        MainManager.inGameManager?.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Carrion, transform.position);
         base.NaturalDespawn();
     }
 }

@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Manager : MonoBehaviour
+public class InGameManager
 {
-    // 單例實例
-    public static Manager Instance { get; private set; }
-
     // 環境實體管理器
     public EnvEntityManager EnvEntityManager { get; private set; }
 
@@ -18,25 +15,17 @@ public class Manager : MonoBehaviour
     [SerializeField] private readonly Dictionary<int, Species> species = new();
     public Dictionary<int, Species> Species => species;
 
-    void Start()
+    public InGameManager()
     {
         Initialize();
     }
 
-    private void Awake()
+    ~InGameManager()
     {
-        // 確保只有一個實例
-        if (Instance != null && Instance != this)
+        if (EnvEntityManager != null)
         {
-            Destroy(gameObject);
-            return;
+            TickManager?.UnregisterTickable(EnvEntityManager.OnTick);
         }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
-        // 在 Awake 中初始化 EnvEntityManager，確保在其他腳本的 Start 之前可用
-        EnvEntityManager = new EnvEntityManager();
     }
 
     private void Initialize()
@@ -47,16 +36,16 @@ public class Manager : MonoBehaviour
         // 新建 TickManager 
         TickManager = new GameObject("TickManager").AddComponent<TickManager>();
 
+        EnvEntityManager = new EnvEntityManager();
+
         // 啟用 EnvEntityManager 的 Tick 訂閱
-        EnvEntityManager?.OnEnable();
+        if (EnvEntityManager != null)
+        {
+            TickManager?.RegisterTickable(EnvEntityManager.OnTick);
+        }
 
         // 紀錄初始化完成
         LogManager.Log("[Manager] 初始化完成");
-    }
-
-    private void OnDisable()
-    {
-        EnvEntityManager?.OnDisable();
     }
 
     /// <summary>
@@ -68,7 +57,7 @@ public class Manager : MonoBehaviour
         var newSpecies = new_creature.mySpecies;
 
         // --- 第一階段：找出誰是這隻新生物的天敵 ---
-        foreach (var speciesEntry in Manager.Instance.Species.Values)
+        foreach (var speciesEntry in Species.Values)
         {
             // 如果這個物種的獵物清單包含新生物的 ID，那牠就是天敵
             if (speciesEntry.preyIDList.Contains(newSpecies.speciesID))
@@ -85,7 +74,7 @@ public class Manager : MonoBehaviour
         foreach (var preyID in newSpecies.preyIDList)
         {
             // 找目標獵物物種
-            if (Manager.Instance.Species.TryGetValue(preyID, out var preySpecies))
+            if (Species.TryGetValue(preyID, out var preySpecies))
             {
                 // 遍歷該物種的所有生物
                 foreach (var preyCreature in preySpecies.creatures.Values)
