@@ -9,8 +9,7 @@ public class CreatureEditor : Editor
 {
     // 分頁索引與名稱
     private int tabIndex = 0;
-    private string[] tabNames = { "Dashboard", "Debug Tools" };
-
+    private string[] tabNames = { "Dashboard", "Static Information", "Debug Tools" };
     // 內部測試變數 (持久化於 Editor 實例)
     private Vector2Int testPos = Vector2Int.zero;
     private float testAngle = 0f;
@@ -31,6 +30,9 @@ public class CreatureEditor : Editor
                 DrawDashboardTab(creature);
                 break;
             case 1:
+                DrawStaticInformation(creature);
+                break;
+            case 2:
                 DrawDebugTab(creature);
                 break;
         }
@@ -150,31 +152,31 @@ public class CreatureEditor : Editor
     /// <summary>
     /// 繪製大腦運行時的變數監測
     /// </summary>
-    private void DrawBrainStateMonitor(Creature creature)
-    {
-        EditorGUILayout.LabelField("Brain State", EditorStyles.boldLabel);
-        EditorGUILayout.BeginVertical("box");
+    //private void DrawBrainStateMonitor(Creature creature)
+    //{
+    //    EditorGUILayout.LabelField("Brain State", EditorStyles.boldLabel);
+    //    EditorGUILayout.BeginVertical("box");
 
-        // 保存原本的寬度
-        float oldWidth = EditorGUIUtility.labelWidth;
-        // 強制設定標題欄寬度為 120 像素 (視需求調整)
-        EditorGUIUtility.labelWidth = 120;
+    //    // 保存原本的寬度
+    //    float oldWidth = EditorGUIUtility.labelWidth;
+    //    // 強制設定標題欄寬度為 120 像素 (視需求調整)
+    //    EditorGUIUtility.labelWidth = 120;
 
-        EditorGUILayout.LabelField($"Current Action:", creature.currentAction.ToString());
-        EditorGUILayout.LabelField($"Distance:", creature.GetDistanceToDestination().ToString("F2"));
-        EditorGUILayout.LabelField($"Stuck Times:", creature.GetMovementStuckTimes().ToString());
-        EditorGUILayout.LabelField($"Attack Dir:", creature.underAttackDirection.ToString());
-        EditorGUILayout.LabelField($"Movement State:", creature.movementState.ToString());
+    //    EditorGUILayout.LabelField($"Current Action:", creature.currentAction.ToString());
+    //    EditorGUILayout.LabelField($"Distance:", creature.GetDistanceToDestination().ToString("F2"));
+    //    EditorGUILayout.LabelField($"Stuck Times:", creature.GetMovementStuckTimes().ToString());
+    //    EditorGUILayout.LabelField($"Attack Dir:", creature.underAttackDirection.ToString());
+    //    EditorGUILayout.LabelField($"Movement State:", creature.movementState.ToString());
 
-        string uuid = creature.enemy?.UUID ?? "None";
-        string lastFive = uuid.Length >= 5 ? uuid.Substring(uuid.Length - 5) : uuid;
-        EditorGUILayout.LabelField("Enemy ID (Last 5):", lastFive);
+    //    string uuid = creature.enemy?.UUID ?? "None";
+    //    string lastFive = uuid.Length >= 5 ? uuid.Substring(uuid.Length - 5) : uuid;
+    //    EditorGUILayout.LabelField("Enemy ID (Last 5):", lastFive);
 
-        // 恢復寬度，以免影響到後面的渲染
-        EditorGUIUtility.labelWidth = oldWidth;
+    //    // 恢復寬度，以免影響到後面的渲染
+    //    EditorGUIUtility.labelWidth = oldWidth;
 
-        EditorGUILayout.EndVertical();
-    }
+    //    EditorGUILayout.EndVertical();
+    //}
 
     #endregion
 
@@ -331,7 +333,100 @@ public class CreatureEditor : Editor
     }
 
     #endregion
+    void DrawStaticInformation(Creature creature)
+    {
+        // --- 1. 身份與血統 ---
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("Identity & Lineage", EditorStyles.boldLabel);
 
+        // 確保 UUID 存在才顯示前/後幾碼，避免畫面太長
+        string uuidDisplay = string.IsNullOrEmpty(creature.UUID) ? "Not Born (In Pool)" : creature.UUID;
+        EditorGUILayout.LabelField("UUID", uuidDisplay);
+        EditorGUILayout.LabelField("Species", creature.mySpecies != null ? creature.mySpecies.name : "Null");
+        EditorGUILayout.LabelField("Father ID", string.IsNullOrEmpty(creature.fatherID) ? "None (First Gen)" : creature.fatherID);
+        EditorGUILayout.LabelField("Mother ID", string.IsNullOrEmpty(creature.motherID) ? "None (First Gen)" : creature.motherID);
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.Space(5);
+
+        // --- 2. 遺傳屬性 (Genetics) ---
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("Genetic Attributes", EditorStyles.boldLabel);
+
+        float oldWidth = EditorGUIUtility.labelWidth;
+        EditorGUIUtility.labelWidth = 150; // 讓對齊好看一點
+
+        EditorGUILayout.LabelField("Size (Scale)", creature.size.ToString("F2"));
+        EditorGUILayout.LabelField("Speed", creature.speed.ToString("F2"));
+        EditorGUILayout.LabelField("Attack Power", creature.attackPower.ToString("F2"));
+        EditorGUILayout.LabelField("Perception Range", creature.perceptionRange.ToString("F2"));
+        EditorGUILayout.LabelField("Lifespan", creature.lifespan.ToString("F1") + " ticks");
+        EditorGUILayout.LabelField("Max Health", creature.maxHealth.ToString("F1"));
+        EditorGUILayout.LabelField("Max Hunger", creature.maxHunger.ToString("F1"));
+
+        EditorGUIUtility.labelWidth = oldWidth;
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.Space(5);
+
+        // --- 3. God Mode (原有的性別修改) ---
+        EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.LabelField("God Mode Overrides", EditorStyles.boldLabel);
+        EditorGUI.BeginChangeCheck();
+        Gender newGender = (Gender)EditorGUILayout.EnumPopup("Force Gender", creature.gender);
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(creature, "Change Creature Gender");
+            creature.gender = newGender;
+            EditorUtility.SetDirty(creature);
+            Debug.Log($"[God Mode] 強制更改生物 {creature.gameObject.name} 的性別為 {newGender}");
+        }
+        EditorGUILayout.EndVertical();
+    }
+    private void DrawBrainStateMonitor(Creature creature)
+    {
+        EditorGUILayout.LabelField("Brain & Body State", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical("box");
+
+        float oldWidth = EditorGUIUtility.labelWidth;
+        EditorGUIUtility.labelWidth = 120;
+
+        // 原本的行動狀態
+        EditorGUILayout.LabelField("Current Action:", creature.currentAction.ToString());
+        EditorGUILayout.LabelField("Movement State:", creature.movementState.ToString());
+
+        // 🌟 新增：生命階段與體態
+        EditorGUILayout.LabelField("Life Stage:", creature.currentLifeState.ToString());
+        EditorGUILayout.LabelField("Body Type:", creature.currentBodyType.ToString());
+
+        EditorGUILayout.Space(5);
+
+        // 🌟 新增：異常狀態監控
+        if (creature.isSleeping) EditorGUILayout.LabelField("Status:", "💤 Sleeping");
+        else if (creature.isStunned) EditorGUILayout.LabelField("Status:", $"💫 Stunned ({creature.stunTimer:F1}s)");
+        else if (creature.isDead) EditorGUILayout.LabelField("Status:", "💀 Dead");
+        else EditorGUILayout.LabelField("Status:", "🟢 Normal");
+
+        EditorGUILayout.Space(5);
+
+        // 🌟 新增：社交與繁殖監控
+        //EditorGUILayout.LabelField("Mating Partner:", creature.matingPartner != null ? creature.matingPartner.gameObject.name : "None");
+        //if (creature.reproductionCD > 0)
+        //{
+        //    EditorGUILayout.LabelField("Reproduction CD:", creature.reproductionCD.ToString("F1"));
+        //}
+
+        EditorGUILayout.Space(5);
+
+        // 原本的戰鬥追蹤
+        string uuid = creature.enemy?.UUID ?? "None";
+        string lastFive = uuid.Length >= 5 ? uuid.Substring(uuid.Length - 5) : uuid;
+        EditorGUILayout.LabelField("Enemy ID (Last 5):", lastFive);
+        EditorGUILayout.LabelField("Attack Dir:", creature.underAttackDirection.ToString());
+
+        EditorGUIUtility.labelWidth = oldWidth;
+        EditorGUILayout.EndVertical();
+    }
     #region --- 通用繪製工具 ---
 
     /// <summary>

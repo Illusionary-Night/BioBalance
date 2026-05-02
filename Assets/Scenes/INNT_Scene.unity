@@ -162,11 +162,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0667220e6d63c246abee32ea2c17189, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestRunner
-  ManualControl: 0
+  ManualControl: 1
   goat: {fileID: 11400000, guid: 7518b6743146baf4facbf30eda33fb51, type: 2}
   slime: {fileID: 11400000, guid: 6dfd3791039972441a7a50251b8a457f, type: 2}
   icedragon: {fileID: 11400000, guid: 6e9dc253a94a31c48aaa50892b88984a, type: 2}
   tiger: {fileID: 11400000, guid: ce9bf06ab964ac04f80d8b3c0ed2e91a, type: 2}
+  cam: {fileID: 0}
+  highlightMaterial: {fileID: 0}
+  currentSelected: {fileID: 0}
 --- !u!4 &244281955
 Transform:
   m_ObjectHideFlags: 0

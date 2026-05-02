@@ -57,8 +57,8 @@ public struct CreatureAttributes
     public float attack_power;
     public float lifespan;
     public float perception_range;
-    public int sleeping_head;
-    public int sleeping_tail;
+    public Gender gender;
+    public String UUID;
 }
 public static class AttributesCalculator{
     public static float CalculateHungerRate(float size, float speed, float attack_power)
@@ -77,9 +77,9 @@ public static class AttributesCalculator{
     {
         return size * base_health;
     }
-    public static float CalculateHealthRegeneration(float base_health, float size, float sleeping_time)
+    public static float CalculateHealthRegeneration(float base_health, float size)
     {
-        return base_health * sleeping_time / size /100000;
+        return base_health / size /1000;
     }
 }
 
@@ -141,4 +141,9 @@ public enum Gender
     None,
     Male,
     Female,
+}
+public enum ReproductionType
+{
+    Asexual, // 無性：初代給固定性別（例如 Gender.None 或統一是 Female）
+    Sexual   // 有性：初代直接 50/50 盲抽
 }

@@ -26,12 +26,12 @@ public partial class Creature : MonoBehaviour, ITickable {
     public float attackPower { get; private set; }
     public float lifespan { get; private set; }
     public float perceptionRange { get; private set; }
-    public int sleepingHead { get; private set; }
-    public int sleepingTail { get; private set; }
+    //public int sleepingHead { get; private set; }
+    //public int sleepingTail { get; private set; }
     public float hungerRate { get; private set; }
     public float maxHunger { get; private set; }
     public float healthRegeneration { get; private set; }
-    public int sleepTime { get; private set; }
+    //public int sleepTime { get; private set; }
 
     // --- 運行時動態狀態 ---
     public float hunger { get; private set; }
@@ -51,7 +51,7 @@ public partial class Creature : MonoBehaviour, ITickable {
     public Creature enemy { get; private set; }
     public CreatureMovementState movementState { get; private set; }
     public Gender gender;
-    public Creature matingPartner; // 目前鎖定的配對對象
+    //public Creature matingPartner; // 目前鎖定的配對對象
     public float reproductionCD; // 成功繁殖的冷卻
     public string fatherID { get; private set; }
     public string motherID { get; private set; }

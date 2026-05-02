@@ -10,23 +10,30 @@ using System.IO;
 
 public partial class Creature : MonoBehaviour, ITickable
 {
-    
+    private void Awake()
+    {
+        if (movement == null)
+            movement = new Movement(this);
 
-    public void Initialize(Species species, CreatureAttributes creatureAttributes, GameObject creature_object)
+        if (actionStateMachine == null)
+            actionStateMachine = new ActionStateMachine(this);
+
+    }
+
+    public void Initialize(Species species, CreatureAttributes? parentAttr1 = null, CreatureAttributes? parentAttr2 = null)
     {
         mySpecies = species;
-        AttributeInheritance(species, creatureAttributes, creature_object);
+        AttributeInheritance(species, parentAttr1, parentAttr2);
         //個體編號
         UUID = System.Guid.NewGuid().ToString();
+
+        ResetRuntimeStates();
         isDead = false;
         //角色物件調適
         transform.localScale = new Vector3(size * constantData.NORMAL_SIZE, size * constantData.NORMAL_SIZE, 1f);
-        movement = new Movement(this);
-        // 初始化狀態機
-        actionStateMachine = new ActionStateMachine(this);
         // 生物圖片
         SetCreatureSprite(species.creatureBase);
-        OnEnable();
+        //OnEnable();
         AutoSetLayer(gameObject);
     }
 

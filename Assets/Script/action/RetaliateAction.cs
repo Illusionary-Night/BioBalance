@@ -21,7 +21,7 @@ public class RetaliateAction : AttackAction
     }
     protected override void Attack(Creature creature, Creature target)
     {
-        Debug.Log(creature.creatureBase + " Retaliate!");
+        //Debug.Log(creature.creatureBase + " Retaliate!");
         target.SetStun(40);
         Vector2 drection = target.transform.position - creature.transform.position;
         target.Repel(drection, 50);
