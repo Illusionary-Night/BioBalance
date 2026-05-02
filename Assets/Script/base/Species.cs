@@ -24,9 +24,8 @@ public class Species : ScriptableObject, ISerializationCallbackReceiver
     public float baseLifespan = 2000.0f;
     public float basePerceptionRange = 10.0f;
 
-    [Header("生理時鐘基準")]
-    public int baseSleepingHead = 200;
-    public int baseSleepingTail = 600;
+    [Header("特殊遺傳項目")]
+    public ReproductionType reproductionType;
 
     [Header("運行時數據 (Runtime)")]
     // 執行時才產生的 Dictionary，不需要序列化
@@ -59,19 +58,5 @@ public class Species : ScriptableObject, ISerializationCallbackReceiver
         {
             actionMaxCD.Add(_cdKeys[i], _cdValues[i]);
         }
-    }
-    public CreatureAttributes ToCreatureAttributes()
-    {
-        CreatureAttributes attributes = new CreatureAttributes();
-        attributes.size = baseSize;
-        attributes.max_health = baseMaxHealth;
-        attributes.speed = baseSpeed;
-        attributes.attack_power = baseAttackPower;
-        attributes.reproduction_rate = baseReproductionRate;
-        attributes.lifespan = baseLifespan;
-        attributes.perception_range = basePerceptionRange;
-        attributes.sleeping_head = baseSleepingHead;
-        attributes.sleeping_tail = baseSleepingTail;
-        return attributes;
     }
 }

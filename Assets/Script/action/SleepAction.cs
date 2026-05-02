@@ -5,12 +5,11 @@ public class SleepAction : ActionBase
 {
     public override ActionType Type => ActionType.Sleep;
 
-    //private const float SleepHungerRateMultiplier = 0.3f;
     public override bool IsConditionMet(Creature creature)
     {
-        int sleepHead = creature.sleepingHead;
-        int sleepTail = creature.sleepingTail;
-        int nowHour = MainManager.inGameManager.TickManager.CurrentHour;
+        int sleepHead = 900;
+        int sleepTail = 1800;
+        int nowHour = Manager.Instance.TickManager.CurrentHour;
         
         if (sleepHead > sleepTail) 
         {
@@ -26,23 +25,23 @@ public class SleepAction : ActionBase
     {
         //return 2f;
 
-        int sleepHead = creature.sleepingHead;
-        int sleepTail = creature.sleepingTail;
-        int sleepDuration = creature.sleepTime;
-        int nowHour = MainManager.inGameManager.TickManager.CurrentHour;
+        int sleepHead = 900;
+        int sleepTail = 1800;
+        int sleepDuration = 900;
+        int nowHour = Manager.Instance.TickManager.CurrentHour;
         int hoursPerDay = constantData.HOURS_PER_DAY;
 
         if (sleepDuration == 0) return 0f;
         
-        // ­pºâ·í«e®É¶¡¦bºÎ¯v°Ï¶¡¤¤ªº¦ì¸m
+        // ï¿½pï¿½ï¿½ï¿½ï¿½eï¿½É¶ï¿½ï¿½bï¿½Î¯vï¿½Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m
         int hoursIntoSleep = sleepHead <= sleepTail
             ? nowHour - sleepHead
             : (nowHour >= sleepHead ? nowHour - sleepHead : hoursPerDay - sleepHead + nowHour);
 
-        // ¥¿³W¤Æ¶i«× (0.0 ~ 1.0)
+        // ï¿½ï¿½ï¿½Wï¿½Æ¶iï¿½ï¿½ (0.0 ~ 1.0)
         float progress = (float)hoursIntoSleep / sleepDuration;
 
-        // ¥¿©¶¦±½u¡G¤¤¶¡®É¬qÅv­«³Ì°ª
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½uï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½É¬qï¿½vï¿½ï¿½ï¿½Ì°ï¿½
         float weight = Mathf.Sin(Mathf.PI * progress);
 
         const float minWeight = 0.9f;

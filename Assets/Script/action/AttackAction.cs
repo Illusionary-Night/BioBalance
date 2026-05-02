@@ -96,7 +96,7 @@ public class AttackAction : ActionBase
     }
     protected virtual void Attack(Creature creature, Creature target)
     {
-        Debug.Log(creature.creatureBase + " Attack!");
+        //Debug.Log(creature.creatureBase + " Attack!");
         target.Hurt(creature.attackPower, creature.transform.position, creature);
     }
 }

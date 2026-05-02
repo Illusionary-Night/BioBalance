@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using static UnityEngine.GraphicsBuffer;
 using static Perception;
 using System.Linq;
+using System;
 
 public static class Perception
 {
     public static class Creatures
     {
         // Returns the first target creature found within perception range, or null if none found
-        public static bool HasTarget(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f)
+        public static bool HasTarget(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起偵測的生物必須存在且存活
             if (current_creature == null || current_creature.isDead)
@@ -29,12 +30,13 @@ public static class Perception
             return target_species.creatures.Values.Any(c =>
                 c != null &&
                 !c.isDead &&
-                c != current_creature && // 不會偵測到自己
+                c != current_creature &&
+                (filter == null || filter(c)) &&
                 (current_creature.transform.position - c.transform.position).sqrMagnitude <= rangeSq
             );
         }
         // Returns true if any target creature from the list is found within perception range
-        public static bool HasTarget(Creature creature, List<int> target_ID_list, float rangeMultiplier = 1.0f)
+        public static bool HasTarget(Creature creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
             if (creature == null || creature.isDead) return false;
@@ -42,10 +44,10 @@ public static class Perception
             // 列表檢查：若清單為 null 或長度為 0，直接回傳 false
             if (target_ID_list == null || target_ID_list.Count == 0) return false;
 
-            return target_ID_list.Any(id => HasTarget(creature, id, rangeMultiplier));
+            return target_ID_list.Any(id => HasTarget(creature, id, rangeMultiplier, filter));
         }
         // Counts the number of target creatures with the specified ID within perception range
-        public static int CountTargetNumber(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f)
+        public static int CountTargetNumber(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起偵測的生物必須存在且存活
             if (current_creature == null || current_creature.isDead)
@@ -61,11 +63,12 @@ public static class Perception
 
             return target_species.creatures.Values.Count(c =>
                 c != null && !c.isDead && c != current_creature &&
+                (filter == null || filter(c)) &&
                 (current_creature.transform.position - c.transform.position).sqrMagnitude < rangeSq
             );
         }
         // Counts the total number of target creatures from the list of IDs within perception range
-        public static int CountTarget(Creature current_creature, List<int> target_ID_list, float rangeMultiplier = 1.0f)
+        public static int CountTargetNumber(Creature current_creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
             if (current_creature == null || current_creature.isDead) return 0;
@@ -73,10 +76,10 @@ public static class Perception
             // 列表檢查：若清單為 null 或長度為 0，直接回傳 false
             if (target_ID_list == null || target_ID_list.Count == 0) return 0;
 
-            return target_ID_list.Sum(id => CountTargetNumber(current_creature, id, rangeMultiplier));
+            return target_ID_list.Sum(id => CountTargetNumber(current_creature, id, rangeMultiplier, filter));
         }
         // Retrieves a sorted list of all target creatures with the specified ID within perception range
-        public static List<Creature> GetAllTargets(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f, bool sorted = true)
+        public static List<Creature> GetAllTargets(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f, bool sorted = true, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起偵測的生物必須存在且存活
             if (current_creature == null || current_creature.isDead)
@@ -94,7 +97,8 @@ public static class Perception
             // 先進行基礎篩選
             var query = target_species.creatures.Values
                 .Where(c => c != null && !c.isDead && c != current_creature &&
-                            ((Vector2)c.transform.position - currentPos).sqrMagnitude < rangeSq);
+                (filter == null || filter(c)) &&
+                ((Vector2)c.transform.position - currentPos).sqrMagnitude < rangeSq);
 
             // 根據參數決定是否排序 
             if (sorted)
@@ -107,7 +111,7 @@ public static class Perception
             }
         }
         // Retrieves a sorted list of all target creatures from the list of IDs within perception range
-        public static List<Creature> GetAllTargets(Creature current_creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, bool sorted = true)
+        public static List<Creature> GetAllTargets(Creature current_creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, bool sorted = true, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
             if (current_creature == null || current_creature.isDead) return new List<Creature>();
@@ -118,7 +122,7 @@ public static class Perception
             Vector2 currentPos = current_creature.transform.position;
 
             var query = target_ID_list
-                .SelectMany(id => GetAllTargets(current_creature, id, rangeMultiplier, false));
+                .SelectMany(id => GetAllTargets(current_creature, id, rangeMultiplier, false , filter));
             if (sorted)
             {
                 return query

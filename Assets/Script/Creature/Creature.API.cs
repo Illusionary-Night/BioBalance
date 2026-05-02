@@ -7,6 +7,7 @@
  */
 using System.Collections.Generic;
 using UnityEngine;
+using static Perception;
 
 public partial class Creature : MonoBehaviour
 {
@@ -236,8 +237,8 @@ public partial class Creature : MonoBehaviour
         attributes.reproduction_rate = reproductionRate;
         attributes.lifespan = lifespan;
         attributes.perception_range = perceptionRange;
-        attributes.sleeping_head = sleepingHead;
-        attributes.sleeping_tail = sleepingTail;
+        attributes.gender = gender;
+        attributes.UUID= UUID;
         return attributes;
     }
 
@@ -320,7 +321,7 @@ public partial class Creature : MonoBehaviour
     #endregion
 
 
-
+    #region 尚未歸類function 
     public void SetMotherID(string motherID)
     {
         this.motherID = motherID;
@@ -329,6 +330,74 @@ public partial class Creature : MonoBehaviour
     {
         this.fatherID = fatherID;
     }
+    public bool IsNearby(Creature another)
+    {
+        Vector2 position1 = this.transform.position;
+        Vector2 position2 = another.transform.position;
+        float DistanceGate = GetContactDistance(another);
+        if (DistanceGate  < Vector2.Distance(position1 ,position2)) return false;
+        Debug.Log("is nearby");
+        return true;
+    }
+    public float GetContactDistance(Creature another)
+    {
+        // 1. 去抓 Unity 物理引擎身上那個真實的 CircleCollider2D
+        var myCol = this.GetComponent<CircleCollider2D>();
+        var otherCol = another.GetComponent<CircleCollider2D>();
+
+        if (myCol != null && otherCol != null)
+        {
+            // 2. 讓程式碼承認物理引擎的半徑 (就是抓出來的值)
+            float myRealRadius = myCol.radius * this.transform.localScale.x;
+            float otherRealRadius = otherCol.radius * another.transform.localScale.x;
+
+            // 3. 回傳真實的極限距離再乘以 1.2 容差
+            return (myRealRadius + otherRealRadius) * 1.2f;
+        }
+
+        // 防呆機制：萬一沒掛碰撞體才用舊的方法
+        return (this.transform.localScale.x + another.transform.localScale.x) * 0.5f * 1.2f;
+    }
+    public bool IsInHeat()
+    {
+        // 1. 年齡門檻：必須是成年體 (假設你有 lifespan 或 matureAge 的設定)
+        // 這裡假設超過壽命的 20% 才算成年
+        if (age < lifespan * 0.2f)
+            return false;
+
+        // 2. 老年停經 (選配)：如果太老了也不生了，避免佔用資源
+        if (age > lifespan * 0.9f)
+            return false;
+
+        // 3. 能量門檻：肚子至少要有 60% 飽，才有體力繁衍
+        if (hunger < maxHunger * 0.6f)
+            return false;
+
+        // 4. 健康門檻 (選配)：如果快死了 (血量低於 30%)，優先保命不發情
+        if (health < maxHealth * 0.3f)
+            return false;
+
+        // 5. 冷卻期檢查：(針對雌性產後的 CD 時間，假設你有個計時器 matingCooldown)
+        //if (c.matingCooldown > 0f)
+        //    return false;
+
+        // 如果以上都通過了，代表生理狀態極佳，可以繁衍！
+        return true;
+    }
+    public bool IsInHeatMaleNearby(Creature c)
+    {
+        if (c.gender == Gender.Female) return false;
+        if (!c.IsInHeat()) return false;
+        if (!this.IsNearby(c)) return false;
+        return true;
+    }
+    public bool IsInHeatFemale(Creature c)
+    {
+        if (c.gender == Gender.Male) return false;
+        if (!c.IsInHeat()) return false;
+        return true;
+    }
+    #endregion
 
 
 

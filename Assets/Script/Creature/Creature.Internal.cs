@@ -53,13 +53,10 @@ public partial class Creature : MonoBehaviour
             var col = GetComponent<CircleCollider2D>();
             if (col != null)
             {
-                col.radius = 1.3f;
-
-
-                //    // 取圖片寬高之中較大的一半作為半徑，確保能包覆
-                //    float maxDim = Mathf.Max(loadedSprite.bounds.size.x, loadedSprite.bounds.size.y);
-                //    col.radius = maxDim / 2f * 0.95f;
-                //    col.offset = loadedSprite.bounds.center;
+                // 讓它自動抓！
+                // 取圖片寬高之中較大的一半作為半徑，完美貼合任何形狀的生物圖片
+                float maxDim = Mathf.Max(loadedSprite.bounds.size.x, loadedSprite.bounds.size.y);
+                col.radius = maxDim * 0.5f;
             }
         }
         else
@@ -91,33 +88,78 @@ public partial class Creature : MonoBehaviour
         }
     }
 
-    private void AttributeInheritance(Species species, CreatureAttributes creatureAttributes, GameObject creature_object)
+    private void AttributeInheritance(Species species, CreatureAttributes? parentAttr1 = null, CreatureAttributes? parentAttr2 = null)
     {
+        // 變異引擎：生出一個介於 -variation 到 +variation 之間的隨機比例
         float variationFactor() => UnityEngine.Random.Range(-species.variation, species.variation);
-        //睡眠時間變異
-        int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail - creatureAttributes.sleeping_head) * variationFactor());
-        sleepingHead = creatureAttributes.sleeping_head + delta_sleep_time();
-        sleepingTail = creatureAttributes.sleeping_tail + delta_sleep_time();
+
+        // 核心遺傳與變異邏輯 (完美包容單親與雙親)
+        float Inherit(float speciesVal, float? parent1Val, float? parent2Val)
+        {
+            float baseValue = 0;
+            if (!parentAttr1.HasValue && !parentAttr2.HasValue)
+            {
+                //初代個體
+                baseValue = speciesVal;
+            }
+            else if (!parentAttr2.HasValue)
+            {
+                // 【無性生殖/孤雌生殖】：直接拿單親的屬性
+                baseValue = parent1Val.Value;
+            }
+            else
+            {
+                // 【有性生殖】：擲骰子決定拿爸爸還是媽媽的數值
+                baseValue = UnityEngine.Random.value > 0.5f ? parent1Val.Value : parent2Val.Value;
+            }
+
+            // 不管是有性還是無性，最後統統乘上變異係數
+            return baseValue + (baseValue * variationFactor());
+        }
+
+        ////睡眠時間變異-------------------------這個東西處理比較麻煩
+        //int delta_sleep_time() => (int)((creatureAttributes.sleeping_tail - creatureAttributes.sleeping_head) * variationFactor());
+        //sleepingHead = creatureAttributes.sleeping_head + delta_sleep_time();
+        //sleepingTail = creatureAttributes.sleeping_tail + delta_sleep_time();
         //其他玩家屬性變異
-        size = creatureAttributes.size + creatureAttributes.size * variationFactor();
-        speed = creatureAttributes.speed + creatureAttributes.speed * variationFactor();
-        maxHealth = creatureAttributes.max_health + creatureAttributes.max_health * variationFactor();
-        reproductionRate = creatureAttributes.reproduction_rate + creatureAttributes.reproduction_rate * variationFactor();
-        attackPower = creatureAttributes.attack_power + creatureAttributes.attack_power * variationFactor();
-        lifespan = creatureAttributes.lifespan + creatureAttributes.lifespan * variationFactor();
-        perceptionRange = creatureAttributes.perception_range + creatureAttributes.perception_range * variationFactor();
+        size = Inherit(species.baseSize, parentAttr1?.size, parentAttr2?.size);
+        speed = Inherit(species.baseSpeed, parentAttr1?.speed, parentAttr2?.speed);
+        maxHealth = Inherit(species.baseMaxHealth, parentAttr1?.max_health, parentAttr2?.max_health);
+        reproductionRate = Inherit(species.baseReproductionRate, parentAttr1?.reproduction_rate, parentAttr2?.reproduction_rate);
+        attackPower = Inherit(species.baseAttackPower, parentAttr1?.attack_power, parentAttr2?.attack_power);
+        lifespan = Inherit(species.baseLifespan, parentAttr1?.lifespan, parentAttr2?.lifespan);
+        perceptionRange = Inherit(species.basePerceptionRange, parentAttr1?.perception_range, parentAttr2?.perception_range);
+
+        if (!parentAttr1.HasValue && !parentAttr2.HasValue)
+        {
+            //初代個體
+            if (species.reproductionType == ReproductionType.Asexual)
+            {
+                gender = Gender.None;
+            }
+            else
+            {
+                gender = UnityEngine.Random.value > 0.5f ? Gender.Male : Gender.Female;
+            }
+        }
+        else if (!parentAttr2.HasValue)
+        {
+            // 【無性生殖/孤雌生殖】：直接拿單親的屬性
+            gender = parentAttr1?.gender ?? Gender.None;
+        }
+        else
+        {
+            // 【有性生殖】：擲骰子決定拿爸爸還是媽媽的數值
+            gender = UnityEngine.Random.value > 0.5f ? Gender.Male : Gender.Female;
+        }
+
         //計算衍生屬性
-        sleepTime = sleepingTail - sleepingHead;
+        //sleepTime = sleepingTail - sleepingHead;
         hungerRate = AttributesCalculator.CalculateHungerRate(size, speed, attackPower);
         maxHunger = AttributesCalculator.CalculateMaxHunger(size, maxHealth, foodTypes);
-        healthRegeneration = AttributesCalculator.CalculateHealthRegeneration(maxHealth, size, sleepTime);
-        //初始狀態
-        hunger = maxHunger;
-        health = maxHealth;
-        age = 0;
-        actionCooldown = 0;
+        healthRegeneration = AttributesCalculator.CalculateHealthRegeneration(maxHealth, size);
+        
     }
-
     private void UpdateGrowth()
     {
         if (isDead) return;
@@ -185,5 +227,31 @@ public partial class Creature : MonoBehaviour
         }
 
         return hungerRate * multiplier;
+    }
+
+    private void ResetRuntimeStates() {
+        //初始狀態
+        hunger = maxHunger;
+        health = maxHealth;
+        age = 0;
+        actionCooldown = 0;
+        reproductionCD = 0;
+        stunTimer = 0f;
+        actionCD.Clear();
+        
+        isDead = false;
+        isSleeping = false;
+        isStunned = false;
+        isInvincible = false;
+
+        //matingPartner = null;
+        enemy = null;
+        fatherID = string.Empty;
+        motherID = string.Empty;
+        currentLifeState = LifeState.Infant;
+        //currentBodyType = BodyType
+        movementState = CreatureMovementState.Idle;
+        underAttackDirection = Direction.None;
+
     }
 }

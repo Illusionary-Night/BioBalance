@@ -116,9 +116,9 @@ public partial class Creature : MonoBehaviour, ITickable
                     // 物理旋轉建議使用 MoveRotation，這樣比較平滑且符合物理規則
                     rb.MoveRotation(angle);
                 }
-
+                float dynamicRadius = Mathf.Max(0.2f, GetCurrentSpeed() * Time.fixedDeltaTime * 1.5f);
                 // 4. 抵達路徑點判定 (稍微放寬一點距離，物理移動較難精準踩在點上)
-                if (Vector2.Distance(currentActualPos, target) < 0.2f)
+                if (Vector2.Distance(currentActualPos, target) < dynamicRadius)
                 {
                     currentPathIndex++;
                 }

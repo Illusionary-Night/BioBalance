@@ -45,7 +45,7 @@ public class TestRunner : MonoBehaviour
         {
             pos = new Vector3(250, 250, 0);
         }
-        Creature creature = CreaturePool.GetCreature(goat, goat.ToCreatureAttributes(), (Vector3)pos, TestParent);
+        Creature creature = CreaturePool.GetCreature(goat, (Vector3)pos, null, null, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
         MainManager.inGameManager.RegisterCreature(creature);
     }
@@ -58,7 +58,7 @@ public class TestRunner : MonoBehaviour
             pos = new Vector3(260, 250, 0);
         }
         // 使用物件池取得新生物
-        Creature creature = CreaturePool.GetCreature(slime, slime.ToCreatureAttributes(), (Vector3)pos, TestParent);
+        Creature creature = CreaturePool.GetCreature(slime, (Vector3)pos, null, null, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
         MainManager.inGameManager.RegisterCreature(creature);
     }
@@ -69,7 +69,7 @@ public class TestRunner : MonoBehaviour
         {
             pos = new Vector3(270, 270, 0);
         }
-        Creature creature = CreaturePool.GetCreature(icedragon, icedragon.ToCreatureAttributes(), (Vector3)pos, TestParent);
+        Creature creature = CreaturePool.GetCreature(icedragon, (Vector3)pos, null, null, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
         MainManager.inGameManager.RegisterCreature(creature);
     }
@@ -80,7 +80,7 @@ public class TestRunner : MonoBehaviour
         {
             pos = new Vector3(250, 260, 0);
         }
-        Creature creature = CreaturePool.GetCreature(tiger, tiger.ToCreatureAttributes(), (Vector3)pos, TestParent);
+        Creature creature = CreaturePool.GetCreature(tiger, (Vector3)pos, null, null, TestParent);
         creature.gameObject.name = creature.creatureBase + "_" + creature.UUID;
         MainManager.inGameManager.RegisterCreature(creature);
     }
@@ -94,6 +94,7 @@ public class TestRunner : MonoBehaviour
         // 按下數字鍵 1 生成羊
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
+            Debug.Log("create a goat!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             SpawnCreature1(mousePos);
         }
         // 按下數字鍵 2 生成史萊姆

@@ -30,7 +30,6 @@ public class SpeciesEditor : Editor
         // --- 3. 生態關係 ---
         EditorGUILayout.BeginVertical("box");
         DrawIntList(species.preyIDList, "Prey IDs");
-        //DrawIntList(species.predatorIDList, "Predator IDs");
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.Space(10);
@@ -72,6 +71,7 @@ public class SpeciesEditor : Editor
         EditorGUILayout.LabelField("Core Statistics", EditorStyles.miniBoldLabel);
         species.creatureBase = (CreatureBase)EditorGUILayout.EnumPopup("Creature Base Type", species.creatureBase);
         species.speciesID = EditorGUILayout.IntField("Species ID", species.speciesID);
+        species.reproductionType = (ReproductionType)EditorGUILayout.EnumPopup("Reproduction Type", species.reproductionType);
         species.baseSize = EditorGUILayout.Slider("Size", species.baseSize, 0.1f, 5f);
         species.baseSpeed = EditorGUILayout.Slider("Speed", species.baseSpeed, 0f, 20f);
         species.baseMaxHealth = EditorGUILayout.Slider("Base Health", species.baseMaxHealth, 0f, 100f);
@@ -81,12 +81,6 @@ public class SpeciesEditor : Editor
         species.variation = EditorGUILayout.Slider("Variation", species.variation, 0f, 1f);
         species.basePerceptionRange = EditorGUILayout.Slider("Perception Range", species.basePerceptionRange, 0, 100);
 
-        // 睡眠區間 (MinMaxSlider 需要 float 變數)
-        float head = species.baseSleepingHead;
-        float tail = species.baseSleepingTail;
-        EditorGUILayout.MinMaxSlider("Sleep Interval", ref head, ref tail, 0f, constantData.HOURS_PER_DAY);
-        species.baseSleepingHead = (int)head;
-        species.baseSleepingTail = (int)tail;
 
         EditorGUILayout.EndVertical();
 
