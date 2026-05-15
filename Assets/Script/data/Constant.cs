@@ -59,11 +59,13 @@ public struct CreatureAttributes
     public float perception_range;
     public Gender gender;
     public String UUID;
+    public float[] colorGenes;
 }
-public static class AttributesCalculator{
+public static class AttributesCalculator
+{
     public static float CalculateHungerRate(float size, float speed, float attack_power)
     {
-        return (size * speed + attack_power/20)/100;
+        return (size * speed + attack_power / 20) / 100;
     }
     public static float CalculateMaxHunger(float size, float base_health, List<FoodType> foods)
     {
@@ -79,7 +81,7 @@ public static class AttributesCalculator{
     }
     public static float CalculateHealthRegeneration(float base_health, float size)
     {
-        return base_health / size /1000;
+        return base_health / size / 1000;
     }
 }
 
@@ -120,7 +122,7 @@ public enum Direction
 public enum CreatureBase
 {
     Slime,
-    Goat, 
+    Goat,
     IceDragon,
     Tiger
 }
@@ -129,14 +131,14 @@ public enum CreatureBase
 public enum CreatureMovementState
 {
     None = 0,
-    Sleep =1,
+    Sleep = 1,
     Idle = 2,          // 待機
     Walk = 3,        // 散步
     Run = 4,       // 跑步
     Stunned = 5,      // 暈眩 (AI 停用，物理接管)
 }
 
-public enum Gender 
+public enum Gender
 {
     None,
     Male,

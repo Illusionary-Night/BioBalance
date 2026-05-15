@@ -1,9 +1,9 @@
-/*
- * [°Ï¬q¦WºÙ] Hurt Section
- * [°Ï¬q»¡©ú] ­t³d Creature ªº¥Í©R­ÈºŞ²z»P¨üÀ»¤è¦V°»´ú¡C
- * [¥D­n¥\¯à] ±µ¦¬¶Ë®`¼Æ­È¡B±N§ğÀ»ªÌ®y¼ĞÂà´«¬° 8 ¦V¨üÀ»¤è¦ì¡B´£¨Ñ¨üÀ»ª¬ºA¬d¸ß¡C
- * [¥i¥Î¨ç¦¡] void Hurt(int), void Hurt(int, Vector2), bool UnderAttack(), Direction GetUnderAttackDirection(), Direction GetAndResetDirection()
- * [´ú¸Õ°Ï°ì] Inspector¤¤ªºDebug Tools¦³©Ô±ì¥i¥H³]©w¨ü¨ì§ğÀ»ªº¤è¦V¡C
+ï»¿/*
+ * [å€æ®µåç¨±] Hurt Section
+ * [å€æ®µèªªæ˜] è² è²¬ Creature çš„ç”Ÿå‘½å€¼ç®¡ç†èˆ‡å—æ“Šæ–¹å‘åµæ¸¬ã€‚
+ * [ä¸»è¦åŠŸèƒ½] æ¥æ”¶å‚·å®³æ•¸å€¼ã€å°‡æ”»æ“Šè€…åº§æ¨™è½‰æ›ç‚º 8 å‘å—æ“Šæ–¹ä½ã€æä¾›å—æ“Šç‹€æ…‹æŸ¥è©¢ã€‚
+ * [å¯ç”¨å‡½å¼] void Hurt(int), void Hurt(int, Vector2), bool UnderAttack(), Direction GetUnderAttackDirection(), Direction GetAndResetDirection()
+ * [æ¸¬è©¦å€åŸŸ] Inspectorä¸­çš„Debug Toolsæœ‰æ‹‰æ¡¿å¯ä»¥è¨­å®šå—åˆ°æ”»æ“Šçš„æ–¹å‘ã€‚
  */
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,91 +11,90 @@ using static Perception;
 
 public partial class Creature : MonoBehaviour
 {
-    #region --- ¥Í©Rª¬ºA±±¨î ---
+    #region --- ç”Ÿå‘½ç‹€æ…‹æ§åˆ¶ ---
 
-    /// <summary> ¥ß§Y³]¸m·í«e°§¾j­È¡A¨Ã½T«O¦b¦Xªk½d³ò¤º </summary>
+    /// <summary> ç«‹å³è¨­ç½®ç•¶å‰é£¢é¤“å€¼ï¼Œä¸¦ç¢ºä¿åœ¨åˆæ³•ç¯„åœå…§ </summary>
     public void SetHunger(float value)
     {
         hunger = Mathf.Clamp(value, 0, maxHunger);
     }
 
-    /// <summary> ¥ß§Y³]¸m·í«e¥Í©R­È¡A¨Ã½T«O¦b¦Xªk½d³ò¤º </summary>
+    /// <summary> ç«‹å³è¨­ç½®ç•¶å‰ç”Ÿå‘½å€¼ï¼Œä¸¦ç¢ºä¿åœ¨åˆæ³•ç¯„åœå…§ </summary>
     public void SetHealth(float value)
     {
         health = Mathf.Clamp(value, 0, maxHealth);
     }
 
-    /// <summary> ¥ß§Y³]¸m·í«e¦~ÄÖ¡A¨Ã½T«O¤£¶W¹L¹Ø©R¤W­­ </summary>
+    /// <summary> ç«‹å³è¨­ç½®ç•¶å‰å¹´é½¡ï¼Œä¸¦ç¢ºä¿ä¸è¶…éå£½å‘½ä¸Šé™ </summary>
     public void SetAge(float value)
     {
         age = Mathf.Clamp(value, 0, lifespan);
     }
 
-    /// <summary> «ì´_¹¡­¹«×¡A¼W¥[¼Æ­È¨Ã­­¨î¦b maxHunger ¥H¤º </summary>
+    /// <summary> æ¢å¾©é£½é£Ÿåº¦ï¼Œå¢åŠ æ•¸å€¼ä¸¦é™åˆ¶åœ¨ maxHunger ä»¥å…§ </summary>
     public void RestoreHunger(float nutritionalValue)
     {
         hunger = Mathf.Min(hunger + nutritionalValue, maxHunger);
     }
 
-    /// <summary> ³]¸m¬O§_¶i¤JµL¼Äª¬ºA¡]¥Î©ó Debug ©Î¯S®í¨Æ¥ó¡A¤£·|¦º¤`¡^ </summary>
+    /// <summary> è¨­ç½®æ˜¯å¦é€²å…¥ç„¡æ•µç‹€æ…‹ï¼ˆç”¨æ–¼ Debug æˆ–ç‰¹æ®Šäº‹ä»¶ï¼Œä¸æœƒæ­»äº¡ï¼‰ </summary>
     public void SetInvincible(bool isInvincible)
     {
         this.isInvincible = isInvincible;
     }
 
-    /// <summary> ±Ò°ÊºÎ¯vª¬ºA¡GÄ²µo¼Æ­È¥[¦¨¶}Ãö¡]°§¾j®ø¯Ó­°§C¡B¦^¦å´£°ª¡^ </summary>
+    /// <summary> å•Ÿå‹•ç¡çœ ç‹€æ…‹ï¼šè§¸ç™¼æ•¸å€¼åŠ æˆé–‹é—œï¼ˆé£¢é¤“æ¶ˆè€—é™ä½ã€å›è¡€æé«˜ï¼‰ </summary>
     public void StartSleeping()
     {
         isSleeping = true;
-        // ³o¸Ì¥i¥HÄ²µo°Êµe©ÎµøÄ±®ÄªG
+        // é€™è£¡å¯ä»¥è§¸ç™¼å‹•ç•«æˆ–è¦–è¦ºæ•ˆæœ
     }
 
-    /// <summary> µ²§ôºÎ¯vª¬ºA¡G«ì´_±`³W¼Æ­È®ø¯Ó¤ñ¨Ò </summary>
+    /// <summary> çµæŸç¡çœ ç‹€æ…‹ï¼šæ¢å¾©å¸¸è¦æ•¸å€¼æ¶ˆè€—æ¯”ä¾‹ </summary>
     public void StopSleeping()
     {
         isSleeping = false;
     }
 
-   
+
 
     /// <summary>
-    /// Åı¥Íª«¶i¤J·w¯tª¬ºA
+    /// è®“ç”Ÿç‰©é€²å…¥æšˆçœ©ç‹€æ…‹
     /// </summary>
-    /// <param name="duration">·w¯t«ùÄòªº®É¶¡ (³æ¦ì¡GTick)</param>
+    /// <param name="duration">æšˆçœ©æŒçºŒçš„æ™‚é–“ (å–®ä½ï¼šTick)</param>
     public void SetStun(float duration)
     {
-        // ¦pªG¤w¸g¦b·w¯t¤¤¡A¥i¥H¿ï¾Ü¡u¨ú³Ì¤j­È¡v©Î¡uÅ|¥[¡v
+        // å¦‚æœå·²ç¶“åœ¨æšˆçœ©ä¸­ï¼Œå¯ä»¥é¸æ“‡ã€Œå–æœ€å¤§å€¼ã€æˆ–ã€Œç–ŠåŠ ã€
         stunTimer = Mathf.Max(stunTimer, duration);
 
     }
 
-
     #endregion
 
-    #region --- °Ê§@»P§N«oºŞ²z ---
+    #region --- å‹•ä½œèˆ‡å†·å»ç®¡ç† ---
 
-    /// <summary> ¨ú±o·í«e¹B§@¤¤ªºª¬ºA¾÷¹ê¨Ò </summary>
+    /// <summary> å–å¾—ç•¶å‰é‹ä½œä¸­çš„ç‹€æ…‹æ©Ÿå¯¦ä¾‹ </summary>
     public ActionStateMachine GetStateMachine()
     {
         return actionStateMachine;
     }
 
-    /// <summary> °O¿ı¥Ø«e¥¿¦b°õ¦æªº Action Ãş«¬¡A¨ÑÆ[¹îªÌ©Î UI Åã¥Ü </summary>
+    /// <summary> è¨˜éŒ„ç›®å‰æ­£åœ¨åŸ·è¡Œçš„ Action é¡å‹ï¼Œä¾›è§€å¯Ÿè€…æˆ– UI é¡¯ç¤º </summary>
     public void SetCurrentAction(ActionType type)
     {
         currentAction = type;
     }
 
-    /// <summary> ­«¸m©Ò¦³°Ê§@§N«o¡]§t³q¥Î CD »P¯S©w°Ê§@ CD ¦r¨å¡^ </summary>
+    /// <summary> é‡ç½®æ‰€æœ‰å‹•ä½œå†·å»ï¼ˆå«é€šç”¨ CD èˆ‡ç‰¹å®šå‹•ä½œ CD å­—å…¸ï¼‰ </summary>
     public void ResetAllCooldowns()
     {
         actionCooldown = 0;
-        // ²MªÅ¦r¨å¤¤ªº§N«o
+        // æ¸…ç©ºå­—å…¸ä¸­çš„å†·å»
         var keys = new List<ActionType>(actionCD.Keys);
         foreach (var key in keys) actionCD[key] = 0;
     }
 
-    /// <summary> Ä²µo¯S©w°Ê§@ªº§N«o­p®É¡C­Y ScriptableObject ¨S³]©w CD «h·|µ¹¤©Äµ§i </summary>
+    /// <summary> è§¸ç™¼ç‰¹å®šå‹•ä½œçš„å†·å»è¨ˆæ™‚ã€‚è‹¥ ScriptableObject æ²’è¨­å®š CD å‰‡æœƒçµ¦äºˆè­¦å‘Š </summary>
     public void ResetActionCooldown(ActionType actionType)
     {
         if (isDead) return;
@@ -106,15 +105,15 @@ public partial class Creature : MonoBehaviour
         }
         else
         {
-            // ¦pªG¶}µoªÌ¦b½s¿è¾¹¨S³]©w CD¡Aµ¹¤©Äµ§i¨Ã³]¬°¹w³]­È 0¡Aµ{¦¡¤~¤£·|Â_±¼
-            Debug.LogWarning($"[Creature] {mySpecies.name} ¯Ê¤Ö°Ê§@ {actionType} ªº CD ³]©w¡I");
+            // å¦‚æœé–‹ç™¼è€…åœ¨ç·¨è¼¯å™¨æ²’è¨­å®š CDï¼Œçµ¦äºˆè­¦å‘Šä¸¦è¨­ç‚ºé è¨­å€¼ 0ï¼Œç¨‹å¼æ‰ä¸æœƒæ–·æ‰
+            Debug.LogWarning($"[Creature] {mySpecies.name} ç¼ºå°‘å‹•ä½œ {actionType} çš„ CD è¨­å®šï¼");
             actionCD[actionType] = 0;
         }
 
         actionCooldown = constantData.UNIVERSAL_ACTION_COOLDOWN;
     }
 
-    /// <summary> ¬d¸ß¯S©w°Ê§@³Ñ¾lªº§N«o®É¶¡¡]Ticks¡^ </summary>
+    /// <summary> æŸ¥è©¢ç‰¹å®šå‹•ä½œå‰©é¤˜çš„å†·å»æ™‚é–“ï¼ˆTicksï¼‰ </summary>
     public int GetActionCooldown(ActionType actionType)
     {
         if (actionCD.ContainsKey(actionType))
@@ -124,7 +123,7 @@ public partial class Creature : MonoBehaviour
         return 0;
     }
 
-    /// <summary> ¬d¸ß¯S©w°Ê§@¦b¸Óª«ºØ³]©w¤¤ªº³Ì¤j§N«o®É¶¡ </summary>
+    /// <summary> æŸ¥è©¢ç‰¹å®šå‹•ä½œåœ¨è©²ç‰©ç¨®è¨­å®šä¸­çš„æœ€å¤§å†·å»æ™‚é–“ </summary>
     public int GetMaxActionCooldown(ActionType actionType)
     {
         if (actionMaxCD.ContainsKey(actionType))
@@ -134,34 +133,34 @@ public partial class Creature : MonoBehaviour
         return 0;
     }
 
-    /// <summary> ¨ú±o§¹¾ãªº³Ñ¾l§N«o¦r¨å </summary>
+    /// <summary> å–å¾—å®Œæ•´çš„å‰©é¤˜å†·å»å­—å…¸ </summary>
     public Dictionary<ActionType, int> GetActionCDList()
     {
         return actionCD;
     }
 
-    /// <summary> ¨ú±oª«ºØ¹w³]ªº³Ì¤j§N«o¦r¨å </summary>
+    /// <summary> å–å¾—ç‰©ç¨®é è¨­çš„æœ€å¤§å†·å»å­—å…¸ </summary>
     public Dictionary<ActionType, int> GetActionMaxCDList()
     {
         return actionMaxCD;
     }
     #endregion
 
-    #region --- ¨üÀ»¨t²Î ---
+    #region --- å—æ“Šç³»çµ± ---
 
-    /// <summary> °õ¦æ°òÂ¦¶Ë®`¦©¦å¡A¨Ã½T«O¥Í©R­È¤£§C©ó 0 </summary>
+    /// <summary> åŸ·è¡ŒåŸºç¤å‚·å®³æ‰£è¡€ï¼Œä¸¦ç¢ºä¿ç”Ÿå‘½å€¼ä¸ä½æ–¼ 0 </summary>
     public void Hurt(float damage, Creature attacker = null)
     {
         underAttackDirection = Direction.None;
         health -= damage;
         health = Mathf.Max(health, 0);
-        if (attacker != null)enemy = attacker;
+        if (attacker != null) enemy = attacker;
     }
 
-    /// <summary> °õ¦æ¶Ë®`¨Ã°O¿ı§ğÀ»¨Ó·½¤è¦ì¡A¥Î©óÄ²µo¨ü¶Ë°k¶]§P©w©ÎªÌ¤§«á¶i¤@¨Bªº°Êµe©Î¯S®Ä </summary>
+    /// <summary> åŸ·è¡Œå‚·å®³ä¸¦è¨˜éŒ„æ”»æ“Šä¾†æºæ–¹ä½ï¼Œç”¨æ–¼è§¸ç™¼å—å‚·é€ƒè·‘åˆ¤å®šæˆ–è€…ä¹‹å¾Œé€²ä¸€æ­¥çš„å‹•ç•«æˆ–ç‰¹æ•ˆ </summary>
     public void Hurt(float damage, Vector2 attackerPosition, Creature attacker = null)
     {
-        // ­pºâ§ğÀ»ªÌ¬Û¹ï©ó¦Û¤vªº¤è¦ì¦V¶q
+        // è¨ˆç®—æ”»æ“Šè€…ç›¸å°æ–¼è‡ªå·±çš„æ–¹ä½å‘é‡
         Vector2 direction = attackerPosition - (Vector2)transform.position;
         underAttackDirection = GetDirectionFromVector(direction);
         health -= damage;
@@ -169,7 +168,7 @@ public partial class Creature : MonoBehaviour
         if (attacker != null) enemy = attacker;
     }
 
-    /// <summary> ±N¦V¶qÂà´«¬° 8 ¤è¦V¦CÁ|¡A¥H 45 «×¨¤¬°¤@­Ó§PÂ_°Ï¶¡ </summary>
+    /// <summary> å°‡å‘é‡è½‰æ›ç‚º 8 æ–¹å‘åˆ—èˆ‰ï¼Œä»¥ 45 åº¦è§’ç‚ºä¸€å€‹åˆ¤æ–·å€é–“ </summary>
     private Direction GetDirectionFromVector(Vector2 direction)
     {
         if (direction.sqrMagnitude < 0.001f) return Direction.None;
@@ -189,19 +188,19 @@ public partial class Creature : MonoBehaviour
         return Direction.None;
     }
 
-    /// <summary> ÀË¬d¥Ø«e¬O§_³B©ó¨üÀ»ª¬ºA¡]¤è¦ì¤£¬° None ¥Nªí¨üÀ»¤¤¡^ </summary>
+    /// <summary> æª¢æŸ¥ç›®å‰æ˜¯å¦è™•æ–¼å—æ“Šç‹€æ…‹ï¼ˆæ–¹ä½ä¸ç‚º None ä»£è¡¨å—æ“Šä¸­ï¼‰ </summary>
     public bool UnderAttack()
     {
         return underAttackDirection != Direction.None;
     }
 
-    /// <summary> ¨ú±o¨üÀ»¤è¦ì</summary>
+    /// <summary> å–å¾—å—æ“Šæ–¹ä½</summary>
     public Direction GetUnderAttackDirection()
     {
         return underAttackDirection;
     }
 
-    /// <summary> ¨ú±o¨üÀ»¤è¦ì¨Ã¥ß¨è­«¸mª¬ºA¡A½T«O³æ¦¸¨ü¶Ë¶ÈÄ²µo¤@¦¸¤ÏÀ³ </summary>
+    /// <summary> å–å¾—å—æ“Šæ–¹ä½ä¸¦ç«‹åˆ»é‡ç½®ç‹€æ…‹ï¼Œç¢ºä¿å–®æ¬¡å—å‚·åƒ…è§¸ç™¼ä¸€æ¬¡åæ‡‰ </summary>
     public Direction GetAndResetUnderAttackDirection()
     {
         Direction result = underAttackDirection;
@@ -211,7 +210,7 @@ public partial class Creature : MonoBehaviour
 
     public void ResetUnderAttackDirection()
     {
-        underAttackDirection=Direction.None;
+        underAttackDirection = Direction.None;
     }
     public void Repel(Vector2 drection, float strength = 1f)
     {
@@ -225,8 +224,8 @@ public partial class Creature : MonoBehaviour
 
     #endregion
 
-    #region --- ¸ê®ÆÂà´«»P¨t²Î­«¸m ---
-    /// <summary> ±N·í«e­ÓÅéªº¿ò¶ÇÄİ©ÊÂà´«¬°Äİ©Êµ²ºc¡A¨ÑÁc´Ş©Î«O¦s¨Ï¥Î </summary>
+    #region --- è³‡æ–™è½‰æ›èˆ‡ç³»çµ±é‡ç½® ---
+    /// <summary> å°‡ç•¶å‰å€‹é«”çš„éºå‚³å±¬æ€§è½‰æ›ç‚ºå±¬æ€§çµæ§‹ï¼Œä¾›ç¹æ®–æˆ–ä¿å­˜ä½¿ç”¨ </summary>
     public CreatureAttributes ToCreatureAttribute()
     {
         CreatureAttributes attributes = new CreatureAttributes();
@@ -238,37 +237,37 @@ public partial class Creature : MonoBehaviour
         attributes.lifespan = lifespan;
         attributes.perception_range = perceptionRange;
         attributes.gender = gender;
-        attributes.UUID= UUID;
+        attributes.UUID = UUID;
+        attributes.colorGenes = colorGenes;
         return attributes;
     }
 
-
-    /// <summary> ­«¸m¥Íª«ª¬ºA¡]¨Ñª«¥ó¦À­«¥Î®É½Õ¥Î¡^/// </summary>
+    /// <summary> é‡ç½®ç”Ÿç‰©ç‹€æ…‹ï¼ˆä¾›ç‰©ä»¶æ± é‡ç”¨æ™‚èª¿ç”¨ï¼‰/// </summary>
     public void ResetState()
     {
         isDead = false;
         isInvincible = false;
         underAttackDirection = Direction.None;
 
-        // ­«¸mª¬ºA¾÷
+        // é‡ç½®ç‹€æ…‹æ©Ÿ
         actionStateMachine = null;
         movement = null;
 
-        // ­«¸m§N«o
+        // é‡ç½®å†·å»
         ResetAllCooldowns();
     }
     #endregion
 
-    #region --- ²¾°Ê±±¨î»P¾É¯è ---
-    /// <summary> «ü¥O¥Íª«²¾°Ê¦Ü¥Ø¼Ğ®æ®y®y¼Ğ¡C·|¦Û°ÊÄ²µo´M¸ô»Pª«²z²¾°Ê </summary>
-    /// <param name="destination"> ¥Ø¼Ğ®æ®y (Vector2Int) </param>
+    #region --- ç§»å‹•æ§åˆ¶èˆ‡å°èˆª ---
+    /// <summary> æŒ‡ä»¤ç”Ÿç‰©ç§»å‹•è‡³ç›®æ¨™æ ¼åº§åº§æ¨™ã€‚æœƒè‡ªå‹•è§¸ç™¼å°‹è·¯èˆ‡ç‰©ç†ç§»å‹• </summary>
+    /// <param name="destination"> ç›®æ¨™æ ¼åº§ (Vector2Int) </param>
     public void MoveTo(Vector2Int destination, bool isRunning = false)
     {
         if (isDead || movement == null) return;
         movement.SetDestination(destination, isRunning);
     }
 
-    /// <summary> ±j¨î­«·s°õ¦æ´M¸ôºtºâªk¡]A*¡^¡C¥Î©ó¥Ø¼Ğ¦ì¸m§ïÅÜ©ÎÀô¹Ò»ÙÃªª«§ó·s®É </summary>
+    /// <summary> å¼·åˆ¶é‡æ–°åŸ·è¡Œå°‹è·¯æ¼”ç®—æ³•ï¼ˆA*ï¼‰ã€‚ç”¨æ–¼ç›®æ¨™ä½ç½®æ”¹è®Šæˆ–ç’°å¢ƒéšœç¤™ç‰©æ›´æ–°æ™‚ </summary>
     public void ForceNavigate()
     {
         if (isDead || movement == null) return;
@@ -282,20 +281,20 @@ public partial class Creature : MonoBehaviour
 
     #endregion
 
-    #region --- ªÅ¶¡»P¦ì¸m¬d¸ß  ---
+    #region --- ç©ºé–“èˆ‡ä½ç½®æŸ¥è©¢  ---
 
-    /// <summary> ¨ú±o·í«e¸g¹Lª«²z­×¥¿«áªº¾ã¼Æ®æ®y¼Ğ¡]¥|±Ë¤­¤J¡^ </summary>
-    /// <returns> ·í«e©Ò³Bªº®æ®y¦ì¸m </returns>
+    /// <summary> å–å¾—ç•¶å‰ç¶“éç‰©ç†ä¿®æ­£å¾Œçš„æ•´æ•¸æ ¼åº§æ¨™ï¼ˆå››æ¨äº”å…¥ï¼‰ </summary>
+    /// <returns> ç•¶å‰æ‰€è™•çš„æ ¼åº§ä½ç½® </returns>
     public Vector2Int GetRoundedPosition()
     {
         if (movement == null) return Vector2Int.zero;
         return movement.GetVector2IntCurrentPosition();
     }
 
-    /// <summary> ­pºâ·í«e¦ì¸m»P¾É¯è¥Øªº¦a¤§¶¡ªºª½½u¶ZÂ÷¡C­YµL¥Øªº¦a«h¦^¶Ç -1 </summary>
+    /// <summary> è¨ˆç®—ç•¶å‰ä½ç½®èˆ‡å°èˆªç›®çš„åœ°ä¹‹é–“çš„ç›´ç·šè·é›¢ã€‚è‹¥ç„¡ç›®çš„åœ°å‰‡å›å‚³ -1 </summary>
     public float GetDistanceToDestination()
     {
-        // ¦pªG movement ¨S±Ò°Ê¡B©Î¬O¨S¦b°Ê¡A´N¦^¶Ç -1
+        // å¦‚æœ movement æ²’å•Ÿå‹•ã€æˆ–æ˜¯æ²’åœ¨å‹•ï¼Œå°±å›å‚³ -1
         if (movement == null || movement.GetDestination() == null)
         {
             return -1f;
@@ -306,22 +305,21 @@ public partial class Creature : MonoBehaviour
         return Vector2.Distance(currentPos, dest);
     }
 
-    /// <summary> ¨ú±o·í«e²¾°Ê²Õ¥ó¹w³]ªº¥Øªº¦a®y¼Ğ </summary>
+    /// <summary> å–å¾—ç•¶å‰ç§»å‹•çµ„ä»¶é è¨­çš„ç›®çš„åœ°åº§æ¨™ </summary>
     public Vector2Int GetMovementDestination()
     {
         return movement != null ? movement.GetDestination() : Vector2Int.zero;
     }
 
-    /// <summary> ¨ú±o¥Íª«¥Ø«e¦b²¾°Ê¹Lµ{¤¤³Q»ÙÃªª«¥d¦íªº²Ö­p¦¸¼Æ¡]Ticks¡^ </summary>
-    /// <returns> ¥d¦íªº¦¸¼Æ¡A¥i¥Î©ó§P©w¬O§_»İ­n­«·s¾É¯è©ÎÅÜ´«¦æ¬° </returns>
+    /// <summary> å–å¾—ç”Ÿç‰©ç›®å‰åœ¨ç§»å‹•éç¨‹ä¸­è¢«éšœç¤™ç‰©å¡ä½çš„ç´¯è¨ˆæ¬¡æ•¸ï¼ˆTicksï¼‰ </summary>
+    /// <returns> å¡ä½çš„æ¬¡æ•¸ï¼Œå¯ç”¨æ–¼åˆ¤å®šæ˜¯å¦éœ€è¦é‡æ–°å°èˆªæˆ–è®Šæ›è¡Œç‚º </returns>
     public int GetMovementStuckTimes()
     {
         return movement != null ? movement.GetStuckTimes() : 0;
     }
     #endregion
 
-
-    #region ©|¥¼ÂkÃşfunction 
+    #region å°šæœªæ­¸é¡function 
     public void SetMotherID(string motherID)
     {
         this.motherID = motherID;
@@ -335,53 +333,53 @@ public partial class Creature : MonoBehaviour
         Vector2 position1 = this.transform.position;
         Vector2 position2 = another.transform.position;
         float DistanceGate = GetContactDistance(another);
-        if (DistanceGate  < Vector2.Distance(position1 ,position2)) return false;
+        if (DistanceGate < Vector2.Distance(position1, position2)) return false;
         Debug.Log("is nearby");
         return true;
     }
     public float GetContactDistance(Creature another)
     {
-        // 1. ¥h§ì Unity ª«²z¤ŞÀº¨­¤W¨º­Ó¯u¹êªº CircleCollider2D
+        // 1. å»æŠ“ Unity ç‰©ç†å¼•æ“èº«ä¸Šé‚£å€‹çœŸå¯¦çš„ CircleCollider2D
         var myCol = this.GetComponent<CircleCollider2D>();
         var otherCol = another.GetComponent<CircleCollider2D>();
 
         if (myCol != null && otherCol != null)
         {
-            // 2. Åıµ{¦¡½X©Ó»{ª«²z¤ŞÀºªº¥b®| (´N¬O§ì¥X¨Óªº­È)
+            // 2. è®“ç¨‹å¼ç¢¼æ‰¿èªç‰©ç†å¼•æ“çš„åŠå¾‘ (å°±æ˜¯æŠ“å‡ºä¾†çš„å€¼)
             float myRealRadius = myCol.radius * this.transform.localScale.x;
             float otherRealRadius = otherCol.radius * another.transform.localScale.x;
 
-            // 3. ¦^¶Ç¯u¹êªº·¥­­¶ZÂ÷¦A­¼¥H 1.2 ®e®t
+            // 3. å›å‚³çœŸå¯¦çš„æ¥µé™è·é›¢å†ä¹˜ä»¥ 1.2 å®¹å·®
             return (myRealRadius + otherRealRadius) * 1.2f;
         }
 
-        // ¨¾§b¾÷¨î¡G¸U¤@¨S±¾¸I¼²Åé¤~¥ÎÂÂªº¤èªk
+        // é˜²å‘†æ©Ÿåˆ¶ï¼šè¬ä¸€æ²’æ›ç¢°æ’é«”æ‰ç”¨èˆŠçš„æ–¹æ³•
         return (this.transform.localScale.x + another.transform.localScale.x) * 0.5f * 1.2f;
     }
     public bool IsInHeat()
     {
-        // 1. ¦~ÄÖªùÂe¡G¥²¶·¬O¦¨¦~Åé (°²³]§A¦³ lifespan ©Î matureAge ªº³]©w)
-        // ³o¸Ì°²³]¶W¹L¹Ø©Rªº 20% ¤~ºâ¦¨¦~
+        // 1. å¹´é½¡é–€æª»ï¼šå¿…é ˆæ˜¯æˆå¹´é«” (å‡è¨­ä½ æœ‰ lifespan æˆ– matureAge çš„è¨­å®š)
+        // é€™è£¡å‡è¨­è¶…éå£½å‘½çš„ 20% æ‰ç®—æˆå¹´
         if (age < lifespan * 0.2f)
             return false;
 
-        // 2. ¦Ñ¦~°±¸g (¿ï°t)¡G¦pªG¤Ó¦Ñ¤F¤]¤£¥Í¤F¡AÁ×§K¦û¥Î¸ê·½
+        // 2. è€å¹´åœç¶“ (é¸é…)ï¼šå¦‚æœå¤ªè€äº†ä¹Ÿä¸ç”Ÿäº†ï¼Œé¿å…ä½”ç”¨è³‡æº
         if (age > lifespan * 0.9f)
             return false;
 
-        // 3. ¯à¶qªùÂe¡G¨{¤l¦Ü¤Ö­n¦³ 60% ¹¡¡A¤~¦³Åé¤OÁc­l
+        // 3. èƒ½é‡é–€æª»ï¼šè‚šå­è‡³å°‘è¦æœ‰ 60% é£½ï¼Œæ‰æœ‰é«”åŠ›ç¹è¡
         if (hunger < maxHunger * 0.6f)
             return false;
 
-        // 4. °·±dªùÂe (¿ï°t)¡G¦pªG§Ö¦º¤F (¦å¶q§C©ó 30%)¡AÀu¥ı«O©R¤£µo±¡
+        // 4. å¥åº·é–€æª» (é¸é…)ï¼šå¦‚æœå¿«æ­»äº† (è¡€é‡ä½æ–¼ 30%)ï¼Œå„ªå…ˆä¿å‘½ä¸ç™¼æƒ…
         if (health < maxHealth * 0.3f)
             return false;
 
-        // 5. §N«o´ÁÀË¬d¡G(°w¹ï»Û©Ê²£«áªº CD ®É¶¡¡A°²³]§A¦³­Ó­p®É¾¹ matingCooldown)
+        // 5. å†·å»æœŸæª¢æŸ¥ï¼š(é‡å°é›Œæ€§ç”¢å¾Œçš„ CD æ™‚é–“ï¼Œå‡è¨­ä½ æœ‰å€‹è¨ˆæ™‚å™¨ matingCooldown)
         //if (c.matingCooldown > 0f)
         //    return false;
 
-        // ¦pªG¥H¤W³£³q¹L¤F¡A¥Nªí¥Í²zª¬ºA·¥¨Î¡A¥i¥HÁc­l¡I
+        // å¦‚æœä»¥ä¸Šéƒ½é€šéäº†ï¼Œä»£è¡¨ç”Ÿç†ç‹€æ…‹æ¥µä½³ï¼Œå¯ä»¥ç¹è¡ï¼
         return true;
     }
     public bool IsInHeatMaleNearby(Creature c)
@@ -401,5 +399,6 @@ public partial class Creature : MonoBehaviour
 
 
 
-
 }
+
+

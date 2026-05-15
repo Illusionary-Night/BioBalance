@@ -114,7 +114,7 @@ public class TestRunner : MonoBehaviour
         }
         // 按下數字區 2 生成肉
         if (Input.GetKeyDown(KeyCode.Keypad2))
-        {   
+        {
             MainManager.inGameManager.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Meat, mousePos);
         }
         // 按下數字區 3 生成腐肉
@@ -143,16 +143,16 @@ public class TestRunner : MonoBehaviour
             MainManager.inGameManager.TickManager.SetTPS(15);
         }
         // 按下滑鼠左鍵高亮物件
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector2 mousePos2D = cam.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+        // if (Input.GetMouseButtonDown(0))
+        // {
+        //     Vector2 mousePos2D = cam.ScreenToWorldPoint(Input.mousePosition);
+        //     RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
 
-            if (hit.collider != null)
-            {
-                SelectObject(hit.collider.gameObject);
-            }
-        }
+        //     if (hit.collider != null)
+        //     {
+        //         SelectObject(hit.collider.gameObject);
+        //     }
+        // }
     }
 
     void SelectObject(GameObject obj)
