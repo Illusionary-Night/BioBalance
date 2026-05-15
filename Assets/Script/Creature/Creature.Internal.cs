@@ -158,6 +158,11 @@ public partial class Creature : MonoBehaviour
         maxHunger = AttributesCalculator.CalculateMaxHunger(size, maxHealth, foodTypes);
         healthRegeneration = AttributesCalculator.CalculateHealthRegeneration(maxHealth, size);
 
+        // 色彩基因初始化
+        float[] parent1Color = parentAttr1?.colorGenes;
+        float[] parent2Color = parentAttr2?.colorGenes;
+        InitializeColorGenes(parent1Color, parent2Color);
+
     }
     private void UpdateGrowth()
     {
@@ -255,9 +260,9 @@ public partial class Creature : MonoBehaviour
 
     }
 
-    public void InitializeColorGenes(float[] speciesColor, float[] parent1Color, float[] parent2Color)
+    public void InitializeColorGenes(float[] parent1Color, float[] parent2Color)
     {
-        float mutationWeight = 0.1f;
+        float mutationWeight = 0.0f;
         float inheritWeight = 1f - mutationWeight; // 0.9f
 
         // 1. 產生嚴格的 10% 隨機突變比例 (避免歸一化稀釋父母權重)
@@ -279,8 +284,13 @@ public partial class Creature : MonoBehaviour
 
             if (parent1Color == null && parent2Color == null)
             {
-                // 【初代個體】：0 個雙親，使用物種預設色彩
-                baseColorPart = speciesColor[i] * inheritWeight;
+                // 【初代個體】：0 個雙親，使用隨機色彩
+                float[,] baseColor = new float[,] {
+                    {1f, 0f, 0f, 0f, 0f, 0f},
+                    {0f, 0f, 1f, 0f, 0f, 0f},
+                    {0f, 0f, 0f, 0f, 1f, 0f}
+                };
+                baseColorPart = baseColor[Random.Range(0, 3), i] * inheritWeight;
             }
             else if (parent2Color == null)
             {
@@ -419,6 +429,7 @@ public partial class Creature : MonoBehaviour
 
         finalColor.a = 1f;
         _spriteRenderer.color = finalColor;
+        // Debug.Log("Final Color: " + finalColor + " sprite: " + _spriteRenderer.sprite.name);
     }
     private void CheckWandering()
     {
@@ -442,17 +453,16 @@ public partial class Creature : MonoBehaviour
             Creature other = col.GetComponent<Creature>();
             if (other != null)
             {
-                // 3. 判斷顏色(基因)相似度
-                if (IsSimilarColor(other))
-                {
-                    similarCount++;
 
-                    // 效能優化：如果已經找到足夠的同伴，就提早結束迴圈，不用算完
-                    if (similarCount >= minFamilyNeighbors)
-                    {
-                        break;
-                    }
+
+                similarCount++;
+
+                // 效能優化：如果已經找到足夠的同伴，就提早結束迴圈，不用算完
+                if (similarCount >= minFamilyNeighbors)
+                {
+                    break;
                 }
+
             }
         }
 

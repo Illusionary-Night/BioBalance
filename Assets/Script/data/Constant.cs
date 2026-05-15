@@ -59,7 +59,7 @@ public struct CreatureAttributes
     public float perception_range;
     public Gender gender;
     public String UUID;
-    // public float[] colorGenes = new float[6];
+    public float[] colorGenes;
 }
 public static class AttributesCalculator
 {

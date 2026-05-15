@@ -72,9 +72,9 @@ public partial class Creature : MonoBehaviour, ITickable
     public float checkInterval = 1.0f;     // 判斷頻率：每 1 秒判斷一次即可
     private float _checkTimer = 0f;
 
-    public float detectionRadius = 5.0f;   // 感應範圍
+    public float detectionRadius = 15.0f;   // 感應範圍
     public int minFamilyNeighbors = 1;     // 至少需要幾個「相似」同伴才不算走散
-    public float similarityThreshold = 0.4f; // 基因差異容忍度 (數值越小，判斷越嚴格)
+    public float similarityThreshold = 0.8f; // 基因差異容忍度 (數值越小，判斷越嚴格)
 
     // 強烈建議：將所有生物放在同一個 Layer (例如 "Creature")
     // 這樣 Physics2D 就不會去掃描地形或其他無關的物件
