@@ -1,34 +1,40 @@
 using UnityEngine;
-using UnityEngine.EventSystems; // å¿…é ˆå¼•å…¥é€™å€‹æ‰èƒ½æ¥æ”¶ UI äº‹ä»¶
+using UnityEngine.EventSystems; // ¥²¶·¤Ş¤J³o­Ó¤~¯à±µ¦¬ UI ¨Æ¥ó
 
-// ç¹¼æ‰¿ IDragHandler (æ‹–æ›³ä¸­) èˆ‡ IBeginDragHandler (é–‹å§‹æ‹–æ›³)
-public class DraggableWindow : MonoBehaviour, IDragHandler, IBeginDragHandler
+// Ä~©Ó IDragHandler (©ì¦²¤¤) »P IBeginDragHandler (¶}©l©ì¦²)
+public class DraggableWindow : MonoBehaviour, IDragHandler, IBeginDragHandler, IPointerDownHandler
 {
     private RectTransform rectTransform;
     private Canvas canvas;
 
     private void Awake()
     {
-        // æŠ“å–è‡ªå·±çš„ UI è®Šå½¢çµ„ä»¶
+        // §ì¨ú¦Û¤vªº UI ÅÜ§Î²Õ¥ó
         rectTransform = GetComponent<RectTransform>();
 
-        // å¾€ä¸Šå±¤æ‰¾ï¼Œæ‰¾åˆ°æœ€é ‚å±¤çš„ Canvas
-        // (é€™éå¸¸é‡è¦ï¼å› ç‚º Canvas ç¸®æ”¾æœƒå½±éŸ¿æ»‘é¼ æ‹–æ›³çš„è·é›¢è¨ˆç®—)
+        // ©¹¤W¼h§ä¡A§ä¨ì³Ì³»¼hªº Canvas
+        // (³o«D±`­«­n¡I¦]¬° Canvas ÁY©ñ·|¼vÅT·Æ¹«©ì¦²ªº¶ZÂ÷­pºâ)
         canvas = GetComponentInParent<Canvas>();
     }
 
-    // ç•¶æ»‘é¼ ã€Œé»ä¸‹å»ä¸¦é–‹å§‹ç§»å‹•ã€çš„ç¬é–“è§¸ç™¼
+    // ·í·Æ¹«¡uÂI¤U¥h¨Ã¶}©l²¾°Ê¡vªºÀş¶¡Ä²µo
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // Vibe é«”é©—å„ªåŒ–ï¼šç•¶ä½ é»æ“Šæ‹–æ›³æŸå€‹è¦–çª—æ™‚ï¼Œå®ƒæ‡‰è©²è¦è·‘åˆ°æœ€ä¸Šå±¤ï¼Œè“‹ä½å…¶ä»–æ±è¥¿
+        // Vibe ÅéÅçÀu¤Æ¡G·í§AÂIÀ»©ì¦²¬Y­Óµøµ¡®É¡A¥¦À³¸Ó­n¶]¨ì³Ì¤W¼h¡A»\¦í¨ä¥LªF¦è
         transform.SetAsLastSibling();
     }
 
-    // ç•¶æ»‘é¼ ã€Œæ‹–æ›³ä¸­ã€æ¯å¹€è§¸ç™¼
+    // ·í·Æ¹«¡u©ì¦²¤¤¡v¨C´VÄ²µo
     public void OnDrag(PointerEventData eventData)
     {
-        // æ ¸å¿ƒé‚è¼¯ï¼šå°‡è¦–çª—çš„ä½ç½®ï¼ŒåŠ ä¸Šæ»‘é¼ çš„ç§»å‹•é‡ (eventData.delta)
-        // âš ï¸ å¿…é ˆé™¤ä»¥ canvas.scaleFactorï¼Œå¦å‰‡å¦‚æœä½ çš„è¢å¹•æœ‰ç¸®æ”¾ï¼Œè¦–çª—ç§»å‹•é€Ÿåº¦æœƒè·Ÿæ»‘é¼ å°ä¸ä¸Šï¼
+        // ®Ö¤ßÅŞ¿è¡G±Nµøµ¡ªº¦ì¸m¡A¥[¤W·Æ¹«ªº²¾°Ê¶q (eventData.delta)
+        // ¥²¶·°£¥H canvas.scaleFactor¡A§_«h¦pªG§Aªº¿Ã¹õ¦³ÁY©ñ¡Aµøµ¡²¾°Ê³t«×·|¸ò·Æ¹«¹ï¤£¤W¡I
         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
     }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        transform.SetAsFirstSibling();
+    }
+
 }
