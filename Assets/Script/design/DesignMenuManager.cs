@@ -1,38 +1,41 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class DesignMenuManager : MonoBehaviour
 {
-    [Header("ä¸»æ§åˆ¶")]
-    public GameObject designCanvas; // æ•´å€‹è¨­è¨ˆä»‹é¢çš„ç•«å¸ƒ
-    public GameObject popupContainer; // å½ˆå‡ºè¦–çª—çš„åŠé€æ˜é»‘åº•å®¹å™¨
 
-    [Header("å½ˆå‡ºè¦–çª—æ¸…å–® (å°æ‡‰å·¦å´æŒ‰éˆ•)")]
-    // 0:åŸºåº•, 1:å±¬æ€§, 2:æ½›å› , 3:è¡Œå‹•é »ç‡
+    [Header("¥D±±¨î")]
+    public GameObject designCanvas; // ¾ã­Ó³]­p¤¶­±ªºµe¥¬
+    public GameObject popupContainer; // ¼u¥Xµøµ¡ªº¥b³z©ú¶Â©³®e¾¹
+
+    [Header("¼u¥Xµøµ¡²M³æ (¹ïÀ³¥ª°¼«ö¶s)")]
+    // 0:°ò©³, 1:Äİ©Ê, 2:¼ç¦], 3:¦æ°ÊÀW²v
     public GameObject[] popupPanels; 
 
     private void Start()
     {
-        // ä¸€é–‹å§‹å…ˆéš±è—æ‰€æœ‰å½ˆå‡ºè¦–çª—
+        // ¤@¶}©l¥ıÁôÂÃ©Ò¦³¼u¥Xµøµ¡
         CloseAllPopups();
     }
 
     /// <summary>
-    /// ç¶å®šåœ¨å·¦å´ 4 å€‹æŒ‰éˆ•ä¸Šçš„ OnClick äº‹ä»¶
+    /// ¸j©w¦b¥ª°¼ 4 ­Ó«ö¶s¤Wªº OnClick ¨Æ¥ó
     /// </summary>
-    /// <param name="index">å‚³å…¥ 0, 1, 2, 3</param>
+    /// <param name="index">¶Ç¤J 0, 1, 2, 3</param>
     public void OpenPopup(int index)
     {
-        // 1. æ‰“é–‹å½ˆå‡ºè¦–çª—çš„å®¹å™¨åº•è‰²
+        // 1. ¥´¶}¼u¥Xµøµ¡ªº®e¾¹©³¦â
         popupContainer.SetActive(true);
 
-        // 2. é—œé–‰æ‰€æœ‰çš„è¦–çª—
-        for (int i = 0; i < popupPanels.Length; i++)
-        {
-            popupPanels[i].SetActive(false);
-        }
+        // 2. Ãö³¬©Ò¦³ªºµøµ¡
+        //for (int i = 0; i < popupPanels.Length; i++)
+        //{
+        //    popupPanels[i].SetActive(false);
+        //}
 
-        // 3. åªæ‰“é–‹è¢«é¸ä¸­çš„é‚£å€‹è¦–çª—
+        // 3. ¥u¥´¶}³Q¿ï¤¤ªº¨º­Óµøµ¡
         if (index >= 0 && index < popupPanels.Length)
         {
             popupPanels[index].SetActive(true);
@@ -40,7 +43,7 @@ public class DesignMenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// é»æ“Šå½ˆå‡ºè¦–çª—å¤–åœçš„é»‘åº•ï¼Œæˆ–æ˜¯æŒ‰ä¸‹ç¢ºèª/æ‰“å‰æŒ‰éˆ•æ™‚å‘¼å«
+    /// ÂIÀ»¼u¥Xµøµ¡¥~³òªº¶Â©³¡A©Î¬O«ö¤U½T»{/¥´¤e«ö¶s®É©I¥s
     /// </summary>
     public void CloseAllPopups()
     {
@@ -50,4 +53,15 @@ public class DesignMenuManager : MonoBehaviour
             popupPanels[i].SetActive(false);
         }
     }
+
+    public void CloseSpecifiedPopup(int index)
+    {
+        popupPanels[index].SetActive(false);
+    }
+
+    public void SelectSpecifiedPopup(int index)
+    {
+        popupPanels[index].transform.SetAsLastSibling();
+    }
+
 }
