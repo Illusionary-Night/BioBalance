@@ -1,14 +1,15 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
 using static Perception;
 
-public partial class Creature : MonoBehaviour, ITickable {
+public partial class Creature : MonoBehaviour, ITickable
+{
     public Species mySpecies;
     private ActionStateMachine actionStateMachine;
     private Movement movement;
     public string UUID { get; private set; }
-    // --- ���ظ�Ƥޥ� (�q ScriptableObject ����A��������Ŷ�) ---
+    // --- 物種資料引用 (從 ScriptableObject 抓取，不佔個體空間) ---
     public int speciesID => mySpecies.speciesID;
     public CreatureBase creatureBase => mySpecies.creatureBase;
     public List<int> preyIDList => mySpecies.preyIDList;
@@ -18,7 +19,7 @@ public partial class Creature : MonoBehaviour, ITickable {
     public Dictionary<ActionType, int> actionMaxCD => mySpecies.actionMaxCD;
     public float variation => mySpecies.variation;
 
-    // --- �������ݩ� ---
+    // --- 個體遺傳屬性 ---
     public float size { get; private set; }
     public float speed { get; private set; }
     public float maxHealth { get; private set; }
@@ -33,7 +34,7 @@ public partial class Creature : MonoBehaviour, ITickable {
     public float healthRegeneration { get; private set; }
     //public int sleepTime { get; private set; }
 
-    // --- �B��ɰʺA���A ---
+    // --- 運行時動態狀態 ---
     public float hunger { get; private set; }
     public float health { get; private set; }
     public float age { get; private set; }
@@ -51,9 +52,33 @@ public partial class Creature : MonoBehaviour, ITickable {
     public Creature enemy { get; private set; }
     public CreatureMovementState movementState { get; private set; }
     public Gender gender;
-    //public Creature matingPartner; // �ثe��w���t���H
-    public float reproductionCD; // ���\�c�ު��N�o
+    //public Creature matingPartner; // 目前鎖定的配對對象
+    public float reproductionCD; // 成功繁殖的冷卻
     public string fatherID { get; private set; }
     public string motherID { get; private set; }
-    
+    // 儲存六色比例，和必須為 1
+    // 索引：0:紅, 1:橙, 2:黃, 3:綠, 4:藍, 5:紫
+    public float[] colorGenes = new float[6];
+
+    // 狀態判定
+    private bool isWandering = false;
+    public float fadeSpeed = 0.1f; // 褪色速度
+    public bool isUsingColorGenes = true; // 是否啟用顏色基因影響外觀
+    // 渲染相關
+    private Renderer myRenderer;
+    private MaterialPropertyBlock propBlock;
+
+    [Header("Wandering Detection")]
+    public float checkInterval = 1.0f;     // 判斷頻率：每 1 秒判斷一次即可
+    private float _checkTimer = 0f;
+
+    public float detectionRadius = 5.0f;   // 感應範圍
+    public int minFamilyNeighbors = 1;     // 至少需要幾個「相似」同伴才不算走散
+    public float similarityThreshold = 0.4f; // 基因差異容忍度 (數值越小，判斷越嚴格)
+
+    // 強烈建議：將所有生物放在同一個 Layer (例如 "Creature")
+    // 這樣 Physics2D 就不會去掃描地形或其他無關的物件
+    public LayerMask creatureLayer;
 }
+
+

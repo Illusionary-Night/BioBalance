@@ -18,6 +18,7 @@ public partial class Creature : MonoBehaviour, ITickable
         if (actionStateMachine == null)
             actionStateMachine = new ActionStateMachine(this);
 
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     public void Initialize(Species species, CreatureAttributes? parentAttr1 = null, CreatureAttributes? parentAttr2 = null)
@@ -71,7 +72,7 @@ public partial class Creature : MonoBehaviour, ITickable
         {
             MainManager.inGameManager.UnregisterCreature(this);
         }
-        
+
         // 使用物件池回收，而不是直接銷毀
         CreaturePool.ReleaseCreature(this);
     }
@@ -92,13 +93,13 @@ public partial class Creature : MonoBehaviour, ITickable
         }
         else
         {
-            isStunned= false;
+            isStunned = false;
         }
 
 
-        if (actionCooldown <= 0)DoAction();
+        if (actionCooldown <= 0) DoAction();
 
         movement?.MoveOnTick();
     }
-    
+
 }
