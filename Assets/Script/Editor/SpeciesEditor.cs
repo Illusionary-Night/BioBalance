@@ -75,7 +75,7 @@ public class SpeciesEditor : Editor
         species.baseSize = EditorGUILayout.Slider("Size", species.baseSize, 0.1f, 5f);
         species.baseSpeed = EditorGUILayout.Slider("Speed", species.baseSpeed, 0f, 20f);
         species.baseMaxHealth = EditorGUILayout.Slider("Base Health", species.baseMaxHealth, 0f, 100f);
-        species.baseReproductionRate = EditorGUILayout.Slider("Reproduction Rate", species.baseReproductionRate, 0f, 1f);
+        species.baseReproductionRate = EditorGUILayout.Slider("Reproduction Rate", species.baseReproductionRate, 0f, 10f);
         species.baseAttackPower = EditorGUILayout.Slider("Attack Power", species.baseAttackPower, 0f, 100f);
         species.baseLifespan = EditorGUILayout.Slider("Lifespan", species.baseLifespan, 0, 10000);
         species.variation = EditorGUILayout.Slider("Variation", species.variation, 0f, 1f);

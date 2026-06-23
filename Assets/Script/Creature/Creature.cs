@@ -36,6 +36,7 @@ public partial class Creature : MonoBehaviour, ITickable
         SetCreatureSprite(species.creatureBase);
         //OnEnable();
         AutoSetLayer(gameObject);
+        UpdateVisuals();
     }
 
     public void OnEnable()
@@ -66,12 +67,15 @@ public partial class Creature : MonoBehaviour, ITickable
         OnDisable();
 
         //生成肉
+        //TODO: 不該固定生成肉，應該根據生物屬性決定生成什麼東西（肉、骨頭、皮毛等），以及數量，可能是要放Species裡面
         MainManager.inGameManager?.EnvEntityManager.SpawnEntity(EntityData.SpawnableEntityType.Meat, transform.position);
 
+        //TODO: 整合到CreaturePool 
         if (MainManager.inGameManager != null)
         {
             MainManager.inGameManager.UnregisterCreature(this);
         }
+        //TODO:------------------------
 
         // 使用物件池回收，而不是直接銷毀
         CreaturePool.ReleaseCreature(this);
@@ -80,6 +84,7 @@ public partial class Creature : MonoBehaviour, ITickable
 
     public void OnTick()
     {
+        //TODO: 這邊要決定各種東西多久Update一次
         if (isDead || this == null) return;
 
         UpdateVitalSigns();
@@ -100,6 +105,7 @@ public partial class Creature : MonoBehaviour, ITickable
         if (actionCooldown <= 0) DoAction();
 
         movement?.MoveOnTick();
+        //-----------------------------------
     }
 
 }

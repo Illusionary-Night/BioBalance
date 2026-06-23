@@ -47,6 +47,7 @@ public enum FoodType
     Meat,
     Carrion
 }
+//TODO: 獨立出來
 [System.Serializable]
 public struct CreatureAttributes
 {
@@ -61,29 +62,7 @@ public struct CreatureAttributes
     public String UUID;
     public float[] colorGenes;
 }
-public static class AttributesCalculator
-{
-    public static float CalculateHungerRate(float size, float speed, float attack_power)
-    {
-        return (size * speed + attack_power / 20) / 100;
-    }
-    public static float CalculateMaxHunger(float size, float base_health, List<FoodType> foods)
-    {
-        float dietFactor = 1.0f;
-        if (foods.Contains(FoodType.Grass) && (foods.Contains(FoodType.Meat) || foods.Contains(FoodType.Carrion))) dietFactor = 1.0f;
-        else if (foods.Contains(FoodType.Meat) || foods.Contains(FoodType.Carrion)) dietFactor = 1.2f;
-        else if (foods.Contains(FoodType.Grass)) dietFactor = 0.8f;
-        return size * base_health * dietFactor;
-    }
-    public static float CalculateReproductionInterval(float size, float base_health)
-    {
-        return size * base_health;
-    }
-    public static float CalculateHealthRegeneration(float base_health, float size)
-    {
-        return base_health / size / 1000;
-    }
-}
+
 
 // 地形類型定義
 public enum TerrainType
@@ -127,7 +106,7 @@ public enum CreatureBase
     Tiger
 }
 
-
+// TODO: 幾個不會動的state要不要整合在一起
 public enum CreatureMovementState
 {
     None = 0,

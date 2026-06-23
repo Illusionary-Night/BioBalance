@@ -3,19 +3,19 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [Tooltip("Äá¼v¾÷²¾°Ê³t«×")]
+    [Tooltip("æ”å½±æ©Ÿç§»å‹•é€Ÿåº¦")]
     public float panSpeed = 20f;
-    [Tooltip("Äá¼v¾÷Ãä½t½w½Ä (Á×§K²¾¥X¦a¹Ï¤Ó»·)")]
+    [Tooltip("æ”å½±æ©Ÿé‚Šç·£ç·©è¡ (é¿å…ç§»å‡ºåœ°åœ–å¤ªé )")]
     public float panBorderThickness = 10f;
-    [Tooltip("¬O§_­­¨îÄá¼v¾÷¦b¦a¹Ï½d³ò¤º")]
+    [Tooltip("æ˜¯å¦é™åˆ¶æ”å½±æ©Ÿåœ¨åœ°åœ–ç¯„åœå…§")]
     public bool limitToMap = true;
 
     [Header("Zoom Settings")]
-    [Tooltip("ºu½üÁY©ñ³t«×")]
-    public float zoomSpeed = 20f; // ¼Æ­È¶V¤jÁY©ñ¶V§Ö
-    [Tooltip("³Ì¤pÁY©ñ (©Ô±o³Ìªñ)")]
+    [Tooltip("æ»¾è¼ªç¸®æ”¾é€Ÿåº¦")]
+    public float zoomSpeed = 20f; // æ•¸å€¼è¶Šå¤§ç¸®æ”¾è¶Šå¿«
+    [Tooltip("æœ€å°ç¸®æ”¾ (æ‹‰å¾—æœ€è¿‘)")]
     public float minZoom = 5f;
-    [Tooltip("³Ì¤jÁY©ñ (©Ô±o³Ì»·)")]
+    [Tooltip("æœ€å¤§ç¸®æ”¾ (æ‹‰å¾—æœ€é )")]
     public float maxZoom = 20f;
 
     private Camera cam;
@@ -29,10 +29,10 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        // 1. ³B²z²¾°Ê (WASD ©Î ¤è¦VÁä)
+        // 1. è™•ç†ç§»å‹• (WASD æˆ– æ–¹å‘éµ)
         HandleMovement();
 
-        // 2. ³B²zÁY©ñ (·Æ¹«ºu½ü)
+        // 2. è™•ç†ç¸®æ”¾ (æ»‘é¼ æ»¾è¼ª)
         HandleZoom();
     }
 
@@ -40,25 +40,25 @@ public class CameraController : MonoBehaviour
     {
         Vector3 pos = transform.position;
 
-        // Àò¨úÁä½L¿é¤J (Horizontal = A/D/¥ª/¥k, Vertical = W/S/¤W/¤U)
-        // ¨Ï¥Î GetAxisRaw ¥i¥HÀò±o§óÆF±Óªº¤ÏÀ³¡AGetAxis ·|¦³¥­·Æ½w½Ä
+        // ç²å–éµç›¤è¼¸å…¥ (Horizontal = A/D/å·¦/å³, Vertical = W/S/ä¸Š/ä¸‹)
+        // ä½¿ç”¨ GetAxisRaw å¯ä»¥ç²å¾—æ›´éˆæ•çš„åæ‡‰ï¼ŒGetAxis æœƒæœ‰å¹³æ»‘ç·©è¡
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        // ­pºâ²¾°Ê¶q
+        // è¨ˆç®—ç§»å‹•é‡
         Vector3 move = new Vector3(h * panSpeed * Time.deltaTime, v * panSpeed * Time.deltaTime, 0);
         pos += move;
 
-        // ­­¨î²¾°Ê½d³ò (Clamp)
+        // é™åˆ¶ç§»å‹•ç¯„åœ (Clamp)
         if (limitToMap && TerrainGenerator.Instance != null)
         {
-            // Àò¨ú¦a¹Ï¼e°ª
+            // ç²å–åœ°åœ–å¯¬é«˜
             float mapW = TerrainGenerator.Instance.mapWidth;
             float mapH = TerrainGenerator.Instance.mapHeight;
 
-            // ­­¨î X ©M Y ®y¼Ğ
-            // ³o¸Ì°²³]¦a¹Ï±q (0,0) ¶}©l¡A©Ò¥H½d³ò¬O 0 ¨ì mapWidth/Height
-            // §Ú­Ìµy·L¥[¤@ÂI½w½Ä (panBorderThickness)¡AÅıª±®a¥i¥H¬İ¨ìÃä½t¥~­±¤@ÂIÂI
+            // é™åˆ¶ X å’Œ Y åº§æ¨™
+            // é€™è£¡å‡è¨­åœ°åœ–å¾ (0,0) é–‹å§‹ï¼Œæ‰€ä»¥ç¯„åœæ˜¯ 0 åˆ° mapWidth/Height
+            // æˆ‘å€‘ç¨å¾®åŠ ä¸€é»ç·©è¡ (panBorderThickness)ï¼Œè®“ç©å®¶å¯ä»¥çœ‹åˆ°é‚Šç·£å¤–é¢ä¸€é»é»
             pos.x = Mathf.Clamp(pos.x, -panBorderThickness, mapW + panBorderThickness);
             pos.y = Mathf.Clamp(pos.y, -panBorderThickness, mapH + panBorderThickness);
         }
@@ -68,18 +68,18 @@ public class CameraController : MonoBehaviour
 
     void HandleZoom()
     {
-        // Àò¨úºu½ü¿é¤J (¥¿­È = ©¹¤Wºu/©ñ¤j¡A­t­È = ©¹¤Uºu/ÁY¤p)
+        // ç²å–æ»¾è¼ªè¼¸å…¥ (æ­£å€¼ = å¾€ä¸Šæ»¾/æ”¾å¤§ï¼Œè² å€¼ = å¾€ä¸‹æ»¾/ç¸®å°)
         float scrollData = Input.GetAxis("Mouse ScrollWheel");
 
-        // ®Ú¾Úºu½ü¤è¦V½Õ¾ã¥Ø¼ĞÁY©ñ­È
-        // ª`·N¡GOrthographicSize ¶V¤p = µe­±¶Vªñ(©ñ¤j)¡A¶V¤j = µe­±¶V»·(ÁY¤p)
-        // ©Ò¥H§Ú­Ì­n "´î¥h" scrollData
+        // æ ¹æ“šæ»¾è¼ªæ–¹å‘èª¿æ•´ç›®æ¨™ç¸®æ”¾å€¼
+        // æ³¨æ„ï¼šOrthographicSize è¶Šå° = ç•«é¢è¶Šè¿‘(æ”¾å¤§)ï¼Œè¶Šå¤§ = ç•«é¢è¶Šé (ç¸®å°)
+        // æ‰€ä»¥æˆ‘å€‘è¦ "æ¸›å»" scrollData
         targetZoom -= scrollData * zoomSpeed;
 
-        // ­­¨îÁY©ñ½d³ò
+        // é™åˆ¶ç¸®æ”¾ç¯„åœ
         targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
 
-        // ¥­·ÆÁY©ñ®ÄªG (Lerp)
+        // å¹³æ»‘ç¸®æ”¾æ•ˆæœ (Lerp)
         cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime * 10f);
     }
 }

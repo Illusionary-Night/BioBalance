@@ -1,106 +1,106 @@
-/*
+ï»¿/*
  * ===========================================================================================
- * CreaturePool - ¥Íª«ª«¥ó¦ÀºŞ²z¾¹
+ * CreaturePool - ç”Ÿç‰©ç‰©ä»¶æ± ç®¡ç†å™¨
  * ===========================================================================================
  * 
- * [¥\¯à»¡©ú]
- * ¨Ï¥Î Unity ªº ObjectPool ¨ÓºŞ²z Creature ªº¥Í¦¨»P¦^¦¬¡A
- * Á×§KÀWÁcªº Instantiate/Destroy ³y¦¨ªº®Ä¯à°İÃD»P GC À£¤O¡C
+ * [åŠŸèƒ½èªªæ˜]
+ * ä½¿ç”¨ Unity çš„ ObjectPool ä¾†ç®¡ç† Creature çš„ç”Ÿæˆèˆ‡å›æ”¶ï¼Œ
+ * é¿å…é »ç¹çš„ Instantiate/Destroy é€ æˆçš„æ•ˆèƒ½å•é¡Œèˆ‡ GC å£“åŠ›ã€‚
  * 
  * -------------------------------------------------------------------------------------------
- * [¤½¶}Äİ©Ê (Properties)]
+ * [å…¬é–‹å±¬æ€§ (Properties)]
  * -------------------------------------------------------------------------------------------
  * 
- * ¡´ CountActive (int)
- *   - »¡©ú¡G¥Ø«e¥¿¦b³õ´º¤¤¨Ï¥Îªº¥Íª«¼Æ¶q
- *   - ¥Îªk¡GDebug.Log($"¬¡ÅD¥Íª«: {CreaturePool.CountActive}");
+ * â— CountActive (int)
+ *   - èªªæ˜ï¼šç›®å‰æ­£åœ¨å ´æ™¯ä¸­ä½¿ç”¨çš„ç”Ÿç‰©æ•¸é‡
+ *   - ç”¨æ³•ï¼šDebug.Log($"æ´»èºç”Ÿç‰©: {CreaturePool.CountActive}");
  * 
- * ¡´ CountInactive (int)
- *   - »¡©ú¡G¥Ø«e¦b¦À¤¤¶¢¸m¡Bµ¥«İ³Q­«¥Îªº¥Íª«¼Æ¶q
- *   - ¥Îªk¡GDebug.Log($"¶¢¸m¥Íª«: {CreaturePool.CountInactive}");
+ * â— CountInactive (int)
+ *   - èªªæ˜ï¼šç›®å‰åœ¨æ± ä¸­é–’ç½®ã€ç­‰å¾…è¢«é‡ç”¨çš„ç”Ÿç‰©æ•¸é‡
+ *   - ç”¨æ³•ï¼šDebug.Log($"é–’ç½®ç”Ÿç‰©: {CreaturePool.CountInactive}");
  * 
- * ¡´ CountAll (int)
- *   - »¡©ú¡Gª«¥ó¦ÀºŞ²zªº¥Íª«Á`¼Æ¡]¬¡ÅD + ¶¢¸m¡^
- *   - ¥Îªk¡GDebug.Log($"Á`­p¥Íª«: {CreaturePool.CountAll}");
+ * â— CountAll (int)
+ *   - èªªæ˜ï¼šç‰©ä»¶æ± ç®¡ç†çš„ç”Ÿç‰©ç¸½æ•¸ï¼ˆæ´»èº + é–’ç½®ï¼‰
+ *   - ç”¨æ³•ï¼šDebug.Log($"ç¸½è¨ˆç”Ÿç‰©: {CreaturePool.CountAll}");
  * 
  * -------------------------------------------------------------------------------------------
- * [¤½¶}¤èªk (Methods)]
+ * [å…¬é–‹æ–¹æ³• (Methods)]
  * -------------------------------------------------------------------------------------------
  * 
- * ¡´ Initialize(int preWarmCount = 0)
- *   - »¡©ú¡Gªì©l¤Æª«¥ó¦À¡A¥i¿ï¾Ü©Ê¦a¹w¼ö«ü©w¼Æ¶qªº¥Íª«
- *   - °Ñ¼Æ¡GpreWarmCount - ¹w¥ı³Ğ«Øªº¥Íª«¼Æ¶q¡]¹w³]¬° 0¡^
- *   - ¥Îªk¡G
- *       // ¦b¹CÀ¸¶}©l®É©I¥s
- *       CreaturePool.Initialize(100);  // ¹w¥ı³Ğ«Ø 100 °¦¥Íª«
+ * â— Initialize(int preWarmCount = 0)
+ *   - èªªæ˜ï¼šåˆå§‹åŒ–ç‰©ä»¶æ± ï¼Œå¯é¸æ“‡æ€§åœ°é ç†±æŒ‡å®šæ•¸é‡çš„ç”Ÿç‰©
+ *   - åƒæ•¸ï¼špreWarmCount - é å…ˆå‰µå»ºçš„ç”Ÿç‰©æ•¸é‡ï¼ˆé è¨­ç‚º 0ï¼‰
+ *   - ç”¨æ³•ï¼š
+ *       // åœ¨éŠæˆ²é–‹å§‹æ™‚å‘¼å«
+ *       CreaturePool.Initialize(100);  // é å…ˆå‰µå»º 100 éš»ç”Ÿç‰©
  * 
- * ¡´ PreWarm(int count)
- *   - »¡©ú¡G¹w¼öª«¥ó¦À¡A´£«e³Ğ«Ø«ü©w¼Æ¶qªº¥Íª«¨Ã©ñ¤J¦À¤¤«İ¥Î
- *   - °Ñ¼Æ¡Gcount - ­n¹w¥ı³Ğ«Øªº¥Íª«¼Æ¶q
- *   - ¥Îªk¡G
- *       CreaturePool.PreWarm(50);  // ÃB¥~¹w¼ö 50 °¦¥Íª«
- *   - ª`·N¡G¾A¦X¦b Loading µe­±©Î³õ´ºªì©l¤Æ®É¨Ï¥Î¡AÁ×§K¹CÀ¸¤¤¬ğµM¤j¶q¥Í¦¨³y¦¨¥d¹y
+ * â— PreWarm(int count)
+ *   - èªªæ˜ï¼šé ç†±ç‰©ä»¶æ± ï¼Œæå‰å‰µå»ºæŒ‡å®šæ•¸é‡çš„ç”Ÿç‰©ä¸¦æ”¾å…¥æ± ä¸­å¾…ç”¨
+ *   - åƒæ•¸ï¼šcount - è¦é å…ˆå‰µå»ºçš„ç”Ÿç‰©æ•¸é‡
+ *   - ç”¨æ³•ï¼š
+ *       CreaturePool.PreWarm(50);  // é¡å¤–é ç†± 50 éš»ç”Ÿç‰©
+ *   - æ³¨æ„ï¼šé©åˆåœ¨ Loading ç•«é¢æˆ–å ´æ™¯åˆå§‹åŒ–æ™‚ä½¿ç”¨ï¼Œé¿å…éŠæˆ²ä¸­çªç„¶å¤§é‡ç”Ÿæˆé€ æˆå¡é “
  * 
- * ¡´ GetCreature()
- *   - »¡©ú¡G±q¦À¤¤¨ú±o¤@­Ó¥¼ªì©l¤Æªº Creature
- *   - ¦^¶Ç¡GCreature ¹ê¨Ò¡]»İ­n¤â°Ê©I¥s Initialize¡^
- *   - ¥Îªk¡G
+ * â— GetCreature()
+ *   - èªªæ˜ï¼šå¾æ± ä¸­å–å¾—ä¸€å€‹æœªåˆå§‹åŒ–çš„ Creature
+ *   - å›å‚³ï¼šCreature å¯¦ä¾‹ï¼ˆéœ€è¦æ‰‹å‹•å‘¼å« Initializeï¼‰
+ *   - ç”¨æ³•ï¼š
  *       Creature creature = CreaturePool.GetCreature();
  *       creature.Initialize(species, attributes, creature.gameObject);
  *       creature.transform.position = spawnPosition;
  * 
- * ¡´ GetCreature(species, CreatureAttributes attributes, Vector3 position, Transform parent = null)
- *   - »¡©ú¡G±q¦À¤¤¨ú±o¤@­Ó¤wªì©l¤Æªº Creature¡]±ÀÂË¨Ï¥Î¡^
- *   - °Ñ¼Æ¡G
- *       species    - ¥Íª«ªººØ±Ú
- *       attributes - ¥Íª«ªº¿ò¶ÇÄİ©Ê
- *       position   - ¥Í¦¨¦ì¸m¡]¥@¬É®y¼Ğ¡^
- *       parent     - ¤÷ª«¥ó¡]¥i¿ï¡A¹w³]¬° null¡^
- *   - ¦^¶Ç¡G¤wªì©l¤Æ¨Ã©ñ¸m¦n¦ì¸mªº Creature ¹ê¨Ò
- *   - ¥Îªk¡G
+ * â— GetCreature(species, CreatureAttributes attributes, Vector3 position, Transform parent = null)
+ *   - èªªæ˜ï¼šå¾æ± ä¸­å–å¾—ä¸€å€‹å·²åˆå§‹åŒ–çš„ Creatureï¼ˆæ¨è–¦ä½¿ç”¨ï¼‰
+ *   - åƒæ•¸ï¼š
+ *       species    - ç”Ÿç‰©çš„ç¨®æ—
+ *       attributes - ç”Ÿç‰©çš„éºå‚³å±¬æ€§
+ *       position   - ç”Ÿæˆä½ç½®ï¼ˆä¸–ç•Œåº§æ¨™ï¼‰
+ *       parent     - çˆ¶ç‰©ä»¶ï¼ˆå¯é¸ï¼Œé è¨­ç‚º nullï¼‰
+ *   - å›å‚³ï¼šå·²åˆå§‹åŒ–ä¸¦æ”¾ç½®å¥½ä½ç½®çš„ Creature å¯¦ä¾‹
+ *   - ç”¨æ³•ï¼š
  *       CreatureAttributes attr = parentCreature.ToCreatureAttribute();
  *       Vector3 pos = new Vector3(100, 100, 0);
  *       Creature baby = CreaturePool.GetCreature(attr, pos);
  * 
- * ¡´ ReleaseCreature(Creature creature)
- *   - »¡©ú¡G±N¤£¦A¨Ï¥Îªº Creature ¦^¦¬¨ìª«¥ó¦À¤¤
- *   - °Ñ¼Æ¡Gcreature - ­n¦^¦¬ªº¥Íª«¹ê¨Ò
- *   - ¥Îªk¡G
+ * â— ReleaseCreature(Creature creature)
+ *   - èªªæ˜ï¼šå°‡ä¸å†ä½¿ç”¨çš„ Creature å›æ”¶åˆ°ç‰©ä»¶æ± ä¸­
+ *   - åƒæ•¸ï¼šcreature - è¦å›æ”¶çš„ç”Ÿç‰©å¯¦ä¾‹
+ *   - ç”¨æ³•ï¼š
  *       CreaturePool.ReleaseCreature(deadCreature);
- *   - ª`·N¡G³q±`¤£»İ­n¤â°Ê©I¥s¡ACreature.Die() ·|¦Û°Ê³B²z¦^¦¬
+ *   - æ³¨æ„ï¼šé€šå¸¸ä¸éœ€è¦æ‰‹å‹•å‘¼å«ï¼ŒCreature.Die() æœƒè‡ªå‹•è™•ç†å›æ”¶
  * 
- * ¡´ Clear()
- *   - »¡©ú¡G²MªÅ¾ã­Óª«¥ó¦À¡A¾P·´©Ò¦³¶¢¸mªº¥Íª«
- *   - ¥Îªk¡G
- *       // ¦b³õ´º¤Á´«©Î¹CÀ¸µ²§ô®É©I¥s
+ * â— Clear()
+ *   - èªªæ˜ï¼šæ¸…ç©ºæ•´å€‹ç‰©ä»¶æ± ï¼ŒéŠ·æ¯€æ‰€æœ‰é–’ç½®çš„ç”Ÿç‰©
+ *   - ç”¨æ³•ï¼š
+ *       // åœ¨å ´æ™¯åˆ‡æ›æˆ–éŠæˆ²çµæŸæ™‚å‘¼å«
  *       CreaturePool.Clear();
- *   - ª`·N¡G³o·|¾P·´©Ò¦³¦À¤¤ªºª«¥ó¡A¦ı¤£¼vÅT³õ´º¤¤¥¿¦b¨Ï¥Îªº¥Íª«
+ *   - æ³¨æ„ï¼šé€™æœƒéŠ·æ¯€æ‰€æœ‰æ± ä¸­çš„ç‰©ä»¶ï¼Œä½†ä¸å½±éŸ¿å ´æ™¯ä¸­æ­£åœ¨ä½¿ç”¨çš„ç”Ÿç‰©
  * 
  * -------------------------------------------------------------------------------------------
- * [¨Ï¥Î½d¨Ò]
+ * [ä½¿ç”¨ç¯„ä¾‹]
  * -------------------------------------------------------------------------------------------
  * 
- * // 1. ¹CÀ¸ªì©l¤Æ®É¹w¼ö
+ * // 1. éŠæˆ²åˆå§‹åŒ–æ™‚é ç†±
  * void Start()
  * {
  *     CreaturePool.Initialize(100);
  * }
  * 
- * // 2. Ác´Ş®É¨Ï¥Îª«¥ó¦À
+ * // 2. ç¹æ®–æ™‚ä½¿ç”¨ç‰©ä»¶æ± 
  * void Reproduce(Creature parent)
  * {
  *     Vector3 spawnPos = parent.transform.position + Vector3.right;
  *     Creature baby = CreaturePool.GetCreature(parent.ToCreatureAttribute(), spawnPos);
  * }
  * 
- * // 3. ¥Íª«¦º¤`®É¦Û°Ê¦^¦¬¡]¤w¾ã¦X¦b Creature.Die() ¤¤¡^
- * // ¤£»İ­n¤â°Ê³B²z
+ * // 3. ç”Ÿç‰©æ­»äº¡æ™‚è‡ªå‹•å›æ”¶ï¼ˆå·²æ•´åˆåœ¨ Creature.Die() ä¸­ï¼‰
+ * // ä¸éœ€è¦æ‰‹å‹•è™•ç†
  * 
- * // 4. ºÊ±±ª«¥ó¦Àª¬ºA
+ * // 4. ç›£æ§ç‰©ä»¶æ± ç‹€æ…‹
  * void OnGUI()
  * {
  *     GUI.Label(new Rect(10, 10, 200, 20), 
- *         $"¦Àª¬ºA: {CreaturePool.CountActive}/{CreaturePool.CountAll}");
+ *         $"æ± ç‹€æ…‹: {CreaturePool.CountActive}/{CreaturePool.CountAll}");
  * }
  * 
  * ===========================================================================================
@@ -112,7 +112,7 @@ public static class CreaturePool
 {
     private static GameObject prefab;
     private static Transform poolParent;
-    
+
     // Object pool for Creature instances
     private static ObjectPool<Creature> pool = new(
         createFunc: CreateCreature,
@@ -121,22 +121,22 @@ public static class CreaturePool
         actionOnDestroy: ActionOnDestroy,
         collectionCheck: false,
         defaultCapacity: 200,
-        maxSize: 10000
+        maxSize: 400
     );
 
-    // ²Î­p¸ê°T
+    // çµ±è¨ˆè³‡è¨Š
     public static int CountActive => pool.CountActive;
     public static int CountInactive => pool.CountInactive;
     public static int CountAll => pool.CountAll;
 
     /// <summary>
-    /// ªì©l¤Æª«¥ó¦À¡]¥i¿ï¡A·|¦Û°Ê©µ¿ğªì©l¤Æ¡^
+    /// åˆå§‹åŒ–ç‰©ä»¶æ± ï¼ˆå¯é¸ï¼Œæœƒè‡ªå‹•å»¶é²åˆå§‹åŒ–ï¼‰
     /// </summary>
-    /// <param name="preWarmCount">¹w¼ö¼Æ¶q</param>
+    /// <param name="preWarmCount">é ç†±æ•¸é‡</param>
     public static void Initialize(int preWarmCount = 0)
     {
         EnsureInitialized();
-        
+
         if (preWarmCount > 0)
         {
             PreWarm(preWarmCount);
@@ -144,12 +144,12 @@ public static class CreaturePool
     }
 
     /// <summary>
-    /// ¹w¼ö¡G´£«e³Ğ«Ø¤@§å Creature ¨Ã©ñ¤J¦À¤¤
+    /// é ç†±ï¼šæå‰å‰µå»ºä¸€æ‰¹ Creature ä¸¦æ”¾å…¥æ± ä¸­
     /// </summary>
     public static void PreWarm(int count)
     {
         EnsureInitialized();
-        
+
         Creature[] creatures = new Creature[count];
         for (int i = 0; i < count; i++)
         {
@@ -159,12 +159,12 @@ public static class CreaturePool
         {
             pool.Release(creatures[i]);
         }
-        
+
         Debug.Log($"CreaturePool: Pre-warmed {count} creatures. Pool size: {CountInactive}");
     }
 
     /// <summary>
-    /// ±q¦À¤¤¨ú±o¤@­Ó Creature¡]¥¼ªì©l¤Æ¡^
+    /// å¾æ± ä¸­å–å¾—ä¸€å€‹ Creatureï¼ˆæœªåˆå§‹åŒ–ï¼‰
     /// </summary>
     public static Creature GetCreature()
     {
@@ -173,20 +173,20 @@ public static class CreaturePool
     }
 
     /// <summary>
-    /// ±q¦À¤¤¨ú±o¨Ãªì©l¤Æ¤@­Ó Creature
+    /// å¾æ± ä¸­å–å¾—ä¸¦åˆå§‹åŒ–ä¸€å€‹ Creature
     /// </summary>
-    /// <param name="species">¥Íª«ºØ±Ú</param>
-    /// <param name="position">¥Í¦¨¦ì¸m</param>
-    /// <param name="attributes2">¿ò¶ÇªÌ2Äİ©Ê(¥i¿ï)</param >
-    /// <param name="attributes1">¿ò¶ÇªÌ1Äİ©Ê(¥i¿ï)</param >
-    /// <param name="parent">¤÷ª«¥ó¡]¥i¿ï¡^</param>
-    public static Creature GetCreature(Species species, Vector3 position, CreatureAttributes?  attribuet1=null, CreatureAttributes? attribuet2=null, Transform parent = null)
+    /// <param name="species">ç”Ÿç‰©ç¨®æ—</param>
+    /// <param name="position">ç”Ÿæˆä½ç½®</param>
+    /// <param name="attributes2">éºå‚³è€…2å±¬æ€§(å¯é¸)</param >
+    /// <param name="attributes1">éºå‚³è€…1å±¬æ€§(å¯é¸)</param >
+    /// <param name="parent">çˆ¶ç‰©ä»¶ï¼ˆå¯é¸ï¼‰</param>
+    public static Creature GetCreature(Species species, Vector3 position, CreatureAttributes? attribuet1 = null, CreatureAttributes? attribuet2 = null, Transform parent = null)
     {
         EnsureInitialized();
-        
+
         Creature creature = pool.Get();
-        
-        // ³]©w¦ì¸m©M¤÷ª«¥ó
+
+        // è¨­å®šä½ç½®å’Œçˆ¶ç‰©ä»¶
         if (parent != null)
         {
             creature.transform.SetParent(parent);
@@ -199,41 +199,41 @@ public static class CreaturePool
 
         creature.transform.position = position;
         creature.transform.rotation = Quaternion.identity;
-        
-        // ªì©l¤Æ¥Íª«
+
+        // åˆå§‹åŒ–ç”Ÿç‰©
         creature.Initialize(species, attribuet1, attribuet2);
-        
+
         return creature;
     }
 
     /// <summary>
-    /// ±N Creature ¦^¦¬¨ì¦À¤¤
+    /// å°‡ Creature å›æ”¶åˆ°æ± ä¸­
     /// </summary>
     public static void ReleaseCreature(Creature creature)
     {
         if (creature == null) return;
-        
+
         pool.Release(creature);
     }
 
     /// <summary>
-    /// ²MªÅ¾ã­Óª«¥ó¦À
+    /// æ¸…ç©ºæ•´å€‹ç‰©ä»¶æ± 
     /// </summary>
     public static void Clear()
     {
         pool.Clear();
-        
+
         if (poolParent != null)
         {
             Object.Destroy(poolParent.gameObject);
             poolParent = null;
         }
-        
+
         prefab = null;
     }
 
     /// <summary>
-    /// ½T«O¸ê·½¤wªì©l¤Æ
+    /// ç¢ºä¿è³‡æºå·²åˆå§‹åŒ–
     /// </summary>
     private static void EnsureInitialized()
     {
@@ -245,7 +245,7 @@ public static class CreaturePool
                 Debug.LogError("CreaturePool: Failed to load EmptyCreature prefab");
             }
         }
-        
+
         if (poolParent == null)
         {
             GameObject parentObj = new GameObject("[CreaturePool]");
@@ -258,17 +258,17 @@ public static class CreaturePool
     private static Creature CreateCreature()
     {
         EnsureInitialized();
-        
+
         if (prefab == null)
         {
             Debug.LogError("CreaturePool: Prefab is null, cannot create creature.");
             return null;
         }
-        
+
         GameObject obj = Object.Instantiate(prefab, poolParent);
         obj.name = "PooledCreature";
         obj.SetActive(false);
-        
+
         Creature creature = obj.GetComponent<Creature>();
         if (creature == null)
         {
@@ -276,18 +276,18 @@ public static class CreaturePool
             Object.Destroy(obj);
             return null;
         }
-        
+
         return creature;
     }
 
     private static void ActionOnGet(Creature creature)
     {
         if (creature == null) return;
-        
-        // ±Ò¥Î GameObject
+
+        // å•Ÿç”¨ GameObject
         creature.gameObject.SetActive(true);
-        
-        // ­«¸m Transform
+
+        // é‡ç½® Transform
         creature.transform.SetParent(null);
         creature.transform.localScale = Vector3.one;
     }
@@ -295,11 +295,11 @@ public static class CreaturePool
     private static void ActionOnRelease(Creature creature)
     {
         if (creature == null) return;
-               
-        // °±¤î©Ò¦³¨óµ{
+
+        // åœæ­¢æ‰€æœ‰å”ç¨‹
         creature.StopAllCoroutines();
-        
-        // ÁôÂÃ¨Ã²¾¨ì¦À¤÷ª«¥ó¤U
+
+        // éš±è—ä¸¦ç§»åˆ°æ± çˆ¶ç‰©ä»¶ä¸‹
         creature.gameObject.SetActive(false);
         creature.transform.SetParent(poolParent);
         creature.transform.position = Vector3.zero;

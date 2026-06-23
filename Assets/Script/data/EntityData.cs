@@ -1,79 +1,79 @@
-/*
+ï»¿/*
  * ===========================================================================================
- * EntityData - ¥i¥Í¦¨¹êÅéªº¸ê®Æ©w¸q
+ * EntityData - å¯ç”Ÿæˆå¯¦é«”çš„è³‡æ–™å®šç¾©
  * ===========================================================================================
  * 
- * [¥\¯à»¡©ú]
- * ¶°¤¤ºŞ²z©Ò¦³¥i¦bÀô¹Ò¤¤¥Í¦¨ªº¹êÅéÃş«¬¸ê®Æ¡A¥]¬A¡G
- * - ¹êÅéÃş«¬ªº©w¸q¡]SpawnableEntityType¡^
- * - ¦UÃş«¬¹êÅéªº¸Ô²Ó¸ê®Æ¡]SpawnableEntity¡^
- * - FoodType »P SpawnableEntityType ¤§¶¡ªº¹ïÀ³Ãö«Y
+ * [åŠŸèƒ½èªªæ˜]
+ * é›†ä¸­ç®¡ç†æ‰€æœ‰å¯åœ¨ç’°å¢ƒä¸­ç”Ÿæˆçš„å¯¦é«”é¡å‹è³‡æ–™ï¼ŒåŒ…æ‹¬ï¼š
+ * - å¯¦é«”é¡å‹çš„å®šç¾©ï¼ˆSpawnableEntityTypeï¼‰
+ * - å„é¡å‹å¯¦é«”çš„è©³ç´°è³‡æ–™ï¼ˆSpawnableEntityï¼‰
+ * - FoodType èˆ‡ SpawnableEntityType ä¹‹é–“çš„å°æ‡‰é—œä¿‚
  * 
- * [³]­p¥Øªº]
- * - ´£¨Ñ²Î¤@ªº¸ê®Æ¨Ó·½¡AÁ×§Kµw½s½X´²¸¨¦U³B
- * - ¤ä´©Ãş«¬¦w¥şªº¹êÅé¬d¸ß©MÂà´«
- * - ¦b½sÄ¶®É´ÁÅçÃÒ¸ê®Æ§¹¾ã©Ê
- * 
- * -------------------------------------------------------------------------------------------
- * [SpawnableEntityType ¦CÁ|]
- * -------------------------------------------------------------------------------------------
- * ©w¸q©Ò¦³¥i¥Í¦¨ªº¹êÅéÃş«¬¡G
- * - Grass   : ¯ó¡]´Óª«©Ê­¹ª«¡^
- * - Meat    : ¦×¡]°Êª«©Ê­¹ª«¡A¥Íª«¦º¤`®É²£¥Í¡^
- * - Carrion : »G¦×¡]¦×Ãş»GÄê«á²£¥Í¡^
+ * [è¨­è¨ˆç›®çš„]
+ * - æä¾›çµ±ä¸€çš„è³‡æ–™ä¾†æºï¼Œé¿å…ç¡¬ç·¨ç¢¼æ•£è½å„è™•
+ * - æ”¯æ´é¡å‹å®‰å…¨çš„å¯¦é«”æŸ¥è©¢å’Œè½‰æ›
+ * - åœ¨ç·¨è­¯æ™‚æœŸé©—è­‰è³‡æ–™å®Œæ•´æ€§
  * 
  * -------------------------------------------------------------------------------------------
- * [¤½¶}¤èªk]
+ * [SpawnableEntityType åˆ—èˆ‰]
  * -------------------------------------------------------------------------------------------
- * 
- * ¡´ FoodType2SpawnableType(FoodType foodType)
- *   - »¡©ú¡G±N FoodType Âà´«¬°¹ïÀ³ªº SpawnableEntityType
- *   - ¦^¶Ç¡G¹ïÀ³ªº SpawnableEntityType¡A­YµL¹ïÀ³«h¦^¶Ç null
- *   - ¥Îªk¡Gvar type = EntityData.FoodType2SpawnableType(FoodType.Grass);
- * 
- * ¡´ SpawnableType2FoodType(SpawnableEntityType spawnableType)
- *   - »¡©ú¡G±N SpawnableEntityType Âà´«¬°¹ïÀ³ªº FoodType
- *   - ¦^¶Ç¡G¹ïÀ³ªº FoodType¡A­YµL¹ïÀ³«h¦^¶Ç null
- *   - ¥Îªk¡Gvar food = EntityData.SpawnableType2FoodType(SpawnableEntityType.Meat);
- * 
- * ¡´ GetSpawnableEntity(SpawnableEntityType spawnableType)
- *   - »¡©ú¡G¨ú±o«ü©wÃş«¬ªº¹êÅé¸ê®Æ
- *   - ¦^¶Ç¡GSpawnableEntity ª«¥ó¡A¥]§t¸ÓÃş«¬ªº©Ò¦³¸Ô²Ó¸ê®Æ
- *   - ¥Îªk¡Gvar data = EntityData.GetSpawnableEntity(SpawnableEntityType.Grass);
+ * å®šç¾©æ‰€æœ‰å¯ç”Ÿæˆçš„å¯¦é«”é¡å‹ï¼š
+ * - Grass   : è‰ï¼ˆæ¤ç‰©æ€§é£Ÿç‰©ï¼‰
+ * - Meat    : è‚‰ï¼ˆå‹•ç‰©æ€§é£Ÿç‰©ï¼Œç”Ÿç‰©æ­»äº¡æ™‚ç”¢ç”Ÿï¼‰
+ * - Carrion : è…è‚‰ï¼ˆè‚‰é¡è…çˆ›å¾Œç”¢ç”Ÿï¼‰
  * 
  * -------------------------------------------------------------------------------------------
- * [SpawnableEntity Ãş§O]
+ * [å…¬é–‹æ–¹æ³•]
  * -------------------------------------------------------------------------------------------
- * Àx¦s³æ¤@¹êÅéÃş«¬ªº¸Ô²Ó¸ê®Æ¡G
  * 
- * ¡´ ClassType (Type)
- *   - ¹êÅéªº C# Ãş§OÃş«¬¡]¦p typeof(Grass)¡^
- *   - ¥Î©ó¤Ï®g³Ğ«Ø¹ïÀ³ªº EntityPool<T>
+ * â— FoodType2SpawnableType(FoodType foodType)
+ *   - èªªæ˜ï¼šå°‡ FoodType è½‰æ›ç‚ºå°æ‡‰çš„ SpawnableEntityType
+ *   - å›å‚³ï¼šå°æ‡‰çš„ SpawnableEntityTypeï¼Œè‹¥ç„¡å°æ‡‰å‰‡å›å‚³ null
+ *   - ç”¨æ³•ï¼švar type = EntityData.FoodType2SpawnableType(FoodType.Grass);
  * 
- * ¡´ PrefabPath (string)
- *   - Prefab ¦b Resources ¸ê®Æ§¨¤¤ªº¸ô®|
- *   - ¥Î©ó¸ü¤J¹êÅéªº¹w»sª«¥ó
+ * â— SpawnableType2FoodType(SpawnableEntityType spawnableType)
+ *   - èªªæ˜ï¼šå°‡ SpawnableEntityType è½‰æ›ç‚ºå°æ‡‰çš„ FoodType
+ *   - å›å‚³ï¼šå°æ‡‰çš„ FoodTypeï¼Œè‹¥ç„¡å°æ‡‰å‰‡å›å‚³ null
+ *   - ç”¨æ³•ï¼švar food = EntityData.SpawnableType2FoodType(SpawnableEntityType.Meat);
  * 
- * ¡´ MaxSpawnableValue (int)
- *   - ¸ÓÃş«¬¹êÅéªº³Ì¤j¼Æ¶q­­¨î
- *   - ¥Î©ó±±¨î¥@¬É¤¤¦P®É¦s¦bªº¹êÅé¼Æ¶q
- * 
- * ¡´ FoodType (FoodType?)
- *   - ¹ïÀ³ªº­¹ª«Ãş«¬¡]¥i¬° null¡^
- *   - ¥Î©ó»P¥Íª«ªº¶i­¹¨t²Î³s±µ
- * 
- * ¡´ SpawnableTerrain (List<TerrainType>)
- *   - ¥i¥Í¦¨¦¹¹êÅéªº¦a§ÎÃş«¬¦Cªí
- *   - ­Y¬° null «hªí¥Ü¥i¦b¥ô¦ó¦a§Î¥Í¦¨
+ * â— GetSpawnableEntity(SpawnableEntityType spawnableType)
+ *   - èªªæ˜ï¼šå–å¾—æŒ‡å®šé¡å‹çš„å¯¦é«”è³‡æ–™
+ *   - å›å‚³ï¼šSpawnableEntity ç‰©ä»¶ï¼ŒåŒ…å«è©²é¡å‹çš„æ‰€æœ‰è©³ç´°è³‡æ–™
+ *   - ç”¨æ³•ï¼švar data = EntityData.GetSpawnableEntity(SpawnableEntityType.Grass);
  * 
  * -------------------------------------------------------------------------------------------
- * [·s¼W¹êÅéÃş«¬¨BÆJ]
+ * [SpawnableEntity é¡åˆ¥]
  * -------------------------------------------------------------------------------------------
- * 1. ¦b SpawnableEntityType ¦CÁ|¤¤·s¼WÃş«¬
- * 2. ¦b spawnableDict ¤¤·s¼W¹ïÀ³ªº SpawnableEntity
- * 3. ­Y¸Ó¹êÅé¤]¬O­¹ª«¡A¦b foodTypeMapping ¤¤·s¼W¹ïÀ³Ãö«Y
- * 4. ³Ğ«Ø¹ïÀ³ªº¹êÅéÃş§O¡]Ä~©Ó Edible ©Î¨ä¥L°òÃş¡^
- * 5. ³Ğ«Ø¹ïÀ³ªº Prefab ¨Ã©ñ¸m©ó¥¿½Tªº Resources ¸ô®|
+ * å„²å­˜å–®ä¸€å¯¦é«”é¡å‹çš„è©³ç´°è³‡æ–™ï¼š
+ * 
+ * â— ClassType (Type)
+ *   - å¯¦é«”çš„ C# é¡åˆ¥é¡å‹ï¼ˆå¦‚ typeof(Grass)ï¼‰
+ *   - ç”¨æ–¼åå°„å‰µå»ºå°æ‡‰çš„ EntityPool<T>
+ * 
+ * â— PrefabPath (string)
+ *   - Prefab åœ¨ Resources è³‡æ–™å¤¾ä¸­çš„è·¯å¾‘
+ *   - ç”¨æ–¼è¼‰å…¥å¯¦é«”çš„é è£½ç‰©ä»¶
+ * 
+ * â— MaxSpawnableValue (int)
+ *   - è©²é¡å‹å¯¦é«”çš„æœ€å¤§æ•¸é‡é™åˆ¶
+ *   - ç”¨æ–¼æ§åˆ¶ä¸–ç•Œä¸­åŒæ™‚å­˜åœ¨çš„å¯¦é«”æ•¸é‡
+ * 
+ * â— FoodType (FoodType?)
+ *   - å°æ‡‰çš„é£Ÿç‰©é¡å‹ï¼ˆå¯ç‚º nullï¼‰
+ *   - ç”¨æ–¼èˆ‡ç”Ÿç‰©çš„é€²é£Ÿç³»çµ±é€£æ¥
+ * 
+ * â— SpawnableTerrain (List<TerrainType>)
+ *   - å¯ç”Ÿæˆæ­¤å¯¦é«”çš„åœ°å½¢é¡å‹åˆ—è¡¨
+ *   - è‹¥ç‚º null å‰‡è¡¨ç¤ºå¯åœ¨ä»»ä½•åœ°å½¢ç”Ÿæˆ
+ * 
+ * -------------------------------------------------------------------------------------------
+ * [æ–°å¢å¯¦é«”é¡å‹æ­¥é©Ÿ]
+ * -------------------------------------------------------------------------------------------
+ * 1. åœ¨ SpawnableEntityType åˆ—èˆ‰ä¸­æ–°å¢é¡å‹
+ * 2. åœ¨ spawnableDict ä¸­æ–°å¢å°æ‡‰çš„ SpawnableEntity
+ * 3. è‹¥è©²å¯¦é«”ä¹Ÿæ˜¯é£Ÿç‰©ï¼Œåœ¨ foodTypeMapping ä¸­æ–°å¢å°æ‡‰é—œä¿‚
+ * 4. å‰µå»ºå°æ‡‰çš„å¯¦é«”é¡åˆ¥ï¼ˆç¹¼æ‰¿ Edible æˆ–å…¶ä»–åŸºé¡ï¼‰
+ * 5. å‰µå»ºå°æ‡‰çš„ Prefab ä¸¦æ”¾ç½®æ–¼æ­£ç¢ºçš„ Resources è·¯å¾‘
  * 
  * ===========================================================================================
  */
@@ -83,50 +83,50 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ¹êÅé¸ê®ÆºŞ²zÃş§O - ¶°¤¤ºŞ²z©Ò¦³¥i¥Í¦¨¹êÅéªº©w¸q¸ê®Æ
+/// å¯¦é«”è³‡æ–™ç®¡ç†é¡åˆ¥ - é›†ä¸­ç®¡ç†æ‰€æœ‰å¯ç”Ÿæˆå¯¦é«”çš„å®šç¾©è³‡æ–™
 /// </summary>
 public static class EntityData
 {
     /// <summary>
-    /// ¥i¥Í¦¨ªº¹êÅéÃş«¬¦CÁ|
+    /// å¯ç”Ÿæˆçš„å¯¦é«”é¡å‹åˆ—èˆ‰
     /// </summary>
     public enum SpawnableEntityType
     {
-        Grass,      // ¯ó¡]´Óª«©Ê­¹ª«¡^
-        Meat,       // ¦×¡]°Êª«©Ê­¹ª«¡^
-        Carrion     // »G¦×
+        Grass,      // è‰ï¼ˆæ¤ç‰©æ€§é£Ÿç‰©ï¼‰
+        Meat,       // è‚‰ï¼ˆå‹•ç‰©æ€§é£Ÿç‰©ï¼‰
+        Carrion     // è…è‚‰
     }
 
-    // ========== ¹êÅé¸ê®Æ¦r¨å ==========
-    // Àx¦s¨CºØ¹êÅéÃş«¬ªº¸Ô²Ó¸ê®Æ
+    // ========== å¯¦é«”è³‡æ–™å­—å…¸ ==========
+    // å„²å­˜æ¯ç¨®å¯¦é«”é¡å‹çš„è©³ç´°è³‡æ–™
     private static readonly Dictionary<SpawnableEntityType, SpawnableEntity> spawnableDict = new()
     {
-        // ¯ó¡G³Ì¤j 5000 ­Ó¡A¥u¯à¦b¯ó¦a¦a§Î¥Í¦¨
+        // è‰ï¼šæœ€å¤§ 5000 å€‹ï¼Œåªèƒ½åœ¨è‰åœ°åœ°å½¢ç”Ÿæˆ
         { SpawnableEntityType.Grass, new SpawnableEntity(
-            typeof(Grass), 
-            "Prefabs/Edible/Grass", 
-            5000, 
-            FoodType.Grass, 
-            new List<TerrainType> { TerrainType.Grass }) 
+            typeof(Grass),
+            "Prefabs/Edible/Grass",
+            5000,
+            FoodType.Grass,
+            new List<TerrainType> { TerrainType.Grass })
         },
-        // ¦×¡GµL¼Æ¶q­­¨î¡A¥i¦b¥ô¦ó¦a§Î¥Í¦¨
+        // è‚‰ï¼šç„¡æ•¸é‡é™åˆ¶ï¼Œå¯åœ¨ä»»ä½•åœ°å½¢ç”Ÿæˆ
         { SpawnableEntityType.Meat, new SpawnableEntity(
-            typeof(Meat), 
-            "Prefabs/Edible/Meat", 
-            int.MaxValue, 
-            FoodType.Meat) 
+            typeof(Meat),
+            "Prefabs/Edible/Meat",
+            int.MaxValue,
+            FoodType.Meat)
         },
-        // »G¦×¡GµL¼Æ¶q­­¨î¡A¥i¦b¥ô¦ó¦a§Î¥Í¦¨
+        // è…è‚‰ï¼šç„¡æ•¸é‡é™åˆ¶ï¼Œå¯åœ¨ä»»ä½•åœ°å½¢ç”Ÿæˆ
         { SpawnableEntityType.Carrion, new SpawnableEntity(
-            typeof(Carrion), 
-            "Prefabs/Edible/Carrion", 
-            int.MaxValue, 
-            FoodType.Carrion) 
+            typeof(Carrion),
+            "Prefabs/Edible/Carrion",
+            int.MaxValue,
+            FoodType.Carrion)
         }
     };
 
-    // ========== FoodType ¹ïÀ³ªí ==========
-    // ¥Î©ó§Ö³t¬d¸ß FoodType ¹ïÀ³ªº SpawnableEntityType
+    // ========== FoodType å°æ‡‰è¡¨ ==========
+    // ç”¨æ–¼å¿«é€ŸæŸ¥è©¢ FoodType å°æ‡‰çš„ SpawnableEntityType
     private static readonly Dictionary<FoodType, SpawnableEntityType> foodTypeMapping = new()
     {
         { FoodType.Grass, SpawnableEntityType.Grass },
@@ -135,10 +135,10 @@ public static class EntityData
     };
 
     /// <summary>
-    /// ±N FoodType Âà´«¬°¹ïÀ³ªº SpawnableEntityType
+    /// å°‡ FoodType è½‰æ›ç‚ºå°æ‡‰çš„ SpawnableEntityType
     /// </summary>
-    /// <param name="foodType">­¹ª«Ãş«¬</param>
-    /// <returns>¹ïÀ³ªº SpawnableEntityType¡A­YµL¹ïÀ³«h¦^¶Ç null</returns>
+    /// <param name="foodType">é£Ÿç‰©é¡å‹</param>
+    /// <returns>å°æ‡‰çš„ SpawnableEntityTypeï¼Œè‹¥ç„¡å°æ‡‰å‰‡å›å‚³ null</returns>
     public static SpawnableEntityType? FoodType2SpawnableType(FoodType foodType)
     {
         if (foodTypeMapping.TryGetValue(foodType, out var spawnableType))
@@ -149,10 +149,10 @@ public static class EntityData
     }
 
     /// <summary>
-    /// ±N SpawnableEntityType Âà´«¬°¹ïÀ³ªº FoodType
+    /// å°‡ SpawnableEntityType è½‰æ›ç‚ºå°æ‡‰çš„ FoodType
     /// </summary>
-    /// <param name="spawnableType">¥i¥Í¦¨¹êÅéÃş«¬</param>
-    /// <returns>¹ïÀ³ªº FoodType¡A­YµL¹ïÀ³«h¦^¶Ç null</returns>
+    /// <param name="spawnableType">å¯ç”Ÿæˆå¯¦é«”é¡å‹</param>
+    /// <returns>å°æ‡‰çš„ FoodTypeï¼Œè‹¥ç„¡å°æ‡‰å‰‡å›å‚³ null</returns>
     public static FoodType? SpawnableType2FoodType(SpawnableEntityType spawnableType)
     {
         if (spawnableDict.TryGetValue(spawnableType, out var entity))
@@ -163,10 +163,10 @@ public static class EntityData
     }
 
     /// <summary>
-    /// ¨ú±o«ü©wÃş«¬ªº¹êÅé¸ê®Æ
+    /// å–å¾—æŒ‡å®šé¡å‹çš„å¯¦é«”è³‡æ–™
     /// </summary>
-    /// <param name="spawnableType">¥i¥Í¦¨¹êÅéÃş«¬</param>
-    /// <returns>SpawnableEntity ¸ê®Æª«¥ó</returns>
+    /// <param name="spawnableType">å¯ç”Ÿæˆå¯¦é«”é¡å‹</param>
+    /// <returns>SpawnableEntity è³‡æ–™ç‰©ä»¶</returns>
     public static SpawnableEntity GetSpawnableEntity(SpawnableEntityType spawnableType)
     {
         if (spawnableDict.TryGetValue(spawnableType, out var entity))
@@ -177,19 +177,19 @@ public static class EntityData
     }
 
     /// <summary>
-    /// ÀRºA«Øºc¤l - ÅçÃÒ¸ê®Æ§¹¾ã©Ê
+    /// éœæ…‹å»ºæ§‹å­ - é©—è­‰è³‡æ–™å®Œæ•´æ€§
     /// </summary>
     static EntityData()
     {
-        // ÀË¬d spawnableDict ¬O§_¥]§t©Ò¦³ SpawnableEntityType
+        // æª¢æŸ¥ spawnableDict æ˜¯å¦åŒ…å«æ‰€æœ‰ SpawnableEntityType
         if (spawnableDict.Count != Enum.GetValues(typeof(SpawnableEntityType)).Length)
         {
-            Debug.LogError("[EntityData] spawnableDict ªº¼Æ¶q»P SpawnableEntityType ¦CÁ|¤£²Å¡I");
+            Debug.LogError("[EntityData] spawnableDict çš„æ•¸é‡èˆ‡ SpawnableEntityType åˆ—èˆ‰ä¸ç¬¦ï¼");
             foreach (SpawnableEntityType type in Enum.GetValues(typeof(SpawnableEntityType)))
             {
                 if (!spawnableDict.ContainsKey(type))
                 {
-                    Debug.LogError($"[EntityData] SpawnableEntityType.{type} ¥¼¦b spawnableDict ¤¤©w¸q¡I");
+                    Debug.LogError($"[EntityData] SpawnableEntityType.{type} æœªåœ¨ spawnableDict ä¸­å®šç¾©ï¼");
                 }
             }
         }
@@ -197,33 +197,33 @@ public static class EntityData
 }
 
 /// <summary>
-/// ¥i¥Í¦¨¹êÅé¸ê®ÆÃş§O - Àx¦s³æ¤@¹êÅéÃş«¬ªº¸Ô²Ó¸ê®Æ
+/// å¯ç”Ÿæˆå¯¦é«”è³‡æ–™é¡åˆ¥ - å„²å­˜å–®ä¸€å¯¦é«”é¡å‹çš„è©³ç´°è³‡æ–™
 /// </summary>
 public class SpawnableEntity
 {
-    /// <summary>¹êÅéªº C# Ãş§OÃş«¬¡]¥Î©ó¤Ï®g³Ğ«Ø EntityPool¡^</summary>
+    /// <summary>å¯¦é«”çš„ C# é¡åˆ¥é¡å‹ï¼ˆç”¨æ–¼åå°„å‰µå»º EntityPoolï¼‰</summary>
     public Type ClassType { get; private set; }
-    
-    /// <summary>Prefab ¦b Resources ¸ê®Æ§¨¤¤ªº¸ô®|</summary>
+
+    /// <summary>Prefab åœ¨ Resources è³‡æ–™å¤¾ä¸­çš„è·¯å¾‘</summary>
     public string PrefabPath { get; }
-    
-    /// <summary>¥i¥Í¦¨¦¹¹êÅéªº¦a§ÎÃş«¬¦Cªí¡]null ªí¥Ü¥i¦b¥ô¦ó¦a§Î¥Í¦¨¡^</summary>
+
+    /// <summary>å¯ç”Ÿæˆæ­¤å¯¦é«”çš„åœ°å½¢é¡å‹åˆ—è¡¨ï¼ˆnull è¡¨ç¤ºå¯åœ¨ä»»ä½•åœ°å½¢ç”Ÿæˆï¼‰</summary>
     public List<TerrainType> SpawnableTerrain { get; private set; }
-    
-    /// <summary>¸ÓÃş«¬¹êÅéªº³Ì¤j¼Æ¶q­­¨î</summary>
+
+    /// <summary>è©²é¡å‹å¯¦é«”çš„æœ€å¤§æ•¸é‡é™åˆ¶</summary>
     public int MaxSpawnableValue { get; private set; }
-    
-    /// <summary>¹ïÀ³ªº­¹ª«Ãş«¬¡]¥i¬° null¡^</summary>
+
+    /// <summary>å°æ‡‰çš„é£Ÿç‰©é¡å‹ï¼ˆå¯ç‚º nullï¼‰</summary>
     public FoodType? FoodType { get; private set; }
 
     /// <summary>
-    /// «Øºc¤l
+    /// å»ºæ§‹å­
     /// </summary>
-    /// <param name="type">¹êÅéªº C# Ãş§OÃş«¬</param>
-    /// <param name="prefabPath">Prefab ¸ô®|</param>
-    /// <param name="maxVal">³Ì¤j¼Æ¶q­­¨î</param>
-    /// <param name="foodType">¹ïÀ³ªº­¹ª«Ãş«¬¡]¥i¿ï¡^</param>
-    /// <param name="spawnableTerrain">¥i¥Í¦¨ªº¦a§Î¦Cªí¡]¥i¿ï¡^</param>
+    /// <param name="type">å¯¦é«”çš„ C# é¡åˆ¥é¡å‹</param>
+    /// <param name="prefabPath">Prefab è·¯å¾‘</param>
+    /// <param name="maxVal">æœ€å¤§æ•¸é‡é™åˆ¶</param>
+    /// <param name="foodType">å°æ‡‰çš„é£Ÿç‰©é¡å‹ï¼ˆå¯é¸ï¼‰</param>
+    /// <param name="spawnableTerrain">å¯ç”Ÿæˆçš„åœ°å½¢åˆ—è¡¨ï¼ˆå¯é¸ï¼‰</param>
     public SpawnableEntity(Type type, string prefabPath, int maxVal, FoodType? foodType = null, List<TerrainType> spawnableTerrain = null)
     {
         ClassType = type;
@@ -233,4 +233,5 @@ public class SpawnableEntity
         SpawnableTerrain = spawnableTerrain;
     }
 }
+
 

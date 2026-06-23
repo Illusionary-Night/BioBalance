@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Action ª¬ºA¾÷¡AºŞ²z Creature ªº Action °õ¦æ¬yµ{
+/// Action ç‹€æ…‹æ©Ÿï¼Œç®¡ç† Creature çš„ Action åŸ·è¡Œæµç¨‹
 /// </summary>
 public class ActionStateMachine
 {
@@ -10,11 +10,11 @@ public class ActionStateMachine
     private ActionContext currentContext;
     private System.Action<Vector2Int> currentMovementCallback;
 
-    //µ¹creature editor¨ºÃäºÊ±±¥Î---
+    //çµ¦creature editoré‚£é‚Šç›£æ§ç”¨---
     public bool HasMovementCallback => currentMovementCallback != null;
     public string CurrentActionName => currentContext?.ActionType.ToString() ?? "None";
-    
-    // ¥Î©ó Creature Editor ºÊ±±ªº§Ö¨ú¼Æ¾Ú
+
+    // ç”¨æ–¼ Creature Editor ç›£æ§çš„å¿«å–æ•¸æ“š
     public struct ActionDebugInfo
     {
         public bool isConditionMet;
@@ -22,7 +22,7 @@ public class ActionStateMachine
     }
     public Dictionary<ActionType, ActionDebugInfo> DebugInfoCache = new();
 
-    // ¥Î©ó°lÂÜ­ş¨Ç¨Æ¥ó³B²z¾¹»İ­n¦b²M²z®É²¾°£
+    // ç”¨æ–¼è¿½è¹¤å“ªäº›äº‹ä»¶è™•ç†å™¨éœ€è¦åœ¨æ¸…ç†æ™‚ç§»é™¤
     private List<System.Delegate> registeredCallbacks = new();
 
     public ActionContext CurrentContext => currentContext;
@@ -34,23 +34,23 @@ public class ActionStateMachine
     }
 
     /// <summary>
-    /// µû¦ô¨Ã°õ¦æ³Ì¨Î Action
+    /// è©•ä¼°ä¸¦åŸ·è¡Œæœ€ä½³ Action
     /// </summary>
     public void EvaluateAndExecute()
     {
         DebugInfoCache.Clear();
 
-        // ¦¬¶°¥i¥Îªº Actions
+        // æ”¶é›†å¯ç”¨çš„ Actions
         List<KeyValuePair<ActionType, float>> availableActions = new List<KeyValuePair<ActionType, float>>();
 
         for (int i = 0; i < owner.actionList.Count; i++)
         {
-            // ¥[¤J¦s¨ú¤@¨Çµ¹Creature EditorºÊ´úªº¼Æ¾Ú
+            // åŠ å…¥å­˜å–ä¸€äº›çµ¦Creature Editorç›£æ¸¬çš„æ•¸æ“š
             ActionType type = owner.actionList[i];
             bool met = ActionSystem.IsConditionMet(owner, type);
             float weight = met ? ActionSystem.GetWeight(owner, type) : 0;
 
-            // ¦s¤J§Ö¨ú¨Ñ Editor Åª¨ú
+            // å­˜å…¥å¿«å–ä¾› Editor è®€å–
             DebugInfoCache[type] = new ActionDebugInfo { isConditionMet = met, weight = weight };
 
             if (met)
@@ -59,31 +59,31 @@ public class ActionStateMachine
             }
         }
 
-        // «öÅv­«±Æ§Ç
+        // æŒ‰æ¬Šé‡æ’åº
         availableActions.Sort((x, y) => y.Value.CompareTo(x.Value));
 
-        // ¹Á¸Õ°õ¦æ Action
+        // å˜—è©¦åŸ·è¡Œ Action
         while (availableActions.Count > 0)
         {
             ActionType selectedAction = availableActions[0].Key;
-            
-            // ¦pªG¦³¥¿¦b°õ¦æªº Action¡A¥ı²M²z
+
+            // å¦‚æœæœ‰æ­£åœ¨åŸ·è¡Œçš„ Actionï¼Œå…ˆæ¸…ç†
             if (IsExecuting)
             {
-                // ¨ú®ø·í«e Action
+                // å–æ¶ˆç•¶å‰ Action
                 CancelCurrentAction();
             }
 
             if (ActionSystem.IsSuccess(owner, selectedAction))
             {
-                // ³Ğ«Ø·sªº°õ¦æ¤W¤U¤å
+                // å‰µå»ºæ–°çš„åŸ·è¡Œä¸Šä¸‹æ–‡
                 currentContext = new ActionContext(owner, selectedAction);
-                
-                // ­q¾\¤W¤U¤å¨Æ¥ó
+
+                // è¨‚é–±ä¸Šä¸‹æ–‡äº‹ä»¶
                 currentContext.OnCancelled += OnActionCancelled;
                 currentContext.OnCompleted += OnActionCompleted;
-                
-                // °õ¦æ Action
+
+                // åŸ·è¡Œ Action
                 owner.SetCurrentAction(selectedAction);
                 ActionSystem.Execute(owner, selectedAction, currentContext);
 
@@ -91,14 +91,14 @@ public class ActionStateMachine
             }
             else
             {
-                // ¥¢±Ñ¡A¹Á¸Õ¦¸°ªÅv­«
+                // å¤±æ•—ï¼Œå˜—è©¦æ¬¡é«˜æ¬Šé‡
                 availableActions.RemoveAt(0);
             }
         }
     }
 
     /// <summary>
-    /// ¨ú®ø·í«e¥¿¦b°õ¦æªº Action
+    /// å–æ¶ˆç•¶å‰æ­£åœ¨åŸ·è¡Œçš„ Action
     /// </summary>
     public void CancelCurrentAction()
     {
@@ -110,20 +110,20 @@ public class ActionStateMachine
     }
 
     /// <summary>
-    /// µù¥U²¾°Ê§¹¦¨¦^½Õ
+    /// è¨»å†Šç§»å‹•å®Œæˆå›èª¿
     /// </summary>
     public void RegisterMovementCallback(System.Action<Vector2Int> callback)
     {
-        // ²M°£ÂÂªº¦^½Õ
+        // æ¸…é™¤èˆŠçš„å›èª¿
         ClearMovementCallback();
-        
+
         currentMovementCallback = callback;
         owner.OnMovementComplete += callback;
         registeredCallbacks.Add(callback);
     }
 
     /// <summary>
-    /// ²M°£²¾°Ê¦^½Õ
+    /// æ¸…é™¤ç§»å‹•å›èª¿
     /// </summary>
     private void ClearMovementCallback()
     {
@@ -135,7 +135,7 @@ public class ActionStateMachine
     }
 
     /// <summary>
-    /// Action ³Q¨ú®ø®Éªº³B²z
+    /// Action è¢«å–æ¶ˆæ™‚çš„è™•ç†
     /// </summary>
     private void OnActionCancelled()
     {
@@ -143,33 +143,33 @@ public class ActionStateMachine
     }
 
     /// <summary>
-    /// Action §¹¦¨®Éªº³B²z
+    /// Action å®Œæˆæ™‚çš„è™•ç†
     /// </summary>
     private void OnActionCompleted()
     {
-        // ³]©w§N«o®É¶¡
+        // è¨­å®šå†·å»æ™‚é–“
         if (currentContext != null)
         {
             //int cooldown = ActionSystem.GetCooldown(owner, currentContext.ActionType);
             //owner.actionCooldown = cooldown;
             owner.ResetActionCooldown(currentContext.ActionType);
         }
-        
+
         Cleanup();
     }
 
     /// <summary>
-    /// ²M²z©Ò¦³¨Æ¥ó­q¾\©M¦^½Õ
+    /// æ¸…ç†æ‰€æœ‰äº‹ä»¶è¨‚é–±å’Œå›èª¿
     /// </summary>
     private void Cleanup()
     {
-        // ²M°£²¾°Ê¦^½Õ
+        // æ¸…é™¤ç§»å‹•å›èª¿
         ClearMovementCallback();
-        
-        // ²M°£©Ò¦³µù¥Uªº¦^½Õ
+
+        // æ¸…é™¤æ‰€æœ‰è¨»å†Šçš„å›èª¿
         registeredCallbacks.Clear();
-        
-        // ¨ú®ø­q¾\¤W¤U¤å¨Æ¥ó
+
+        // å–æ¶ˆè¨‚é–±ä¸Šä¸‹æ–‡äº‹ä»¶
         if (currentContext != null)
         {
             currentContext.OnCancelled -= OnActionCancelled;

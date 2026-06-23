@@ -3,16 +3,18 @@ using UnityEngine;
 
 public class InGameManager
 {
-    // Àô¹Ò¹êÅéºŞ²z¾¹
+    // ç’°å¢ƒå¯¦é«”ç®¡ç†å™¨
     public EnvEntityManager EnvEntityManager { get; private set; }
 
-    // ®É¶¡ºŞ²z¾¹
+    // æ™‚é–“ç®¡ç†å™¨
     public TickManager TickManager { get; private set; }
 
-    // ª«ºØÁ`¤÷ª«¥ó
+    // ç‰©ç¨®ç¸½çˆ¶ç‰©ä»¶
     public Transform Creature_Container { get; private set; }
 
     [SerializeField] private readonly Dictionary<int, Species> species = new();
+    //TODO: åˆ†å€ç®¡ç†çš„æ™‚å€™ä¾†è§£æ±º
+    //TODO: ä¹‹å¾Œéœ€è¦æ€è€ƒï¼Œç•¶éŠæˆ²ä¸­å»ºç«‹äº†æ–°ç‰©ç¨®ï¼Œè©²æ€éº¼è®“èˆŠç”Ÿç‰©èƒ½å¤ å°‡ä»–åˆ—å…¥çµç‰©åå–®ä¸­
     public Dictionary<int, Species> Species => species;
 
     public InGameManager()
@@ -30,39 +32,39 @@ public class InGameManager
 
     private void Initialize()
     {
-        // ·s«Øª«ºØÁ`¤÷ª«¥óCreature_Container
+        // æ–°å»ºç‰©ç¨®ç¸½çˆ¶ç‰©ä»¶Creature_Container
         Creature_Container = new GameObject("Creature_Container").transform;
 
-        // ·s«Ø TickManager 
+        // æ–°å»º TickManager 
         TickManager = new GameObject("TickManager").AddComponent<TickManager>();
 
         EnvEntityManager = new EnvEntityManager();
 
-        // ±Ò¥Î EnvEntityManager ªº Tick ­q¾\
+        // å•Ÿç”¨ EnvEntityManager çš„ Tick è¨‚é–±
         if (EnvEntityManager != null)
         {
             TickManager?.RegisterTickable(EnvEntityManager.OnTick);
         }
 
-        // ¬ö¿ıªì©l¤Æ§¹¦¨
-        LogManager.Log("[Manager] ªì©l¤Æ§¹¦¨");
+        // ç´€éŒ„åˆå§‹åŒ–å®Œæˆ
+        LogManager.Log("[Manager] åˆå§‹åŒ–å®Œæˆ");
     }
 
     /// <summary>
-    /// §ó·s¤Ñ¼ÄÃö«Y
+    /// æ›´æ–°å¤©æ•µé—œä¿‚
     /// </summary>
     private void PredatorUpdate(Creature new_creature)
     {
-        // ¨ú±o·s¥Íª«ªºª«ºØ©w¸q
+        // å–å¾—æ–°ç”Ÿç‰©çš„ç‰©ç¨®å®šç¾©
         var newSpecies = new_creature.mySpecies;
 
-        // --- ²Ä¤@¶¥¬q¡G§ä¥X½Ö¬O³o°¦·s¥Íª«ªº¤Ñ¼Ä ---
+        // --- ç¬¬ä¸€éšæ®µï¼šæ‰¾å‡ºèª°æ˜¯é€™éš»æ–°ç”Ÿç‰©çš„å¤©æ•µ ---
         foreach (var speciesEntry in Species.Values)
         {
-            // ¦pªG³o­Óª«ºØªºÂyª«²M³æ¥]§t·s¥Íª«ªº ID¡A¨º¨e´N¬O¤Ñ¼Ä
+            // å¦‚æœé€™å€‹ç‰©ç¨®çš„çµç‰©æ¸…å–®åŒ…å«æ–°ç”Ÿç‰©çš„ IDï¼Œé‚£ç‰ å°±æ˜¯å¤©æ•µ
             if (speciesEntry.preyIDList.Contains(newSpecies.speciesID))
             {
-                // ±N¸Óª«ºØ ID ¥[¤J·s¥Íª«ªº¤Ñ¼Ä²M³æ¡]¦pªGÁÙ¨S¥[¹L¡^
+                // å°‡è©²ç‰©ç¨® ID åŠ å…¥æ–°ç”Ÿç‰©çš„å¤©æ•µæ¸…å–®ï¼ˆå¦‚æœé‚„æ²’åŠ éï¼‰
                 if (!new_creature.predatorIDList.Contains(speciesEntry.speciesID))
                 {
                     new_creature.predatorIDList.Add(speciesEntry.speciesID);
@@ -70,16 +72,16 @@ public class InGameManager
             }
         }
 
-        // --- ²Ä¤G¶¥¬q¡G§iª¾·s¥Íª«ªºÂyª«¡A·s¥Íª«¬O¨e­Ìªº¤Ñ¼Ä ---
+        // --- ç¬¬äºŒéšæ®µï¼šå‘ŠçŸ¥æ–°ç”Ÿç‰©çš„çµç‰©ï¼Œæ–°ç”Ÿç‰©æ˜¯ç‰ å€‘çš„å¤©æ•µ ---
         foreach (var preyID in newSpecies.preyIDList)
         {
-            // §ä¥Ø¼ĞÂyª«ª«ºØ
+            // æ‰¾ç›®æ¨™çµç‰©ç‰©ç¨®
             if (Species.TryGetValue(preyID, out var preySpecies))
             {
-                // ¹M¾ú¸Óª«ºØªº©Ò¦³¥Íª«
+                // éæ­·è©²ç‰©ç¨®çš„æ‰€æœ‰ç”Ÿç‰©
                 foreach (var preyCreature in preySpecies.creatures.Values)
                 {
-                    // §i¶DÂyª«¡G·s¥Íª«³o­Óª«ºØ¬O§Aªº¤Ñ¼Ä
+                    // å‘Šè¨´çµç‰©ï¼šæ–°ç”Ÿç‰©é€™å€‹ç‰©ç¨®æ˜¯ä½ çš„å¤©æ•µ
                     if (!preyCreature.predatorIDList.Contains(newSpecies.speciesID))
                     {
                         preyCreature.predatorIDList.Add(newSpecies.speciesID);
@@ -90,32 +92,32 @@ public class InGameManager
     }
 
     /// <summary>
-    /// µù¥U·s¥Íª«
+    /// è¨»å†Šæ–°ç”Ÿç‰©
     /// </summary>
     public void RegisterCreature(Creature newCreature)
     {
         int id = newCreature.speciesID;
 
-        // ¹Á¸Õ¨ú±oª«ºØ¸ê®Æ
+        // å˜—è©¦å–å¾—ç‰©ç¨®è³‡æ–™
         if (!species.TryGetValue(id, out var speciesData))
         {
-            // ³o¬O·sª«ºØ
+            // é€™æ˜¯æ–°ç‰©ç¨®
             speciesData = newCreature.mySpecies;
             species.Add(id, speciesData);
 
-            // --- ¦Û°Ê¤Æ®e¾¹¥Í¦¨ ---
-            // ¦b EnvironmentEntities ¤U«Ø¥ß¤@­Ó¥Hª«ºØ©R¦WªºªÅª«¥ó
+            // --- è‡ªå‹•åŒ–å®¹å™¨ç”Ÿæˆ ---
+            // åœ¨ EnvironmentEntities ä¸‹å»ºç«‹ä¸€å€‹ä»¥ç‰©ç¨®å‘½åçš„ç©ºç‰©ä»¶
             GameObject container = new GameObject($"{speciesData.name}_Container");
             container.transform.SetParent(this.Creature_Container);
             speciesData.parentObject = container.transform;
 
-            // ¬Æ¦Ü¥i¥H§â³o­Ó Transform ¦s¶i Species ª«¥ó¤¤¡]¦pªG Species ¦³¹w¯dÄæ¦ì¡^
+            // ç”šè‡³å¯ä»¥æŠŠé€™å€‹ Transform å­˜é€² Species ç‰©ä»¶ä¸­ï¼ˆå¦‚æœ Species æœ‰é ç•™æ¬„ä½ï¼‰
             // speciesData.runtimeContainer = container.transform; 
 
-            Debug.Log($"[Manager] µù¥U·sª«ºØ¨Ã«Ø¥ß®e¾¹: {speciesData.name}");
+            Debug.Log($"[Manager] è¨»å†Šæ–°ç‰©ç¨®ä¸¦å»ºç«‹å®¹å™¨: {speciesData.name}");
         }
 
-        // ¥[¤J¦r¨å
+        // åŠ å…¥å­—å…¸
         if (!speciesData.creatures.TryAdd(newCreature.UUID, newCreature))
         {
             return;
@@ -125,7 +127,7 @@ public class InGameManager
     }
 
     /// <summary>
-    /// µù¾P¤w¦º¤`ªº¥Íª«
+    /// è¨»éŠ·å·²æ­»äº¡çš„ç”Ÿç‰©
     /// </summary>
     public void UnregisterCreature(Creature deadCreature)
     {
@@ -135,14 +137,14 @@ public class InGameManager
         {
             if (speciesData.creatures.Remove(deadCreature.UUID))
             {
-                // ¥u¦³¦b²¾°£¦¨¥\«á¤~°µ²M²zÅŞ¿è
-                // ¨Ò¦p¡G²M²z¸Ó¥Íª«ªº CD ¦r¨å©Îª¬ºA¡AÁ×§Kª«¥ó¦À¦^¦¬«á´İ¯dÂÂ¸ê®Æ
+                // åªæœ‰åœ¨ç§»é™¤æˆåŠŸå¾Œæ‰åšæ¸…ç†é‚è¼¯
+                // ä¾‹å¦‚ï¼šæ¸…ç†è©²ç”Ÿç‰©çš„ CD å­—å…¸æˆ–ç‹€æ…‹ï¼Œé¿å…ç‰©ä»¶æ± å›æ”¶å¾Œæ®˜ç•™èˆŠè³‡æ–™
                 // deadCreature.OnRecycle(); 
             }
         }
         else
         {
-            Debug.LogWarning($"[Manager] ¹Á¸Õµù¾P¤£¦s¦bª«ºØªº¥Íª«: {id}");
+            Debug.LogWarning($"[Manager] å˜—è©¦è¨»éŠ·ä¸å­˜åœ¨ç‰©ç¨®çš„ç”Ÿç‰©: {id}");
         }
     }
 }
