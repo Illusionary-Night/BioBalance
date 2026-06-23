@@ -1,21 +1,22 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+//TODO: æ€è€ƒä¸€ä¸‹ç‚ºä»€éº¼ä»–éœ€è¦public
 [CreateAssetMenu(fileName = "New Species", menuName = "BioBalance/Species")]
 public class Species : ScriptableObject, ISerializationCallbackReceiver
 {
-    [Header("ª«ºØ°ò¥»©w¸q (¥ş±Ú¸s²Î¤@)")]
+    [Header("ç‰©ç¨®åŸºæœ¬å®šç¾© (å…¨æ—ç¾¤çµ±ä¸€)")]
     public int speciesID;
     public CreatureBase creatureBase;
     public List<FoodType> foodTypes = new List<FoodType>();
     public List<int> preyIDList = new List<int>();
     public List<int> predatorIDList = new List<int>();
     public List<ActionType> actionList = new List<ActionType>();
-    public float variation; // ÅÜ²§²v
+    public float variation; // è®Šç•°ç‡
     public Transform parentObject = null;
 
-    [Header("¿ò¶Ç°ò·Ç­È (­ÓÅéÅÜ²§ªº°_ÂI)")]
-    // ±N­ì¥»Äİ©Êµ²ºc¤¤ªº°òÂ¦¼Æ­È©ñ¦b³o¸Ì§@¬°¡u½d¥»¡v
+    [Header("éºå‚³åŸºæº–å€¼ (å€‹é«”è®Šç•°çš„èµ·é»)")]
+    // å°‡åŸæœ¬å±¬æ€§çµæ§‹ä¸­çš„åŸºç¤æ•¸å€¼æ”¾åœ¨é€™è£¡ä½œç‚ºã€Œç¯„æœ¬ã€
     public float baseSize = 1.0f;
     public float baseSpeed = 5.0f;
     public float baseMaxHealth = 100.0f;
@@ -24,19 +25,23 @@ public class Species : ScriptableObject, ISerializationCallbackReceiver
     public float baseLifespan = 2000.0f;
     public float basePerceptionRange = 10.0f;
 
-    [Header("¯S®í¿ò¶Ç¶µ¥Ø")]
+    [Header("ç‰¹æ®Šéºå‚³é …ç›®")]
     public ReproductionType reproductionType;
 
-    [Header("¹B¦æ®É¼Æ¾Ú (Runtime)")]
-    // °õ¦æ®É¤~²£¥Íªº Dictionary¡A¤£»İ­n§Ç¦C¤Æ
+    [Header("é‹è¡Œæ™‚æ•¸æ“š (Runtime)")]
+    // åŸ·è¡Œæ™‚æ‰ç”¢ç”Ÿçš„ Dictionaryï¼Œä¸éœ€è¦åºåˆ—åŒ–
     public Dictionary<string, Creature> creatures = new();
     public int Count => creatures.Count;
 
-    // --- ¦r¨å§Ç¦C¤Æ³B²z (Action Max CD) ---
+    // --- å­—å…¸åºåˆ—åŒ–è™•ç† (Action Max CD) ---
     public Dictionary<ActionType, int> actionMaxCD = new();
 
     [SerializeField, HideInInspector] private List<ActionType> _cdKeys = new List<ActionType>();
     [SerializeField, HideInInspector] private List<int> _cdValues = new List<int>();
+
+    // TODO: æ ¹æ“šdesignæ±ºå®šæ­»äº¡æ‰è½ç‰©
+    // public Action<Vector2INT> DropOnDeath;
+
 
     public void OnBeforeSerialize()
     {
@@ -59,4 +64,5 @@ public class Species : ScriptableObject, ISerializationCallbackReceiver
             actionMaxCD.Add(_cdKeys[i], _cdValues[i]);
         }
     }
+
 }

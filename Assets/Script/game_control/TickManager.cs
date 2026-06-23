@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-
+//TODO: 需要把各種行動步驟分在不同執行時間，以免效能尖峰
 public class TickManager : MonoBehaviour
 {
     public int CurrentHour { get; private set; }
@@ -30,7 +30,7 @@ public class TickManager : MonoBehaviour
 
     private void UnregisterPauseInput()
     {
-            MainManager.inputManager.OnPausePerformed -= OnPausePerformed;
+        MainManager.inputManager.OnPausePerformed -= OnPausePerformed;
     }
 
     private void OnPausePerformed()

@@ -23,10 +23,10 @@ public class TestRunner : MonoBehaviour
 
     void Start()
     {
-        SpawnCreature1();
-        SpawnCreature2();
-        SpawnCreature3();
-        SpawnCreature4();
+        // SpawnCreature1();
+        // SpawnCreature2();
+        // SpawnCreature3();
+        // SpawnCreature4();
     }
 
     private void Update()

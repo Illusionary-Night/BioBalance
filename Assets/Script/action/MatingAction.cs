@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Analytics;
@@ -9,26 +9,25 @@ public class MatingAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
     {
-        // --- 1. °ò¥»¥Í²z­­¨î (¨k¤k³q¥Î) ---
-        if (creature.age < creature.lifespan * 0.2f) return false;     // ¥¼¦¨¦~¤£¥æ°t
-        if (creature.hunger < creature.maxHunger * 0.5f) return false; // ¨{¤l¾j¤£¥æ°t
-        //if (creature.reproductionCD > 0) return false;                 // §N«o¤¤¤£¥æ°t
+        // --- 1. åŸºæœ¬ç”Ÿç†é™åˆ¶ (ç”·å¥³é€šç”¨) ---
+        if (creature.age < creature.lifespan * 0.2f) return false;     // æœªæˆå¹´ä¸äº¤é…
+        if (creature.hunger < creature.maxHunger * 0.5f) return false; // è‚šå­é¤“ä¸äº¤é…
+        if (creature.reproductionCD > 0) return false;                 // å†·å»ä¸­ä¸äº¤é…
 
-        // --- 2. ½T«Oµø½u¤º¦³¡u¦Xªk¡vªº¹ï¶H ---
+        // --- 2. ç¢ºä¿è¦–ç·šå…§æœ‰ã€Œåˆæ³•ã€çš„å°è±¡ ---
         if (creature.gender == Gender.Female)
         {
-            // ¥À§ä¤½¡G¹ï¤è¤]¥²¶·¬O¦¨¦~¡B¦Y¹¡¡B¥B¤£¦b§N«o¤¤
+            // æ¯æ‰¾å…¬ï¼šå°æ–¹ä¹Ÿå¿…é ˆæ˜¯æˆå¹´ã€åƒé£½ã€ä¸”ä¸åœ¨å†·å»ä¸­
             bool maleInSight = Perception.Creatures.HasTarget(creature, creature.speciesID, 1.5f,
                 c => c.gender == Gender.Male &&
                      c.age >= c.lifespan * 0.2f &&
-                     c.hunger >= c.maxHunger * 0.5f &&
-                     c.reproductionCD <= 0);
+                     c.hunger >= c.maxHunger * 0.5f);
 
             if (!maleInSight) return false;
         }
         else if (creature.gender == Gender.Male)
         {
-            // ¤½§ä¥À¡G¹ï¤è¤]¥²¶·¬O¦¨¦~¡B¦Y¹¡¡B¥B¤£¦b§N«o¤¤
+            // å…¬æ‰¾æ¯ï¼šå°æ–¹ä¹Ÿå¿…é ˆæ˜¯æˆå¹´ã€åƒé£½ã€ä¸”ä¸åœ¨å†·å»ä¸­
             bool femaleInSight = Perception.Creatures.HasTarget(creature, creature.speciesID, 1.5f,
                 c => c.gender == Gender.Female &&
                      c.age >= c.lifespan * 0.2f &&
@@ -41,29 +40,29 @@ public class MatingAction : ActionBase
     }
     public override float GetWeight(Creature creature)
     {
-        // --- ¶¯©Ê¡G»Qª¯¼Ò¦¡ ---
+        // --- é›„æ€§ï¼šèˆ”ç‹—æ¨¡å¼ ---
         if (creature.gender == Gender.Male)
         {
 
-            // ¥u­n©PÃä¦³¥i¥H¨ü¥¥ªº»Û©Ê¡A´Nºû«ù°l³v¿³½ì
-            if (Perception.Creatures.HasTarget(creature, creature.speciesID ,1 , c=>c.IsInHeat()))
+            // åªè¦å‘¨é‚Šæœ‰å¯ä»¥å—å­•çš„é›Œæ€§ï¼Œå°±ç¶­æŒè¿½é€èˆˆè¶£
+            if (Perception.Creatures.HasTarget(creature, creature.speciesID, 1, c => c.IsInHeat()))
             {
-                return 0.65f; // ¤ñº©¹C°ª¡A¤ñ¦Y¶º§C
+                return 0.65f; // æ¯”æ¼«éŠé«˜ï¼Œæ¯”åƒé£¯ä½
             }
         }
 
-        // --- »Û©Ê¡G¤k¤ı¼Ò¦¡ ---
+        // --- é›Œæ€§ï¼šå¥³ç‹æ¨¡å¼ ---
         if (creature.gender == Gender.Female)
         {
-            // 1. ¥ı¬İ¦Û¤v·Ç¤£·Ç³Æ¦n (§N«o¡B¹¡­¹«×)
+            // 1. å…ˆçœ‹è‡ªå·±æº–ä¸æº–å‚™å¥½ (å†·å»ã€é£½é£Ÿåº¦)
             if (!creature.IsInHeat()) return 0f;
 
-            // 2. ¬İ¬İ¨­Ãä¦³¨S¦³¤w¸g¶K¹L¨Óªº¶¯©Ê (½d³ò­n¤p¡A¨Ò¦p 1.0f)
+            // 2. çœ‹çœ‹èº«é‚Šæœ‰æ²’æœ‰å·²ç¶“è²¼éä¾†çš„é›„æ€§ (ç¯„åœè¦å°ï¼Œä¾‹å¦‚ 1.0f)
             bool maleNearby = Perception.Creatures.HasTarget(creature, creature.speciesID, 1.5f, c => c.IsNearby(creature) && c.gender == Gender.Male && c.IsInHeat());
 
             if (maleNearby)
             {
-                // ¸U¨Æ¨ã³Æ¡AÅv­«©Ô°ª¡A·Ç³Æ°õ¦æ Execute (¥æ°t)
+                // è¬äº‹å…·å‚™ï¼Œæ¬Šé‡æ‹‰é«˜ï¼Œæº–å‚™åŸ·è¡Œ Execute (äº¤é…)
                 //Debug.LogAssertion("success2");
                 return 0.85f;
             }
@@ -79,10 +78,10 @@ public class MatingAction : ActionBase
 
     public override void Execute(Creature creature, ActionContext context)
     {
-        if(creature.gender == Gender.Male)
+        if (creature.gender == Gender.Male)
         {
-            //½Ä¥h§ä»Û©Ê
-            List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.speciesID, 1, true, c => c.gender == Gender.Female&&c.IsInHeat());
+            //è¡å»æ‰¾é›Œæ€§
+            List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.speciesID, 1, true, c => c.gender == Gender.Female && c.IsInHeat());
             Creature target = optionalTargets.FirstOrDefault();
             if (target != null)
             {
@@ -94,72 +93,103 @@ public class MatingAction : ActionBase
                     return;
                 }
 
-                // ¨Ï¥Îª¬ºA¾÷µù¥U²¾°Ê¦^½Õ
+                // ä½¿ç”¨ç‹€æ…‹æ©Ÿè¨»å†Šç§»å‹•å›èª¿
                 var stateMachine = creature.GetStateMachine();
 
                 System.Action<Vector2Int> onArrived = (arrivedPosition) =>
                 {
-                    // ÀË¬d Context ¬O§_¤´µM¦³®Ä
+                    // æª¢æŸ¥ Context æ˜¯å¦ä»ç„¶æœ‰æ•ˆ
                     if (context != null && !context.IsValid)
                     {
                         return;
                     }
-                    // ½T»{¬O§_¦bªşªñ
+                    // ç¢ºèªæ˜¯å¦åœ¨é™„è¿‘
                     if (target != null && creature.IsNearby(target))
                     {
-                        // ¼Ğ°O Action §¹¦¨
+                        // æ¨™è¨˜ Action å®Œæˆ
                         //Debug.LogAssertion("mating arrive");
                         context?.Complete();
                     }
                 };
 
-                // ³z¹Lª¬ºA¾÷µù¥U¦^½Õ¡]¦Û°ÊºŞ²z²M²z¡^
+                // é€éç‹€æ…‹æ©Ÿè¨»å†Šå›èª¿ï¼ˆè‡ªå‹•ç®¡ç†æ¸…ç†ï¼‰
                 stateMachine.RegisterMovementCallback(onArrived);
                 creature.MoveTo(targetPosition, false);
             }
             else
             {
-                // ¨S¦³§ä¨ì¥Ø¼Ğ¡Aª½±µ¼Ğ°O¬°§¹¦¨
+                // æ²’æœ‰æ‰¾åˆ°ç›®æ¨™ï¼Œç›´æ¥æ¨™è¨˜ç‚ºå®Œæˆ
                 context?.Complete();
             }
         }
-        if(creature.gender == Gender.Female)
+        if (creature.gender == Gender.Female)
         {
-            //¿ï¦Ñ¤½
-            List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.speciesID, 1, true, c => c.IsNearby(creature) && c.gender == Gender.Male&&c.IsInHeat());
+            //é¸è€å…¬
+            List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.speciesID, 1, true, c => c.IsNearby(creature) && c.gender == Gender.Male && c.IsInHeat());
             Creature target = optionalTargets.FirstOrDefault();
             if (target != null)
             {
                 Vector2Int targetPosition = Vector2Int.RoundToInt(target.transform.position);
-                GiveBirth(creature, target);
+                int times = CalculateBirthCount(creature.reproductionRate);
+                for (int i = 0; i < times; i++)
+                {
+                    GiveBirth(creature, target);
+                    creature.reproductionCD = 100f;
+                    target.reproductionCD = 30f;
+                }
                 creature.reproductionCD = 100f;
                 context?.Complete();
             }
             else
             {
-                // ¨S¦³§ä¨ì¥Ø¼Ğ¡Aª½±µ¼Ğ°O¬°§¹¦¨
+                // æ²’æœ‰æ‰¾åˆ°ç›®æ¨™ï¼Œç›´æ¥æ¨™è¨˜ç‚ºå®Œæˆ
                 //Debug.LogAssertion("dont fine male");
                 context?.Complete();
             }
         }
     }
-
+    //TODO: ä¹‹å¾ŒBuilderæœƒæŠŠå‡ºç”Ÿæ•´åˆåœ¨ä¸€èµ·
     private void GiveBirth(Creature mother, Creature father)
     {
+        Species species = MainManager.inGameManager.Species[mother.speciesID];
+        if (species.creatures.Count >= 300)
+        {
+            return;
+        }
         //Debug.LogAssertion("mating success!");
-        // ¨Ï¥Îª«¥ó¦À¨ú±o·s¥Íª«
+        // ä½¿ç”¨ç‰©ä»¶æ± å–å¾—æ–°ç”Ÿç‰©
         Vector3 spawnPosition = mother.transform.position + (Vector3)(Random.insideUnitCircle * 0.5f);
         Creature baby = CreaturePool.GetCreature(mother.mySpecies, spawnPosition, mother.ToCreatureAttribute(), father.ToCreatureAttribute());
+        if (baby == null)
+        {
+            Debug.LogWarning("Failed to spawn baby creature because the pool is exhausted.");
+            return;
+        }
         baby.gameObject.name = baby.creatureBase + "_" + baby.UUID;
         MainManager.inGameManager.RegisterCreature(baby);
         if (baby != null)
         {
-            // 2. ¬ö¿ı¤÷¥Àªº ID
+            // 2. ç´€éŒ„çˆ¶æ¯çš„ ID
             baby.SetFatherID(father.UUID);
             baby.SetMotherID(mother.UUID);
 
         }
     }
-    
-    
+
+    public int CalculateBirthCount(float rate)
+    {
+        // å–å‡ºæ•´æ•¸éƒ¨åˆ† (ä¾‹å¦‚ 2.4 -> 2)
+        int baseCount = Mathf.FloorToInt(rate);
+
+        // å–å‡ºå°æ•¸éƒ¨åˆ† (ä¾‹å¦‚ 2.4 - 2 = 0.4)
+        float fraction = rate - baseCount;
+
+        // æ“²éª°å­æ±ºå®šæ˜¯å¦å› ç‚ºå°æ•¸é»è€Œå¤šç”Ÿä¸€éš»
+        if (UnityEngine.Random.value < fraction)
+        {
+            baseCount++;
+        }
+
+        return baseCount;
+    }
 }

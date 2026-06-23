@@ -33,12 +33,18 @@ public partial class Creature : MonoBehaviour
                 actionCD[key] -= 1;
             }
         }
+        //TODO: 理論上可以被ActionData解決掉
+        if (reproductionCD > 0)
+        {
+            reproductionCD -= 1;
+        }
     }
 
 
-
+    //TODO: 可能要考慮掛到Species上面
     private void SetCreatureSprite(CreatureBase baseType)
     {
+
         // 1. 將 Enum 轉為字串 (例如 "Slime")
         string spriteName = baseType.ToString();
 
@@ -63,6 +69,7 @@ public partial class Creature : MonoBehaviour
             Debug.LogError($"找不到對應圖片: Sprites/{spriteName}");
         }
     }
+    //TODO: 有點忘記他為什麼要存在的東西
     private void AutoSetLayer(GameObject obj)
     {
         // 將名稱轉為索引編號 (例如 "Creature" 是第 6 層，layerIndex 就會是 6)
@@ -206,7 +213,7 @@ public partial class Creature : MonoBehaviour
     public float GetCurrentHungerDrain()
     {
         float multiplier = 1f;
-
+        // TODO: 之後可以把multiplier的get set 調成屬性，方便Action直接調整。
         // 1. 根據移動狀態決定倍率
         switch (movementState)
         {
@@ -233,6 +240,9 @@ public partial class Creature : MonoBehaviour
         return hungerRate * multiplier;
     }
 
+    /// <summary>
+    ///  初始化生物的運行時狀態，確保每次生成或重置時都回到初始狀態。
+    /// </summary>
     private void ResetRuntimeStates()
     {
         //初始狀態
@@ -262,7 +272,7 @@ public partial class Creature : MonoBehaviour
 
     public void InitializeColorGenes(float[] parent1Color, float[] parent2Color)
     {
-        float mutationWeight = 0.0f;
+        float mutationWeight = 0.1f;
         float inheritWeight = 1f - mutationWeight; // 0.9f
 
         // 1. 產生嚴格的 10% 隨機突變比例 (避免歸一化稀釋父母權重)
@@ -290,7 +300,7 @@ public partial class Creature : MonoBehaviour
                     {0f, 0f, 1f, 0f, 0f, 0f},
                     {0f, 0f, 0f, 0f, 1f, 0f}
                 };
-                baseColorPart = baseColor[Random.Range(0, 3), i] * inheritWeight;
+                baseColorPart = baseColor[UnityEngine.Random.Range(0, 3), i] * inheritWeight;
             }
             else if (parent2Color == null)
             {
@@ -334,7 +344,6 @@ public partial class Creature : MonoBehaviour
         new Color(0f, 0f, 1f),    // 藍
         new Color(0.5f, 0f, 1f)   // 紫
     };
-
 
     public void UpdateVisuals()
     {
@@ -417,20 +426,16 @@ public partial class Creature : MonoBehaviour
             // 將剩餘的純化顏色依照比例轉為 RGB
             for (int i = 0; i < 6; i++)
             {
-                float normalizedWeight = renderColors[i] / remainingEnergy;
-                finalColor += _baseColors[i] * normalizedWeight;
+                renderColors[i] /= remainingEnergy; // 歸一化到 0~1 範圍
+                finalColor += _baseColors[i] * renderColors[i];
             }
-
-            // 補償因抵銷而失去的能量 (讓抵銷越多的生物，顏色越趨近灰色/白色)
-            // 這裡的邏輯取決於你希望抵銷後的表現。若希望維持高飽和度，可移除此行。
-            // float lostEnergy = 1f - remainingEnergy;
-            // finalColor += new Color(0.5f, 0.5f, 0.5f) * Mathf.Clamp01(lostEnergy);
         }
 
         finalColor.a = 1f;
         _spriteRenderer.color = finalColor;
         // Debug.Log("Final Color: " + finalColor + " sprite: " + _spriteRenderer.sprite.name);
     }
+    //TODO: Wander這個字要改掉，跟action裡面的一個東西重複了，會讓人誤會。
     private void CheckWandering()
     {
         // 1. 頻率限制 (Timer)
@@ -440,34 +445,8 @@ public partial class Creature : MonoBehaviour
         // 重置計時器，加入一點隨機值避免所有生物在同一個 Frame 進行運算 (效能優化)
         _checkTimer = checkInterval + Random.Range(-0.1f, 0.1f);
 
-        // 2. 空間偵測 (找出範圍內的所有生物)
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, detectionRadius, creatureLayer);
-
-        int similarCount = 0;
-
-        foreach (var col in colliders)
-        {
-            // 排除自己
-            if (col.gameObject == this.gameObject) continue;
-
-            Creature other = col.GetComponent<Creature>();
-            if (other != null)
-            {
-
-
-                similarCount++;
-
-                // 效能優化：如果已經找到足夠的同伴，就提早結束迴圈，不用算完
-                if (similarCount >= minFamilyNeighbors)
-                {
-                    break;
-                }
-
-            }
-        }
-
         // 4. 更新走散狀態
-        isWandering = (similarCount < minFamilyNeighbors);
+        isWandering = !Perception.Creatures.HasTarget(this, speciesID, 0.5f);
     }
     private bool IsSimilarColor(Creature other)
     {

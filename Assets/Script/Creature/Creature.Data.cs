@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
 using static Perception;
 
 public partial class Creature : MonoBehaviour, ITickable
 {
+    //TODO: 把各種屬性包含運行中的數據包裝成DTO像是ToCreatureAttribute()類似
+    //TODO: Design Pattern: Strategy Pattern、State Pattern
     public Species mySpecies;
     private ActionStateMachine actionStateMachine;
     private Movement movement;
     public string UUID { get; private set; }
     // --- 物種資料引用 (從 ScriptableObject 抓取，不佔個體空間) ---
+    //TODO: lambda表達式有辦法設定get set嗎？這樣感覺有點危險
     public int speciesID => mySpecies.speciesID;
     public CreatureBase creatureBase => mySpecies.creatureBase;
     public List<int> preyIDList => mySpecies.preyIDList;
@@ -35,6 +38,7 @@ public partial class Creature : MonoBehaviour, ITickable
     //public int sleepTime { get; private set; }
 
     // --- 運行時動態狀態 ---
+    //TODO: 邊界處理直接在這邊做
     public float hunger { get; private set; }
     public float health { get; private set; }
     public float age { get; private set; }

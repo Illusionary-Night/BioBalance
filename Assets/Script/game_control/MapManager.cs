@@ -3,13 +3,13 @@ using UnityEngine;
 public class MapManager : MonoBehaviour
 {
     [Header("Core component")]
-    [Tooltip("­t³d­pºâ¼Æ¾Ú")]
+    [Tooltip("è² è²¬è¨ˆç®—æ•¸æ“š")]
     [SerializeField] private TerrainGenerator generator;
 
-    [Tooltip("­t³dÃ¸»sµe­±")]
+    [Tooltip("è² è²¬ç¹ªè£½ç•«é¢")]
     [SerializeField] private MapVisualizer visualizer;
 
-    // «ö¶s¥\¯à:¥u¥Í¦¨¼Æ¾Ú
+    // æŒ‰éˆ•åŠŸèƒ½:åªç”Ÿæˆæ•¸æ“š
     public void GenerateDataOnly()
     {
         if (EnsureComponents())
@@ -18,7 +18,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    // «ö¶s¥\¯à:Ã¸»s Debug ¼h
+    // æŒ‰éˆ•åŠŸèƒ½:ç¹ªè£½ Debug å±¤
     public void DrawDebugLayer()
     {
         if (EnsureComponents() && CheckData())
@@ -28,7 +28,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    // «ö¶s¥\¯à:Ã¸»s Dual-Grid ¼h
+    // æŒ‰éˆ•åŠŸèƒ½:ç¹ªè£½ Dual-Grid å±¤
     public void DrawDualGridLayer()
     {
         if (EnsureComponents() && CheckData())
@@ -37,30 +37,30 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    // «ö¶s¥\¯à:¥ş³¡­«¨Ó
+    // æŒ‰éˆ•åŠŸèƒ½:å…¨éƒ¨é‡ä¾†
     public void GenerateAndDrawAll()
     {
         GenerateDataOnly();
         DrawDebugLayer();
         DrawDualGridLayer();
     }
-    // «ö¶s¥\¯à:ÀH¾÷´«ºØ¤l¨Ã­«µe(Roll & Redraw)
+    // æŒ‰éˆ•åŠŸèƒ½:éš¨æ©Ÿæ›ç¨®å­ä¸¦é‡ç•«(Roll & Redraw)
     public void RollAndRedraw()
     {
         if (EnsureComponents())
         {
-            // 1. ´«ºØ¤l
+            // 1. æ›ç¨®å­
             generator.RandomizeOffset();
 
-            // 2. ¥Í¦¨¼Æ¾Ú (¥Î·sºØ¤lºâ)
+            // 2. ç”Ÿæˆæ•¸æ“š (ç”¨æ–°ç¨®å­ç®—)
             generator.GenerateMapData();
 
-            // 3. Ã¸»s©Ò¦³¹Ï¼h (Debug + Dual-Grid)
-            // (±z¥i¥H¨M©w­n¤£­n­«µe Debug ¼h¡A³q±`¬°¤F®Ä¯à¥i¥H¥uµe Dual-Grid¡A©ÎªÌ¥ş³¡³£µe)
+            // 3. ç¹ªè£½æ‰€æœ‰åœ–å±¤ (Debug + Dual-Grid)
+            // (æ‚¨å¯ä»¥æ±ºå®šè¦ä¸è¦é‡ç•« Debug å±¤ï¼Œé€šå¸¸ç‚ºäº†æ•ˆèƒ½å¯ä»¥åªç•« Dual-Gridï¼Œæˆ–è€…å…¨éƒ¨éƒ½ç•«)
             DrawDebugLayer();
             DrawDualGridLayer();
 
-            Debug.Log("MapManager: ¤wÀH¾÷­«¸m¨Ã­«·sÃ¸»s¦a¹Ï¡C");
+            Debug.Log("MapManager: å·²éš¨æ©Ÿé‡ç½®ä¸¦é‡æ–°ç¹ªè£½åœ°åœ–ã€‚");
         }
     }
 
@@ -68,15 +68,15 @@ public class MapManager : MonoBehaviour
     {
         if (generator != null) generator.ClearData();
         if (visualizer != null) visualizer.ClearAll();
-        Debug.Log("MapManager: ¦a¹Ï¤w­«¸m (Reset)¡C");
+        Debug.Log("MapManager: åœ°åœ–å·²é‡ç½® (Reset)ã€‚");
     }
 
-    // --- »²§UÀË¬d ---
+    // --- è¼”åŠ©æª¢æŸ¥ ---
     private bool EnsureComponents()
     {
         if (generator == null || visualizer == null)
         {
-            Debug.LogError("MapManager: ½Ğ¦b Inspector ¤¤«ü©w Generator ©M Visualizer¡I");
+            Debug.LogError("MapManager: è«‹åœ¨ Inspector ä¸­æŒ‡å®š Generator å’Œ Visualizerï¼");
             return false;
         }
         return true;
@@ -86,7 +86,7 @@ public class MapManager : MonoBehaviour
     {
         if (generator.GetDefinitionMap() == null)
         {
-            Debug.LogWarning("MapManager: ¨S¦³¦a¹Ï¼Æ¾Ú¡I½Ğ¥ı°õ¦æ 'Generate Data Only'¡C");
+            Debug.LogWarning("MapManager: æ²’æœ‰åœ°åœ–æ•¸æ“šï¼è«‹å…ˆåŸ·è¡Œ 'Generate Data Only'ã€‚");
             return false;
         }
         return true;

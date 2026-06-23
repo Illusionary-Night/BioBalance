@@ -18,12 +18,12 @@ public class StatisticsTableEditor : EditorWindow
 {
     private Dictionary<int, SpeciesStats> allSpecies = new();
     private float lastUpdateTime = 0f;
-    private const float updateInterval = 0.5f; // ¨C 0.5 ¬í¬ö¿ı¤@¦¸¼Æ¾Ú¡AÁ×§K¹L§Ö
+    private const float updateInterval = 0.5f; // æ¯ 0.5 ç§’ç´€éŒ„ä¸€æ¬¡æ•¸æ“šï¼Œé¿å…éå¿«
 
     [MenuItem("Window/BioBalance/Population Stats")]
     public static void ShowWindow()
     {
-        StatisticsTableEditor window = GetWindow<StatisticsTableEditor>("¥ÍºA²Î­pªí");
+        StatisticsTableEditor window = GetWindow<StatisticsTableEditor>("ç”Ÿæ…‹çµ±è¨ˆè¡¨");
         window.Show();
     }
     private void OnEnable()
@@ -32,13 +32,13 @@ public class StatisticsTableEditor : EditorWindow
     }
     private void OnGUI()
     {
-        EditorGUILayout.LabelField("¥ş±Ú¸sºÊ±±­±ªO", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("å…¨æ—ç¾¤ç›£æ§é¢æ¿", EditorStyles.boldLabel);
 
         if (allSpecies.Count == 0)
         {
-            EditorGUILayout.HelpBox("µ¥«İ¹CÀ¸¹B¦æ¨Ã²£¥Í¼Æ¾Ú...", MessageType.Info);
-            // ÂIÀ»¥i¥H¤â°ÊÄ²µo¤@¦¸§ó·s
-            if (GUILayout.Button("¤â°ÊÀË¬d Manager ¸ê®Æ"))
+            EditorGUILayout.HelpBox("ç­‰å¾…éŠæˆ²é‹è¡Œä¸¦ç”¢ç”Ÿæ•¸æ“š...", MessageType.Info);
+            // é»æ“Šå¯ä»¥æ‰‹å‹•è§¸ç™¼ä¸€æ¬¡æ›´æ–°
+            if (GUILayout.Button("æ‰‹å‹•æª¢æŸ¥ Manager è³‡æ–™"))
             {
                 UpdateData();
             }
@@ -50,12 +50,12 @@ public class StatisticsTableEditor : EditorWindow
             var stats = speciesPair.Value;
 
             EditorGUILayout.BeginVertical("box");
-            stats.isFolded = EditorGUILayout.Foldout(stats.isFolded, $"ª«ºØ ID: {speciesID} (¥Ø«e¼Æ¶q: {stats.currentCount})", true);
+            stats.isFolded = EditorGUILayout.Foldout(stats.isFolded, $"ç‰©ç¨® ID: {speciesID} (ç›®å‰æ•¸é‡: {stats.currentCount})", true);
 
             if (stats.isFolded)
             {
                 EditorGUI.indentLevel++;
-                DrawMiniGraph("¼Æ¶qÁÍ¶Õ", stats.countHistory, Color.white);
+                DrawMiniGraph("æ•¸é‡è¶¨å‹¢", stats.countHistory, Color.white);
                 EditorGUI.indentLevel--;
             }
             EditorGUILayout.EndVertical();
@@ -69,7 +69,7 @@ public class StatisticsTableEditor : EditorWindow
 
         if (data == null || data.Count < 2)
         {
-            EditorGUILayout.LabelField("¼Æ¾Ú¦¬¶°¤£¨¬ (¦Ü¤Ö»İ2µ§)", EditorStyles.centeredGreyMiniLabel);
+            EditorGUILayout.LabelField("æ•¸æ“šæ”¶é›†ä¸è¶³ (è‡³å°‘éœ€2ç­†)", EditorStyles.centeredGreyMiniLabel);
         }
         else
         {
@@ -79,28 +79,34 @@ public class StatisticsTableEditor : EditorWindow
                 curve.AddKey(i, data[i]);
             }
 
-            // °ÊºA­pºâ Y ¶b³Ì¤j­È¡AÅı¦±½u¥Ã»·«O«ù¦bµe­±¤º
+            // å‹•æ…‹è¨ˆç®— Y è»¸æœ€å¤§å€¼ï¼Œè®“æ›²ç·šæ°¸é ä¿æŒåœ¨ç•«é¢å…§
             float maxVal = data.Max()*1.2f;
-            if (maxVal < 10) maxVal = 10; // ¦Ü¤ÖÅã¥Ü 0~10 ªº½d³ò
+            if (maxVal < 10) maxVal = 10; // è‡³å°‘é¡¯ç¤º 0~10 çš„ç¯„åœ
 
-            // Rect(x, y, width, height) ¥Î¨Ó©w¸q¦±½u¦b CurveField ¸ÌªºÅã¥Ü½d³ò
+            // Rect(x, y, width, height) ç”¨ä¾†å®šç¾©æ›²ç·šåœ¨ CurveField è£¡çš„é¡¯ç¤ºç¯„åœ
             EditorGUILayout.CurveField(curve, color, new Rect(0, 0, data.Count, maxVal), GUILayout.Height(200));
         }
         EditorGUILayout.EndVertical();
     }
 
     private void OnInspectorUpdate()
+{
+    // ä¿®æ”¹é‚è¼¯ï¼šåªæœ‰ç•¶ã€ŒéŠæˆ²åœ¨åŸ·è¡Œä¸­ã€ä¸”ã€ŒManager å­˜åœ¨ã€æ™‚ï¼Œæˆ‘å€‘æ‰åŸ·è¡Œæ›´æ–°
+    if (!Application.isPlaying || MainManager.inGameManager == null)
     {
-        if (!Application.isPlaying || MainManager.inGameManager != null) return;
-
-        // ©w®É±Ä¼Ë¡G¤£­n¨C´V¬ö¿ı¡A³o«Ü­«­n¡I
-        if (Time.realtimeSinceStartup - lastUpdateTime > updateInterval)
-        {
-            UpdateData();
-            lastUpdateTime = Time.realtimeSinceStartup;
-            Repaint();
-        }
+        return; 
     }
+
+    // å®šæ™‚æ¡æ¨£
+    if (Time.realtimeSinceStartup - lastUpdateTime > updateInterval)
+    {
+        UpdateData();
+        lastUpdateTime = Time.realtimeSinceStartup;
+        
+        // å¼·åˆ¶è¦–çª—é‡ç¹ªï¼Œè®“æ•¸æ“šçœ‹èµ·ä¾†æ˜¯å³æ™‚è·³å‹•çš„
+        Repaint();
+    }
+}
 
     private void UpdateData()
     {
@@ -116,7 +122,7 @@ public class StatisticsTableEditor : EditorWindow
             var stats = allSpecies[id];
             stats.currentCount = species.Value.Count;
 
-            // ¬ö¿ı¾ú¥v¡A¨Ã­­¨î¬ö¿ı¤W­­¡]¨Ò¦p«O¯d³Ìªñ 200 µ§¸ê®Æ¡^
+            // ç´€éŒ„æ­·å²ï¼Œä¸¦é™åˆ¶ç´€éŒ„ä¸Šé™ï¼ˆä¾‹å¦‚ä¿ç•™æœ€è¿‘ 200 ç­†è³‡æ–™ï¼‰
             stats.countHistory.Add(stats.currentCount);
             if (stats.countHistory.Count > 200) stats.countHistory.RemoveAt(0);
         }

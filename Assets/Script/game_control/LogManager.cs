@@ -1,51 +1,51 @@
 /*
  * ===========================================================================================
- * LogManager - ¤é»xºŞ²z¾¹
+ * LogManager - æ—¥èªŒç®¡ç†å™¨
  * ===========================================================================================
  * 
- * [¥\¯à»¡©ú]
- * ´£¨Ñ²Î¤@ªº¤é»x°O¿ı¥\¯à¡A±N°T®§¦P®É¿é¥X¦Ü¡G
- * - Unity Console¡]³z¹L Debug.Log ¨t¦C¤èªk¡^
- * - ¥»¦a¤é»xÀÉ®×¡]Àx¦s©ó Application.persistentDataPath¡^
+ * [åŠŸèƒ½èªªæ˜]
+ * æä¾›çµ±ä¸€çš„æ—¥èªŒè¨˜éŒ„åŠŸèƒ½ï¼Œå°‡è¨Šæ¯åŒæ™‚è¼¸å‡ºè‡³ï¼š
+ * - Unity Consoleï¼ˆé€é Debug.Log ç³»åˆ—æ–¹æ³•ï¼‰
+ * - æœ¬åœ°æ—¥èªŒæª”æ¡ˆï¼ˆå„²å­˜æ–¼ Application.persistentDataPathï¼‰
  * 
- * [¤é»xÀÉ®×©R¦W³W«h]
- * - ®æ¦¡¡G{¤é´Á}-{§Ç¸¹}.log
- * - ½d¨Ò¡G2024-01-15-1.log¡B2024-01-15-2.log
- * - ¨C¤Ñ³Ì¦h 10000 ­ÓÀÉ®×¡A¶W¹L«h¨Ï¥Î overflow.log
- * 
- * -------------------------------------------------------------------------------------------
- * [¤½¶}¤èªk]
- * -------------------------------------------------------------------------------------------
- * 
- * ¡´ EnableLogging(bool enable)
- *   - »¡©ú¡G±Ò¥Î©Î°±¥Î¤é»x¥\¯à
- *   - ¥Îªk¡GLogManager.EnableLogging(false); // °±¥Î¤é»x
- * 
- * ¡´ Log(string message)
- *   - »¡©ú¡G°O¿ı¤@¯ë°T®§
- *   - ¥Îªk¡GLogManager.Log("¹CÀ¸¶}©l");
- *   - ¿é¥X¡G2024-01-15 14:30:00 - ¹CÀ¸¶}©l
- * 
- * ¡´ LogWarning(string message)
- *   - »¡©ú¡G°O¿ıÄµ§i°T®§
- *   - ¥Îªk¡GLogManager.LogWarning("°O¾ĞÅé¨Ï¥Î²v¹L°ª");
- *   - ¿é¥X¡G2024-01-15 14:30:00 - WARNING: °O¾ĞÅé¨Ï¥Î²v¹L°ª
- * 
- * ¡´ LogError(string message)
- *   - »¡©ú¡G°O¿ı¿ù»~°T®§
- *   - ¥Îªk¡GLogManager.LogError("µLªk¸ü¤J¸ê·½");
- *   - ¿é¥X¡G2024-01-15 14:30:00 - ERROR: µLªk¸ü¤J¸ê·½
+ * [æ—¥èªŒæª”æ¡ˆå‘½åè¦å‰‡]
+ * - æ ¼å¼ï¼š{æ—¥æœŸ}-{åºè™Ÿ}.log
+ * - ç¯„ä¾‹ï¼š2024-01-15-1.logã€2024-01-15-2.log
+ * - æ¯å¤©æœ€å¤š 10000 å€‹æª”æ¡ˆï¼Œè¶…éå‰‡ä½¿ç”¨ overflow.log
  * 
  * -------------------------------------------------------------------------------------------
- * [¨Ï¥Î½d¨Ò]
+ * [å…¬é–‹æ–¹æ³•]
  * -------------------------------------------------------------------------------------------
  * 
- * // °O¿ı¤£¦Pµ¥¯Åªº°T®§
- * LogManager.Log("ª±®a¶i¤J¹CÀ¸");
- * LogManager.LogWarning("ºô¸ô©µ¿ğ¹L°ª");
- * LogManager.LogError("¦sÀÉ¥¢±Ñ");
+ * â— EnableLogging(bool enable)
+ *   - èªªæ˜ï¼šå•Ÿç”¨æˆ–åœç”¨æ—¥èªŒåŠŸèƒ½
+ *   - ç”¨æ³•ï¼šLogManager.EnableLogging(false); // åœç”¨æ—¥èªŒ
  * 
- * // ¦b¥¿¦¡µo¥¬ª©¥»¤¤°±¥Î¤é»x
+ * â— Log(string message)
+ *   - èªªæ˜ï¼šè¨˜éŒ„ä¸€èˆ¬è¨Šæ¯
+ *   - ç”¨æ³•ï¼šLogManager.Log("éŠæˆ²é–‹å§‹");
+ *   - è¼¸å‡ºï¼š2024-01-15 14:30:00 - éŠæˆ²é–‹å§‹
+ * 
+ * â— LogWarning(string message)
+ *   - èªªæ˜ï¼šè¨˜éŒ„è­¦å‘Šè¨Šæ¯
+ *   - ç”¨æ³•ï¼šLogManager.LogWarning("è¨˜æ†¶é«”ä½¿ç”¨ç‡éé«˜");
+ *   - è¼¸å‡ºï¼š2024-01-15 14:30:00 - WARNING: è¨˜æ†¶é«”ä½¿ç”¨ç‡éé«˜
+ * 
+ * â— LogError(string message)
+ *   - èªªæ˜ï¼šè¨˜éŒ„éŒ¯èª¤è¨Šæ¯
+ *   - ç”¨æ³•ï¼šLogManager.LogError("ç„¡æ³•è¼‰å…¥è³‡æº");
+ *   - è¼¸å‡ºï¼š2024-01-15 14:30:00 - ERROR: ç„¡æ³•è¼‰å…¥è³‡æº
+ * 
+ * -------------------------------------------------------------------------------------------
+ * [ä½¿ç”¨ç¯„ä¾‹]
+ * -------------------------------------------------------------------------------------------
+ * 
+ * // è¨˜éŒ„ä¸åŒç­‰ç´šçš„è¨Šæ¯
+ * LogManager.Log("ç©å®¶é€²å…¥éŠæˆ²");
+ * LogManager.LogWarning("ç¶²è·¯å»¶é²éé«˜");
+ * LogManager.LogError("å­˜æª”å¤±æ•—");
+ * 
+ * // åœ¨æ­£å¼ç™¼å¸ƒç‰ˆæœ¬ä¸­åœç”¨æ—¥èªŒ
  * #if !UNITY_EDITOR
  *     LogManager.EnableLogging(false);
  * #endif
@@ -58,22 +58,22 @@ using UnityEngine;
 
 
 /// <summary>
-/// ¤é»xºŞ²z¾¹ - ´£¨Ñ²Î¤@ªº¤é»x°O¿ı¥\¯à
+/// æ—¥èªŒç®¡ç†å™¨ - æä¾›çµ±ä¸€çš„æ—¥èªŒè¨˜éŒ„åŠŸèƒ½
 /// </summary>
 public static class LogManager
 {
-    /// <summary>¬O§_±Ò¥Î¤é»x¥\¯à</summary>
+    /// <summary>æ˜¯å¦å•Ÿç”¨æ—¥èªŒåŠŸèƒ½</summary>
     private static bool isLoggingEnabled = true;
-    
-    /// <summary>¤é»xÀÉ®×¸ô®|</summary>
+
+    /// <summary>æ—¥èªŒæª”æ¡ˆè·¯å¾‘</summary>
     private static readonly string logPath = null;
 
     /// <summary>
-    /// ÀRºA«Øºc¤l - ªì©l¤Æ¤é»xÀÉ®×¸ô®|
+    /// éœæ…‹å»ºæ§‹å­ - åˆå§‹åŒ–æ—¥èªŒæª”æ¡ˆè·¯å¾‘
     /// </summary>
     static LogManager()
     {
-        // ´M§ä¥i¥Îªº¤é»xÀÉ®×¦WºÙ¡]Á×§KÂĞ»\¬J¦³ÀÉ®×¡^
+        // å°‹æ‰¾å¯ç”¨çš„æ—¥èªŒæª”æ¡ˆåç¨±ï¼ˆé¿å…è¦†è“‹æ—¢æœ‰æª”æ¡ˆï¼‰
         for (int index = 1; index <= 10000; index++)
         {
             string candidatePath = Application.persistentDataPath + "/" + DateTime.Now.ToString("yyyy-MM-dd") + "-" + index + ".log";
@@ -84,7 +84,7 @@ public static class LogManager
             }
         }
 
-        // ¦pªG¶W¹L 10000 ­ÓÀÉ®×¡A¨Ï¥Î overflow.log
+        // å¦‚æœè¶…é 10000 å€‹æª”æ¡ˆï¼Œä½¿ç”¨ overflow.log
         logPath ??= Application.persistentDataPath + "/" + DateTime.Now.ToString("yyyy-MM-dd") + "-overflow.log";
 
         if (isLoggingEnabled)
@@ -93,64 +93,64 @@ public static class LogManager
         }
         else
         {
-            Debug.Log("[LogManager] Logging is disabled.¡C");
+            Debug.Log("[LogManager] Logging is disabled.ã€‚");
         }
     }
 
     /// <summary>
-    /// ±Ò¥Î©Î°±¥Î¤é»x¥\¯à
+    /// å•Ÿç”¨æˆ–åœç”¨æ—¥èªŒåŠŸèƒ½
     /// </summary>
-    /// <param name="enable">true ¬°±Ò¥Î¡Afalse ¬°°±¥Î</param>
+    /// <param name="enable">true ç‚ºå•Ÿç”¨ï¼Œfalse ç‚ºåœç”¨</param>
     public static void EnableLogging(bool enable)
     {
         isLoggingEnabled = enable;
     }
 
     /// <summary>
-    /// ¤º³¡¤èªk¡G±N°T®§¼g¤J¤é»xÀÉ®×¨Ã¿é¥X¦Ü Console
+    /// å…§éƒ¨æ–¹æ³•ï¼šå°‡è¨Šæ¯å¯«å…¥æ—¥èªŒæª”æ¡ˆä¸¦è¼¸å‡ºè‡³ Console
     /// </summary>
-    /// <param name="message">­ì©l°T®§¤º®e</param>
-    /// <param name="prefix">°T®§«eºó¡]¦p "ERROR"¡B"WARNING"¡A¤@¯ë°T®§¶Ç¤J null¡^</param>
-    /// <param name="debugAction">¹ïÀ³ªº Debug ¿é¥X¤èªk¡]Debug.Log¡BDebug.LogWarning µ¥¡^</param>
+    /// <param name="message">åŸå§‹è¨Šæ¯å…§å®¹</param>
+    /// <param name="prefix">è¨Šæ¯å‰ç¶´ï¼ˆå¦‚ "ERROR"ã€"WARNING"ï¼Œä¸€èˆ¬è¨Šæ¯å‚³å…¥ nullï¼‰</param>
+    /// <param name="debugAction">å°æ‡‰çš„ Debug è¼¸å‡ºæ–¹æ³•ï¼ˆDebug.Logã€Debug.LogWarning ç­‰ï¼‰</param>
     private static void WriteLog(string message, string prefix, Action<string> debugAction)
     {
         if (!isLoggingEnabled) return;
 
-        // ®æ¦¡¤Æ«eºó
+        // æ ¼å¼åŒ–å‰ç¶´
         string formattedPrefix = string.IsNullOrEmpty(prefix) ? "" : $"{prefix}: ";
-        
-        // ²Õ¦X§¹¾ãªº¤é»x°T®§
+
+        // çµ„åˆå®Œæ•´çš„æ—¥èªŒè¨Šæ¯
         string logMessage = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {formattedPrefix}{message}\n";
-        
-        // ¼g¤JÀÉ®×
+
+        // å¯«å…¥æª”æ¡ˆ
         System.IO.File.AppendAllText(logPath, logMessage);
-        
-        // ¿é¥X¦Ü Unity Console
+
+        // è¼¸å‡ºè‡³ Unity Console
         debugAction?.Invoke(logMessage);
     }
 
     /// <summary>
-    /// °O¿ı¤@¯ë°T®§
+    /// è¨˜éŒ„ä¸€èˆ¬è¨Šæ¯
     /// </summary>
-    /// <param name="message">°T®§¤º®e</param>
+    /// <param name="message">è¨Šæ¯å…§å®¹</param>
     public static void Log(string message)
     {
         WriteLog(message, null, Debug.Log);
     }
 
     /// <summary>
-    /// °O¿ı¿ù»~°T®§
+    /// è¨˜éŒ„éŒ¯èª¤è¨Šæ¯
     /// </summary>
-    /// <param name="message">¿ù»~°T®§¤º®e</param>
+    /// <param name="message">éŒ¯èª¤è¨Šæ¯å…§å®¹</param>
     public static void LogError(string message)
     {
         WriteLog(message, "ERROR", Debug.LogError);
     }
 
     /// <summary>
-    /// °O¿ıÄµ§i°T®§
+    /// è¨˜éŒ„è­¦å‘Šè¨Šæ¯
     /// </summary>
-    /// <param name="message">Äµ§i°T®§¤º®e</param>
+    /// <param name="message">è­¦å‘Šè¨Šæ¯å…§å®¹</param>
     public static void LogWarning(string message)
     {
         WriteLog(message, "WARNING", Debug.LogWarning);

@@ -10,48 +10,48 @@ using System.IO;
 public partial class Creature : MonoBehaviour, ITickable
 {
 
-    // ²¾°Ê§¹¦¨¨Æ¥ó
+    // ç§»å‹•å®Œæˆäº‹ä»¶
     public event System.Action<Vector2Int> OnMovementComplete;
+    //DELETE
+    // private void OnCollisionEnter2D(Collision2D collision)
+    // {
+    //     movement.isColliding = true;
+    // }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        movement.isColliding = true;
-    }
+    // private void OnCollisionExit2D(Collision2D collision)
+    // {
+    //     movement.isColliding = false;
+    // }
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        movement.isColliding = false;
-    }
-
-    // ±_ª¬Ãş§O¡GMovement
+    // å·¢ç‹€é¡åˆ¥ï¼šMovement
     private class Movement
     {
         private Creature owner;
-        private Rigidbody2D rb;                 // Àu¥ı¨Ï¥Îª«²z­èÅé
-        private Vector2Int Destination;         // ®æ®y¥Ø¼Ğ¡]¾ã¼Æ®æ¡^
-        public List<Vector2> path = null;      // ¾É¯è«áªº¥@¬É®y¼ĞÂI (³sÄò)
+        private Rigidbody2D rb;                 // å„ªå…ˆä½¿ç”¨ç‰©ç†å‰›é«”
+        private Vector2Int Destination;         // æ ¼åº§ç›®æ¨™ï¼ˆæ•´æ•¸æ ¼ï¼‰
+        public List<Vector2> path = null;      // å°èˆªå¾Œçš„ä¸–ç•Œåº§æ¨™é» (é€£çºŒ)
         private int currentPathIndex = 0;
-        private float stuckThreshold = 0.2f;    // °»´ú³QÀ½¨«/¥d¦íªº®e§Ô¶ZÂ÷
-        private int stuckLimitTicks = 6;        // ¶W¹L´X¦¸´N­«·s¾É¯è
-        private int stuckCounter = 0;
-        private Vector2 lastRecordedPosition;
+        // private float stuckThreshold = 0.2f;    // åµæ¸¬è¢«æ“ èµ°/å¡ä½çš„å®¹å¿è·é›¢
+        // private int stuckLimitTicks = 6;        // è¶…éå¹¾æ¬¡å°±é‡æ–°å°èˆª
+        // private int stuckCounter = 0;
+        // private Vector2 lastRecordedPosition;
         private bool awake;
-        public bool isColliding = false;
-        private int stuck = 0;
+        // public bool isColliding = false;
+        // private int stuck = 0;
 
         public Movement(Creature owner)
         {
             this.owner = owner;
-            this.rb = owner.GetComponent<Rigidbody2D>(); // ¥i¯à¬° null
-                                                         // ªì©l¤Æ lastRecordedPosition ¬°¯u¹ê¦ì¸m¡]Åv«Â¡^
-            lastRecordedPosition = GetAuthoritativePosition();
+            this.rb = owner.GetComponent<Rigidbody2D>(); // å¯èƒ½ç‚º null
+            // åˆå§‹åŒ– lastRecordedPosition ç‚ºçœŸå¯¦ä½ç½®ï¼ˆæ¬Šå¨ï¼‰
+            // lastRecordedPosition = GetAuthoritativePosition();
             awake = false;
         }
 
-        // ³]©w¥Øªº¦a¡]®æ®y¡^
+        // è¨­å®šç›®çš„åœ°ï¼ˆæ ¼åº§ï¼‰
         public void SetDestination(Vector2Int destination, bool isRunning = false)
         {
-            // ¦w¥şÀË¬d
+            // å®‰å…¨æª¢æŸ¥
             if (owner == null || owner.isDead) return;
 
             //Debug.Log("SetDestination");
@@ -63,17 +63,17 @@ public partial class Creature : MonoBehaviour, ITickable
 
             Navigate();
         }
-
-        void PreventDrifting()
-        {
-            if (rb.linearVelocity != Vector2.zero && !isColliding)
-            {
-                rb.linearVelocity = Vector2.zero;
-            }
-        }
+        //DELETE    
+        // void PreventDrifting()
+        // {
+        //     if (rb.linearVelocity != Vector2.zero && !isColliding)
+        //     {
+        //         rb.linearVelocity = Vector2.zero;
+        //     }
+        // }
         public void MoveOnTick()
         {
-            // ¦w¥şÀË¬d
+            // å®‰å…¨æª¢æŸ¥
             if (owner == null || owner.isDead || !awake || path == null || owner.isStunned)
             {
                 return;
@@ -85,49 +85,52 @@ public partial class Creature : MonoBehaviour, ITickable
             {
                 Vector2 target = path[currentPathIndex];
 
-                // 1. ­pºâ¤è¦V»P¹w´Á³t«×
+                // 1. è¨ˆç®—æ–¹å‘èˆ‡é æœŸé€Ÿåº¦
                 Vector2 direction = (target - currentActualPos).normalized;
                 Vector2 desiredVelocity = direction * GetCurrentSpeed();
 
 
-                // 2. °õ¦æ²¾°Ê¡Gª½±µµ¹¤©ª«²z³t«×
-                // ³o¼Ë¸I¼²®É¡Aª«²z¤ŞÀº¥i¥H¦Û°Ê§â¥Íª«±À¶}¡A¦Ó¤£·|¹³ MovePosition ¨º¼ËµwÀ½
+                // 2. åŸ·è¡Œç§»å‹•ï¼šç›´æ¥çµ¦äºˆç‰©ç†é€Ÿåº¦
+                // é€™æ¨£ç¢°æ’æ™‚ï¼Œç‰©ç†å¼•æ“å¯ä»¥è‡ªå‹•æŠŠç”Ÿç‰©æ¨é–‹ï¼Œè€Œä¸æœƒåƒ MovePosition é‚£æ¨£ç¡¬æ“ 
                 rb.linearVelocity = desiredVelocity;
 
-                // --- Stuck §P©wÅŞ¿è ---
-                float actualMovedThisTick = Vector2.Distance(lastRecordedPosition, currentActualPos);
+                // // --- Stuck åˆ¤å®šé‚è¼¯ ---
+                // float actualMovedThisTick = Vector2.Distance(lastRecordedPosition, currentActualPos);
 
-                // ª«²z¨t²Î¤¤¡A¦pªG³Q¾×¦í¡A³t«×·|³Q©è®ø¡A¦ì²¾·|ÅÜ¤p
-                if (actualMovedThisTick < (owner.speed * Time.fixedDeltaTime) * 0.5f)
-                {
-                    stuck++;
-                }
-                else
-                {
-                    stuck = 0;
-                }
+                // // ç‰©ç†ç³»çµ±ä¸­ï¼Œå¦‚æœè¢«æ“‹ä½ï¼Œé€Ÿåº¦æœƒè¢«æŠµæ¶ˆï¼Œä½ç§»æœƒè®Šå°
+                // if (actualMovedThisTick < (owner.speed * Time.fixedDeltaTime) * 0.5f)
+                // {
+                //     stuck++;
+                // }
+                // else
+                // {
+                //     stuck = 0;
+                // }
 
-                lastRecordedPosition = currentActualPos;
+                // lastRecordedPosition = currentActualPos;
 
-                // 3. Âà¦VÅŞ¿è
+                // 3. è½‰å‘é‚è¼¯
+                //TODO: ???? æ–¹å‘å·²ç¶“æ¨™æº–åŒ–äº†ï¼Œç†è«–ä¸Šçµ•å°æœƒæ˜¯1
                 if (direction.sqrMagnitude > 0.0001f)
                 {
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                    // ª«²z±ÛÂà«ØÄ³¨Ï¥Î MoveRotation¡A³o¼Ë¤ñ¸û¥­·Æ¥B²Å¦Xª«²z³W«h
+                    // ç‰©ç†æ—‹è½‰å»ºè­°ä½¿ç”¨ MoveRotationï¼Œé€™æ¨£æ¯”è¼ƒå¹³æ»‘ä¸”ç¬¦åˆç‰©ç†è¦å‰‡
+                    //TODO: å¦‚æœä¹‹å¾Œæƒ³è¦è®“è½‰å‘æœƒæ˜¯ä¸€å€‹éœ€è¦ç¨å¾®è€—è²»è¡Œå‹•çš„äº‹æƒ…çš„è©±ï¼Œéœ€è¦è¨­å®šä¸€æ¬¡æœ€å¤§è½‰è§’
                     rb.MoveRotation(angle);
                 }
                 float dynamicRadius = Mathf.Max(0.2f, GetCurrentSpeed() * Time.fixedDeltaTime * 1.5f);
-                // 4. ©è¹F¸ô®|ÂI§P©w (µy·L©ñ¼e¤@ÂI¶ZÂ÷¡Aª«²z²¾°Ê¸ûÃøºë·Ç½ò¦bÂI¤W)
+                // 4. æŠµé”è·¯å¾‘é»åˆ¤å®š (ç¨å¾®æ”¾å¯¬ä¸€é»è·é›¢ï¼Œç‰©ç†ç§»å‹•è¼ƒé›£ç²¾æº–è¸©åœ¨é»ä¸Š)
                 if (Vector2.Distance(currentActualPos, target) < dynamicRadius)
                 {
                     currentPathIndex++;
                 }
             }
-            
-            // ©è¹F¥Øªº¦a«áªº³B²z
+
+            // æŠµé”ç›®çš„åœ°å¾Œçš„è™•ç†
             //rb.linearVelocity = Vector2.zero;
 
             Vector2 currentPos = GetAuthoritativePosition();
+            //TODO: é€™å€‹è·é›¢å¯¬å®¹ç¯„åœæ˜¯ä¸æ˜¯æ”¾å¤ªå¤§
             if (Vector2.Distance(currentPos, Destination) < 1.8f)
             {
                 //awake = false;
@@ -135,18 +138,18 @@ public partial class Creature : MonoBehaviour, ITickable
             }
         }
 
-        // ¾É¯è©I¥s A* ©Î¨ä¥¦´M¸ô¨t²Î
+        // å°èˆªå‘¼å« A* æˆ–å…¶å®ƒå°‹è·¯ç³»çµ±
         public void Navigate()
         {
-            // ¦w¥şÀË¬d
+            // å®‰å…¨æª¢æŸ¥
             if (owner == null || owner.isDead) return;
 
             //Debug.Log("Navigate");
             Vector2Int start = Vector2Int.RoundToInt(GetAuthoritativePosition());
             Vector2Int goal = Destination;
 
-            // °²³] AStar.FindPath ¦^¶Ç List<Vector2Int> ©Î null
-            // ¨Ï¥Î A* ºtºâªk´M§ä¸ô®|
+            // å‡è¨­ AStar.FindPath å›å‚³ List<Vector2Int> æˆ– null
+            // ä½¿ç”¨ A* æ¼”ç®—æ³•å°‹æ‰¾è·¯å¾‘
             List<Vector2Int> rawPath = AStar.FindPath(start, goal, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
             if (rawPath == null || rawPath.Count == 0)
             {
@@ -155,22 +158,22 @@ public partial class Creature : MonoBehaviour, ITickable
                 return;
             }
 
-            // §â®æ¤l®y¼ĞÂà¦¨¥@¬É®y¼Ğ (¤¤¤ßÂI)¡Aµø§Aªº®æ¤l¨t²Î¥i¯à»İ­n°¾²¾
+            // æŠŠæ ¼å­åº§æ¨™è½‰æˆä¸–ç•Œåº§æ¨™ (ä¸­å¿ƒé»)ï¼Œè¦–ä½ çš„æ ¼å­ç³»çµ±å¯èƒ½éœ€è¦åç§»
             path = rawPath.Select(v => new Vector2(v.x, v.y)).ToList();
             currentPathIndex = 0;
         }
 
-        // ¨ú±o·í«e¸g¹Lª«²z¨t²Î­×¥¿«áªº¾ã¼Æ®æ®y¼Ğ¡]¥|±Ë¤­¤J¡^
+        // å–å¾—ç•¶å‰ç¶“éç‰©ç†ç³»çµ±ä¿®æ­£å¾Œçš„æ•´æ•¸æ ¼åº§æ¨™ï¼ˆå››æ¨äº”å…¥ï¼‰
         public Vector2Int GetVector2IntCurrentPosition()
         {
             Vector2 actual = GetAuthoritativePosition();
             return Vector2Int.RoundToInt(actual);
         }
 
-        // ¨ú±oª«²z/Transform ªºÅv«Â¦ì¸m
+        // å–å¾—ç‰©ç†/Transform çš„æ¬Šå¨ä½ç½®
         private Vector2 GetAuthoritativePosition()
         {
-            // ¦w¥şÀË¬d
+            // å®‰å…¨æª¢æŸ¥
             if (owner == null || owner.isDead || owner.gameObject == null)
                 return Vector2.zero;
 
@@ -181,11 +184,11 @@ public partial class Creature : MonoBehaviour, ITickable
         {
             return Destination;
         }
-        public int GetStuckTimes()
-        {
-            return stuck;
-        }
-        public void Push(Vector2 direction, float strength)
+        // public int GetStuckTimes()
+        // {
+        //     return stuck;
+        // }
+        public void Pushed(Vector2 direction, float strength)
         {
             rb.AddForce(direction.normalized * strength, ForceMode2D.Impulse);
         }
@@ -195,10 +198,10 @@ public partial class Creature : MonoBehaviour, ITickable
             switch (owner.movementState)
             {
                 case CreatureMovementState.Run:
-                    CurrentSpeed = owner.speed * 2; 
+                    CurrentSpeed = owner.speed * 2;
                     break;
                 case CreatureMovementState.Walk:
-                    CurrentSpeed = owner.speed; 
+                    CurrentSpeed = owner.speed;
                     break;
                 default:
                     CurrentSpeed = 0f;

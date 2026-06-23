@@ -13,6 +13,7 @@ public partial class Creature : MonoBehaviour
 {
     #region --- 生命狀態控制 ---
 
+    //TODO: 數值的合不合法交給data自行判斷即可
     /// <summary> 立即設置當前飢餓值，並確保在合法範圍內 </summary>
     public void SetHunger(float value)
     {
@@ -175,7 +176,7 @@ public partial class Creature : MonoBehaviour
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360;
-
+        //TODO: 角度判斷可能要移到Constant
         if (angle >= 337.5f || angle < 22.5f) return Direction.East;
         if (angle >= 22.5f && angle < 67.5f) return Direction.Northeast;
         if (angle >= 67.5f && angle < 112.5f) return Direction.North;
@@ -214,7 +215,7 @@ public partial class Creature : MonoBehaviour
     }
     public void Repel(Vector2 drection, float strength = 1f)
     {
-        movement.Push(drection, strength);
+        movement.Pushed(drection, strength);
     }
 
     public void SetEnemy(Creature enemy)
@@ -313,10 +314,10 @@ public partial class Creature : MonoBehaviour
 
     /// <summary> 取得生物目前在移動過程中被障礙物卡住的累計次數（Ticks） </summary>
     /// <returns> 卡住的次數，可用於判定是否需要重新導航或變換行為 </returns>
-    public int GetMovementStuckTimes()
-    {
-        return movement != null ? movement.GetStuckTimes() : 0;
-    }
+    // public int GetMovementStuckTimes()
+    // {
+    //     return movement != null ? movement.GetStuckTimes() : 0;
+    // }
     #endregion
 
     #region 尚未歸類function 
@@ -328,6 +329,7 @@ public partial class Creature : MonoBehaviour
     {
         this.fatherID = fatherID;
     }
+    //TODO: 優化，不要用Collider2D的半徑來判斷距離，改用size的某種配方，讓設計師可以調整生物之間的互動範圍。
     public bool IsNearby(Creature another)
     {
         Vector2 position1 = this.transform.position;
@@ -356,6 +358,10 @@ public partial class Creature : MonoBehaviour
         // 防呆機制：萬一沒掛碰撞體才用舊的方法
         return (this.transform.localScale.x + another.transform.localScale.x) * 0.5f * 1.2f;
     }
+    /// <summary>
+    /// 判斷生物是否處於發情狀態，根據年齡、飢餓度、健康狀態等多重條件綜合評估。只有當生物達到成年、身體狀況良好且沒有處於冷卻期時，才會返回 true，表示可以進行繁殖行為。
+    /// </summary>
+    /// <returns></returns>
     public bool IsInHeat()
     {
         // 1. 年齡門檻：必須是成年體 (假設你有 lifespan 或 matureAge 的設定)
@@ -382,6 +388,11 @@ public partial class Creature : MonoBehaviour
         // 如果以上都通過了，代表生理狀態極佳，可以繁衍！
         return true;
     }
+    /// <summary>
+    /// 判斷附近是否有處於發情狀態的雄性生物
+    /// </summary>
+    /// <param name="c">要檢查的生物</param>
+    /// <returns></returns>
     public bool IsInHeatMaleNearby(Creature c)
     {
         if (c.gender == Gender.Female) return false;

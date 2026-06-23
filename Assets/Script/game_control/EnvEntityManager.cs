@@ -1,85 +1,85 @@
 /*
  * ===========================================================================================
- * EnvEntityManager - Àô¹Ò¹êÅéºŞ²z¾¹
+ * EnvEntityManager - ç’°å¢ƒå¯¦é«”ç®¡ç†å™¨
  * ===========================================================================================
  * 
- * [¥\¯à»¡©ú]
- * ²Î¤@ºŞ²z¹CÀ¸¥@¬É¤¤©Ò¦³Àô¹Ò¹êÅé¡]¦p¯ó¡B¦×¡B»G¦×µ¥¡^ªº¥Í¦¨¡B¬d¸ß©M¦^¦¬¡C
- * ­t³dºûÅ@¹êÅéªº¦ì¸m¯Á¤Ş©Mª«¥ó¦À¡A´£¨Ñ°ª®ÄªºªÅ¶¡¬d¸ß¥\¯à¡C
+ * [åŠŸèƒ½èªªæ˜]
+ * çµ±ä¸€ç®¡ç†éŠæˆ²ä¸–ç•Œä¸­æ‰€æœ‰ç’°å¢ƒå¯¦é«”ï¼ˆå¦‚è‰ã€è‚‰ã€è…è‚‰ç­‰ï¼‰çš„ç”Ÿæˆã€æŸ¥è©¢å’Œå›æ”¶ã€‚
+ * è² è²¬ç¶­è­·å¯¦é«”çš„ä½ç½®ç´¢å¼•å’Œç‰©ä»¶æ± ï¼Œæä¾›é«˜æ•ˆçš„ç©ºé–“æŸ¥è©¢åŠŸèƒ½ã€‚
  * 
- * [¥D­nÂ¾³d]
- * - ºŞ²z¦UÃş«¬¹êÅéªºª«¥ó¦À¡]³z¹L EntityPool<T>¡^
- * - ºûÅ@¹êÅéªº¦ì¸m¯Á¤Ş¡]³z¹L Dictionary<Vector2Int, GameObject>¡^
- * - ³B²z¹êÅéªº¥Í¦¨ÅŞ¿è¡]¦a§ÎÀË¬d¡B¼Æ¶q­­¨î¡^
- * - ´£¨Ñ¹êÅéªº¬d¸ß©M²¾°£¥\¯à
- * - ¨C­Ó Tick ¦Û°Ê¥Í¦¨Àô¹Ò¹êÅé¡]¦p¯ó¦a¤Wªº¯ó¡^
+ * [ä¸»è¦è·è²¬]
+ * - ç®¡ç†å„é¡å‹å¯¦é«”çš„ç‰©ä»¶æ± ï¼ˆé€é EntityPool<T>ï¼‰
+ * - ç¶­è­·å¯¦é«”çš„ä½ç½®ç´¢å¼•ï¼ˆé€é Dictionary<Vector2Int, GameObject>ï¼‰
+ * - è™•ç†å¯¦é«”çš„ç”Ÿæˆé‚è¼¯ï¼ˆåœ°å½¢æª¢æŸ¥ã€æ•¸é‡é™åˆ¶ï¼‰
+ * - æä¾›å¯¦é«”çš„æŸ¥è©¢å’Œç§»é™¤åŠŸèƒ½
+ * - æ¯å€‹ Tick è‡ªå‹•ç”Ÿæˆç’°å¢ƒå¯¦é«”ï¼ˆå¦‚è‰åœ°ä¸Šçš„è‰ï¼‰
  * 
- * [»P¨ä¥L¨t²ÎªºÃö«Y]
- * - ¥Ñ Manager ³Ğ«Ø©M«ù¦³
- * - ¹ê§@ ITickable ¤¶­±¡A¨C Tick °õ¦æ OnTick
- * - ¨Ï¥Î EntityData ¨ú±o¹êÅéªº¸Ô²Ó¸ê®Æ
- * - ¨Ï¥Î EntityPool<T> ºŞ²z¹êÅéªº³Ğ«Ø©M¦^¦¬
- * - ³Q Perception.Items ¥Î©ó¬d¸ß³õ´º¤¤ªº­¹ª«
- * 
- * -------------------------------------------------------------------------------------------
- * [¤½¶}Äİ©Ê]
- * -------------------------------------------------------------------------------------------
- * 
- * ¡´ EnvironmentEntities (Transform)
- *   - »¡©ú¡G©Ò¦³Àô¹Ò¹êÅéªº¤÷ª«¥ó
- *   - ¥Î³~¡G²ÕÂ´³õ´º¶¥¼h¡B¤è«KºŞ²z
+ * [èˆ‡å…¶ä»–ç³»çµ±çš„é—œä¿‚]
+ * - ç”± Manager å‰µå»ºå’ŒæŒæœ‰
+ * - å¯¦ä½œ ITickable ä»‹é¢ï¼Œæ¯ Tick åŸ·è¡Œ OnTick
+ * - ä½¿ç”¨ EntityData å–å¾—å¯¦é«”çš„è©³ç´°è³‡æ–™
+ * - ä½¿ç”¨ EntityPool<T> ç®¡ç†å¯¦é«”çš„å‰µå»ºå’Œå›æ”¶
+ * - è¢« Perception.Items ç”¨æ–¼æŸ¥è©¢å ´æ™¯ä¸­çš„é£Ÿç‰©
  * 
  * -------------------------------------------------------------------------------------------
- * [¤½¶}¤èªk]
+ * [å…¬é–‹å±¬æ€§]
  * -------------------------------------------------------------------------------------------
  * 
- * ¡´ GetEntityCount(SpawnableEntityType type)
- *   - »¡©ú¡G¨ú±o«ü©wÃş«¬¹êÅéªº·í«e¼Æ¶q
- *   - ¦^¶Ç¡G¸ÓÃş«¬¹êÅé¦b³õ´º¤¤ªº¼Æ¶q
- *   - ¥Îªk¡Gint grassCount = EnvEntityManager.GetEntityCount(SpawnableEntityType.Grass);
- * 
- * ¡´ GetPool(SpawnableEntityType type)
- *   - »¡©ú¡G¨ú±o«ü©wÃş«¬ªºª«¥ó¦À
- *   - ¦^¶Ç¡GIEntityPool ¤¶­±¡A¥i¬d¸ß¦Àª¬ºA
- *   - ¥Îªk¡Gvar pool = EnvEntityManager.GetPool(SpawnableEntityType.Meat);
- * 
- * ¡´ SpawnEntity(SpawnableEntityType type, Vector2Int pos)
- *   - »¡©ú¡G¦b«ü©w¦ì¸m¥Í¦¨¹êÅé
- *   - °Ñ¼Æ¡G
- *       type - ¹êÅéÃş«¬
- *       pos  - ¥Í¦¨¦ì¸m¡]®æ®y¼Ğ¡^
- *   - ¦^¶Ç¡G¬O§_¦¨¥\¥Í¦¨¡]¦ì¸m¤w³Q¦û¥Î©Î¦a§Î¤£²Å·|¥¢±Ñ¡^
- *   - ¥Îªk¡Gbool success = EnvEntityManager.SpawnEntity(SpawnableEntityType.Meat, new Vector2Int(10, 20));
- * 
- * ¡´ RemoveEntity(SpawnableEntityType type, Vector2Int pos)
- *   - »¡©ú¡G²¾°£«ü©w¦ì¸mªº¹êÅé¨Ã¦^¦¬¨ìª«¥ó¦À
- *   - ¦^¶Ç¡G¬O§_¦¨¥\²¾°£
- *   - ¥Îªk¡GEnvEntityManager.RemoveEntity(SpawnableEntityType.Grass, grassPosition);
- * 
- * ¡´ GetEntity<T>(SpawnableEntityType type, Vector2Int pos)
- *   - »¡©ú¡G¨ú±o«ü©w¦ì¸mªº¹êÅé
- *   - ¦^¶Ç¡G¸Ó¦ì¸mªº¹êÅé¡A­Y¤£¦s¦b«h¦^¶Ç null
- *   - ¥Îªk¡GGrass grass = EnvEntityManager.GetEntity<Grass>(SpawnableEntityType.Grass, pos);
- * 
- * ¡´ ClearAll()
- *   - »¡©ú¡G²MªÅ©Ò¦³¹êÅé©Mª«¥ó¦À
- *   - ¥Îªk¡GEnvEntityManager.ClearAll();
+ * â— EnvironmentEntities (Transform)
+ *   - èªªæ˜ï¼šæ‰€æœ‰ç’°å¢ƒå¯¦é«”çš„çˆ¶ç‰©ä»¶
+ *   - ç”¨é€”ï¼šçµ„ç¹”å ´æ™¯éšå±¤ã€æ–¹ä¾¿ç®¡ç†
  * 
  * -------------------------------------------------------------------------------------------
- * [¤º³¡¹B§@]
+ * [å…¬é–‹æ–¹æ³•]
  * -------------------------------------------------------------------------------------------
  * 
- * ªì©l¤Æ¬yµ{¡G
- * 1. ³Ğ«Ø EnvironmentEntities ¤÷ª«¥ó
- * 2. ¹M¾ú©Ò¦³ SpawnableEntityType
- * 3. ¬°¨CºØÃş«¬³Ğ«Ø¦ì¸m¦r¨å©Mª«¥ó¦À
- * 4. ¨Ï¥Î¤Ï®g³Ğ«Ø¥¿½Tªºªx«¬ EntityPool<T>
+ * â— GetEntityCount(SpawnableEntityType type)
+ *   - èªªæ˜ï¼šå–å¾—æŒ‡å®šé¡å‹å¯¦é«”çš„ç•¶å‰æ•¸é‡
+ *   - å›å‚³ï¼šè©²é¡å‹å¯¦é«”åœ¨å ´æ™¯ä¸­çš„æ•¸é‡
+ *   - ç”¨æ³•ï¼šint grassCount = EnvEntityManager.GetEntityCount(SpawnableEntityType.Grass);
  * 
- * ¨C Tick °õ¦æ¡G
- * 1. ©I¥s RandomlySpawnEntity ¹Á¸Õ¥Í¦¨¯ó
- * 2. ÀË¬d¼Æ¶q­­¨î
- * 3. ÀH¾÷¿ï¾Ü¦ì¸m¨ÃÀË¬d¦a§Î
- * 4. ¦b¦X¾Aªº¦ì¸m¥Í¦¨¹êÅé
+ * â— GetPool(SpawnableEntityType type)
+ *   - èªªæ˜ï¼šå–å¾—æŒ‡å®šé¡å‹çš„ç‰©ä»¶æ± 
+ *   - å›å‚³ï¼šIEntityPool ä»‹é¢ï¼Œå¯æŸ¥è©¢æ± ç‹€æ…‹
+ *   - ç”¨æ³•ï¼švar pool = EnvEntityManager.GetPool(SpawnableEntityType.Meat);
+ * 
+ * â— SpawnEntity(SpawnableEntityType type, Vector2Int pos)
+ *   - èªªæ˜ï¼šåœ¨æŒ‡å®šä½ç½®ç”Ÿæˆå¯¦é«”
+ *   - åƒæ•¸ï¼š
+ *       type - å¯¦é«”é¡å‹
+ *       pos  - ç”Ÿæˆä½ç½®ï¼ˆæ ¼åº§æ¨™ï¼‰
+ *   - å›å‚³ï¼šæ˜¯å¦æˆåŠŸç”Ÿæˆï¼ˆä½ç½®å·²è¢«ä½”ç”¨æˆ–åœ°å½¢ä¸ç¬¦æœƒå¤±æ•—ï¼‰
+ *   - ç”¨æ³•ï¼šbool success = EnvEntityManager.SpawnEntity(SpawnableEntityType.Meat, new Vector2Int(10, 20));
+ * 
+ * â— RemoveEntity(SpawnableEntityType type, Vector2Int pos)
+ *   - èªªæ˜ï¼šç§»é™¤æŒ‡å®šä½ç½®çš„å¯¦é«”ä¸¦å›æ”¶åˆ°ç‰©ä»¶æ± 
+ *   - å›å‚³ï¼šæ˜¯å¦æˆåŠŸç§»é™¤
+ *   - ç”¨æ³•ï¼šEnvEntityManager.RemoveEntity(SpawnableEntityType.Grass, grassPosition);
+ * 
+ * â— GetEntity<T>(SpawnableEntityType type, Vector2Int pos)
+ *   - èªªæ˜ï¼šå–å¾—æŒ‡å®šä½ç½®çš„å¯¦é«”
+ *   - å›å‚³ï¼šè©²ä½ç½®çš„å¯¦é«”ï¼Œè‹¥ä¸å­˜åœ¨å‰‡å›å‚³ null
+ *   - ç”¨æ³•ï¼šGrass grass = EnvEntityManager.GetEntity<Grass>(SpawnableEntityType.Grass, pos);
+ * 
+ * â— ClearAll()
+ *   - èªªæ˜ï¼šæ¸…ç©ºæ‰€æœ‰å¯¦é«”å’Œç‰©ä»¶æ± 
+ *   - ç”¨æ³•ï¼šEnvEntityManager.ClearAll();
+ * 
+ * -------------------------------------------------------------------------------------------
+ * [å…§éƒ¨é‹ä½œ]
+ * -------------------------------------------------------------------------------------------
+ * 
+ * åˆå§‹åŒ–æµç¨‹ï¼š
+ * 1. å‰µå»º EnvironmentEntities çˆ¶ç‰©ä»¶
+ * 2. éæ­·æ‰€æœ‰ SpawnableEntityType
+ * 3. ç‚ºæ¯ç¨®é¡å‹å‰µå»ºä½ç½®å­—å…¸å’Œç‰©ä»¶æ± 
+ * 4. ä½¿ç”¨åå°„å‰µå»ºæ­£ç¢ºçš„æ³›å‹ EntityPool<T>
+ * 
+ * æ¯ Tick åŸ·è¡Œï¼š
+ * 1. å‘¼å« RandomlySpawnEntity å˜—è©¦ç”Ÿæˆè‰
+ * 2. æª¢æŸ¥æ•¸é‡é™åˆ¶
+ * 3. éš¨æ©Ÿé¸æ“‡ä½ç½®ä¸¦æª¢æŸ¥åœ°å½¢
+ * 4. åœ¨åˆé©çš„ä½ç½®ç”Ÿæˆå¯¦é«”
  * 
  * ===========================================================================================
  */
@@ -88,43 +88,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
-
+//TODO: ä¹‹å¾Œéœ€è¦æ€è€ƒä¸åŒç”Ÿæ…‹åŸŸè¦å¦‚ä½•èƒ½å¤ æœ‰ä¸åŒçš„entityæ•¸é‡å’Œç¨®é¡
 /// <summary>
-/// Àô¹Ò¹êÅéºŞ²z¾¹ - ²Î¤@ºŞ²z©Ò¦³Àô¹Ò¹êÅéªº¥Í¦¨¡B¬d¸ß©M¦^¦¬
+/// ç’°å¢ƒå¯¦é«”ç®¡ç†å™¨ - çµ±ä¸€ç®¡ç†æ‰€æœ‰ç’°å¢ƒå¯¦é«”çš„ç”Ÿæˆã€æŸ¥è©¢å’Œå›æ”¶
 /// </summary>
 public class EnvEntityManager : ITickable
 {
-    // ========== ´ú¸Õ¥Î±`¼Æ¡]¼È®É©Ê¡^ ==========
-    /// <summary>¥Í¦¨½d³ò³Ì¤p­È¡]¥]§t¡^</summary>
+    // ========== æ¸¬è©¦ç”¨å¸¸æ•¸ï¼ˆæš«æ™‚æ€§ï¼‰ ==========
+    /// <summary>ç”Ÿæˆç¯„åœæœ€å°å€¼ï¼ˆåŒ…å«ï¼‰</summary>
     private const int MINSPAWNRANGE = 0;
-    /// <summary>¥Í¦¨½d³ò³Ì¤j­È¡]¥]§t¡^</summary>
+    /// <summary>ç”Ÿæˆç¯„åœæœ€å¤§å€¼ï¼ˆåŒ…å«ï¼‰</summary>
     private const int MAXSPAWNRANGE = 500;
 
-    // ========== ¤½¶}Äİ©Ê ==========
-    
-    /// <summary>©Ò¦³Àô¹Ò¹êÅéªº¤÷ª«¥ó</summary>
+    // ========== å…¬é–‹å±¬æ€§ ==========
+
+    /// <summary>æ‰€æœ‰ç’°å¢ƒå¯¦é«”çš„çˆ¶ç‰©ä»¶</summary>
     public Transform EnvironmentEntities { get; private set; }
 
-    // ========== ¨p¦³Äæ¦ì ==========
-    
+    // ========== ç§æœ‰æ¬„ä½ ==========
+
     /// <summary>
-    /// ¹êÅé¦ì¸m¯Á¤Ş¦r¨å
-    /// Key: ¹êÅéÃş«¬
-    /// Value: ¸ÓÃş«¬©Ò¦³¹êÅéªº¦ì¸m¹ïÀ³ªí¡]¦ì¸m ¡÷ GameObject¡^
+    /// å¯¦é«”ä½ç½®ç´¢å¼•å­—å…¸
+    /// Key: å¯¦é«”é¡å‹
+    /// Value: è©²é¡å‹æ‰€æœ‰å¯¦é«”çš„ä½ç½®å°æ‡‰è¡¨ï¼ˆä½ç½® â†’ GameObjectï¼‰
     /// </summary>
     private readonly Dictionary<EntityData.SpawnableEntityType, Dictionary<Vector2Int, GameObject>> _entityDict = new();
-    
+
     /// <summary>
-    /// ¹êÅéª«¥ó¦À¦r¨å
-    /// Key: ¹êÅéÃş«¬
-    /// Value: ¸ÓÃş«¬ªºª«¥ó¦À¡]IEntityPool ¤¶­±¡^
+    /// å¯¦é«”ç‰©ä»¶æ± å­—å…¸
+    /// Key: å¯¦é«”é¡å‹
+    /// Value: è©²é¡å‹çš„ç‰©ä»¶æ± ï¼ˆIEntityPool ä»‹é¢ï¼‰
     /// </summary>
     private readonly Dictionary<EntityData.SpawnableEntityType, IEntityPool> _entityPool = new();
 
-    // ========== «Øºc¤l ==========
-    
+    // ========== å»ºæ§‹å­ ==========
+
     /// <summary>
-    /// «Øºc¤l - ªì©l¤ÆÀô¹Ò¹êÅéºŞ²z¾¹
+    /// å»ºæ§‹å­ - åˆå§‹åŒ–ç’°å¢ƒå¯¦é«”ç®¡ç†å™¨
     /// </summary>
     public EnvEntityManager()
     {
@@ -132,38 +132,38 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// ªì©l¤Æ - ³Ğ«Ø¤÷ª«¥ó©M©Ò¦³Ãş«¬ªºª«¥ó¦À
+    /// åˆå§‹åŒ– - å‰µå»ºçˆ¶ç‰©ä»¶å’Œæ‰€æœ‰é¡å‹çš„ç‰©ä»¶æ± 
     /// </summary>
     private void Initialize()
     {
-        // ³Ğ«ØÀô¹Ò¹êÅéªº¤÷ª«¥ó
+        // å‰µå»ºç’°å¢ƒå¯¦é«”çš„çˆ¶ç‰©ä»¶
         EnvironmentEntities = new GameObject("EnvironmentEntities").transform;
 
-        // ¬°¨CºØ¹êÅéÃş«¬ªì©l¤Æ¦r¨å©Mª«¥ó¦À
+        // ç‚ºæ¯ç¨®å¯¦é«”é¡å‹åˆå§‹åŒ–å­—å…¸å’Œç‰©ä»¶æ± 
         foreach (EntityData.SpawnableEntityType type in Enum.GetValues(typeof(EntityData.SpawnableEntityType)))
         {
             SpawnableEntity entityData = EntityData.GetSpawnableEntity(type);
-            
-            // ³Ğ«Ø¸ÓÃş«¬ªº¦ì¸m¯Á¤Ş¦r¨å
+
+            // å‰µå»ºè©²é¡å‹çš„ä½ç½®ç´¢å¼•å­—å…¸
             _entityDict.Add(type, new Dictionary<Vector2Int, GameObject>());
 
-            // ¨Ï¥Î¤Ï®g³Ğ«Ø¥¿½Tªºªx«¬ª«¥ó¦À
-            // ¨Ò¦p¡GEntityPool<Grass>¡BEntityPool<Meat>
+            // ä½¿ç”¨åå°„å‰µå»ºæ­£ç¢ºçš„æ³›å‹ç‰©ä»¶æ± 
+            // ä¾‹å¦‚ï¼šEntityPool<Grass>ã€EntityPool<Meat>
             Type poolType = typeof(EntityPool<>).MakeGenericType(entityData.ClassType);
-            
-            // ª`·N¡G¥²¶·¨Ï¥Î object[] ¥]¸Ë°Ñ¼Æ¡A§_«h enum ·|³QÂà¦¨ int ¾É­P§ä¤£¨ì«Øºc¤l
+
+            // æ³¨æ„ï¼šå¿…é ˆä½¿ç”¨ object[] åŒ…è£åƒæ•¸ï¼Œå¦å‰‡ enum æœƒè¢«è½‰æˆ int å°è‡´æ‰¾ä¸åˆ°å»ºæ§‹å­
             IEntityPool poolInstance = (IEntityPool)Activator.CreateInstance(
-                poolType, 
+                poolType,
                 new object[] { type, 1000 }
             );
             _entityPool.Add(type, poolInstance);
         }
     }
 
-    // ========== ITickable ¹ê§@ ==========
-    
+    // ========== ITickable å¯¦ä½œ ==========
+
     /// <summary>
-    /// ±Ò¥Î®É¦V TickManager µù¥U
+    /// å•Ÿç”¨æ™‚å‘ TickManager è¨»å†Š
     /// </summary>
     public void OnEnable()
     {
@@ -171,7 +171,7 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// °±¥Î®É±q TickManager ¨ú®øµù¥U
+    /// åœç”¨æ™‚å¾ TickManager å–æ¶ˆè¨»å†Š
     /// </summary>
     public void OnDisable()
     {
@@ -179,21 +179,21 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// ¨C­Ó Tick °õ¦æ - ³B²zÀô¹Ò¹êÅéªº¦Û°Ê¥Í¦¨
+    /// æ¯å€‹ Tick åŸ·è¡Œ - è™•ç†ç’°å¢ƒå¯¦é«”çš„è‡ªå‹•ç”Ÿæˆ
     /// </summary>
     public void OnTick()
     {
-        // ¨C­Ó Tick ¹Á¸Õ¥Í¦¨¯ó
+        // æ¯å€‹ Tick å˜—è©¦ç”Ÿæˆè‰
         RandomlySpawnEntity(EntityData.SpawnableEntityType.Grass);
     }
 
-    // ========== ¤½¶}¤èªk ==========
-    
+    // ========== å…¬é–‹æ–¹æ³• ==========
+
     /// <summary>
-    /// ¨ú±o«ü©wÃş«¬¹êÅéªº·í«e¼Æ¶q
+    /// å–å¾—æŒ‡å®šé¡å‹å¯¦é«”çš„ç•¶å‰æ•¸é‡
     /// </summary>
-    /// <param name="type">¹êÅéÃş«¬</param>
-    /// <returns>¸ÓÃş«¬¹êÅé¦b³õ´º¤¤ªº¼Æ¶q</returns>
+    /// <param name="type">å¯¦é«”é¡å‹</param>
+    /// <returns>è©²é¡å‹å¯¦é«”åœ¨å ´æ™¯ä¸­çš„æ•¸é‡</returns>
     public int GetEntityCount(EntityData.SpawnableEntityType type)
     {
         if (_entityDict.TryGetValue(type, out var dict))
@@ -204,10 +204,10 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// ¨ú±o«ü©wÃş«¬ªºª«¥ó¦À
+    /// å–å¾—æŒ‡å®šé¡å‹çš„ç‰©ä»¶æ± 
     /// </summary>
-    /// <param name="type">¹êÅéÃş«¬</param>
-    /// <returns>IEntityPool ¤¶­±</returns>
+    /// <param name="type">å¯¦é«”é¡å‹</param>
+    /// <returns>IEntityPool ä»‹é¢</returns>
     public IEntityPool GetPool(EntityData.SpawnableEntityType type)
     {
         if (_entityPool.TryGetValue(type, out var pool))
@@ -218,24 +218,24 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// ¦b«ü©w¦ì¸m¥Í¦¨¹êÅé
+    /// åœ¨æŒ‡å®šä½ç½®ç”Ÿæˆå¯¦é«”
     /// </summary>
-    /// <param name="spawnableType">¹êÅéÃş«¬</param>
-    /// <param name="pos">¥Í¦¨¦ì¸m¡]®æ®y¼Ğ¡^</param>
-    /// <returns>¬O§_¦¨¥\¥Í¦¨</returns>
+    /// <param name="spawnableType">å¯¦é«”é¡å‹</param>
+    /// <param name="pos">ç”Ÿæˆä½ç½®ï¼ˆæ ¼åº§æ¨™ï¼‰</param>
+    /// <returns>æ˜¯å¦æˆåŠŸç”Ÿæˆ</returns>
     public bool SpawnEntity(EntityData.SpawnableEntityType spawnableType, Vector2Int pos)
     {
-        // ÀË¬d¦ì¸m¬O§_¤w³Q¦û¥Î
+        // æª¢æŸ¥ä½ç½®æ˜¯å¦å·²è¢«ä½”ç”¨
         if (_entityDict[spawnableType].ContainsKey(pos)) return false;
 
         SpawnableEntity entityData = EntityData.GetSpawnableEntity(spawnableType);
 
-        // ÀË¬d¦a§Î¬O§_¤¹³\¥Í¦¨
+        // æª¢æŸ¥åœ°å½¢æ˜¯å¦å…è¨±ç”Ÿæˆ
         if (entityData.SpawnableTerrain != null && entityData.SpawnableTerrain.Count > 0)
         {
             TerrainType currentTerrain = TerrainGenerator.Instance.GetDefinitionMap().GetTerrain(pos);
             bool canSpawn = false;
-            
+
             foreach (var terrainType in entityData.SpawnableTerrain)
             {
                 if (currentTerrain == terrainType)
@@ -244,18 +244,18 @@ public class EnvEntityManager : ITickable
                     break;
                 }
             }
-            
+
             if (!canSpawn) return false;
         }
 
-        // ±qª«¥ó¦À¨ú±o¹êÅé
+        // å¾ç‰©ä»¶æ± å–å¾—å¯¦é«”
         MonoBehaviour entity = _entityPool[spawnableType].GetEntity(pos, EnvironmentEntities);
         if (entity == null) return false;
 
-        // °O¿ı¨ì¦ì¸m¯Á¤Ş¦r¨å¤¤
+        // è¨˜éŒ„åˆ°ä½ç½®ç´¢å¼•å­—å…¸ä¸­
         _entityDict[spawnableType].Add(pos, entity.gameObject);
 
-        // ¦pªG¹êÅé¬O Edible¡A©I¥s¨äªì©l¤Æ¤èªk
+        // å¦‚æœå¯¦é«”æ˜¯ Edibleï¼Œå‘¼å«å…¶åˆå§‹åŒ–æ–¹æ³•
         if (entity is Edible edible)
         {
             edible.Initialize();
@@ -265,23 +265,23 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// ²¾°£«ü©w¦ì¸mªº¹êÅé¨Ã¦^¦¬¨ìª«¥ó¦À
+    /// ç§»é™¤æŒ‡å®šä½ç½®çš„å¯¦é«”ä¸¦å›æ”¶åˆ°ç‰©ä»¶æ± 
     /// </summary>
-    /// <param name="spawnableType">¹êÅéÃş«¬</param>
-    /// <param name="pos">¹êÅé¦ì¸m</param>
-    /// <returns>¬O§_¦¨¥\²¾°£</returns>
+    /// <param name="spawnableType">å¯¦é«”é¡å‹</param>
+    /// <param name="pos">å¯¦é«”ä½ç½®</param>
+    /// <returns>æ˜¯å¦æˆåŠŸç§»é™¤</returns>
     public bool RemoveEntity(EntityData.SpawnableEntityType spawnableType, Vector2Int pos)
     {
-        // ÀË¬d¸Ó¦ì¸m¬O§_¦³¹êÅé
+        // æª¢æŸ¥è©²ä½ç½®æ˜¯å¦æœ‰å¯¦é«”
         if (!_entityDict[spawnableType].TryGetValue(pos, out GameObject entityObj))
         {
             return false;
         }
 
-        // ±q¦ì¸m¯Á¤Ş¤¤²¾°£
+        // å¾ä½ç½®ç´¢å¼•ä¸­ç§»é™¤
         _entityDict[spawnableType].Remove(pos);
 
-        // ¦^¦¬¨ìª«¥ó¦À
+        // å›æ”¶åˆ°ç‰©ä»¶æ± 
         MonoBehaviour entity = entityObj.GetComponent<MonoBehaviour>();
         if (entity != null)
         {
@@ -292,12 +292,12 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// ¨ú±o«ü©w¦ì¸mªº¹êÅé
+    /// å–å¾—æŒ‡å®šä½ç½®çš„å¯¦é«”
     /// </summary>
-    /// <typeparam name="T">¹êÅéªº MonoBehaviour Ãş«¬</typeparam>
-    /// <param name="spawnableType">¹êÅéÃş«¬</param>
-    /// <param name="position">¬d¸ß¦ì¸m</param>
-    /// <returns>¸Ó¦ì¸mªº¹êÅé¡A­Y¤£¦s¦b«h¦^¶Ç null</returns>
+    /// <typeparam name="T">å¯¦é«”çš„ MonoBehaviour é¡å‹</typeparam>
+    /// <param name="spawnableType">å¯¦é«”é¡å‹</param>
+    /// <param name="position">æŸ¥è©¢ä½ç½®</param>
+    /// <returns>è©²ä½ç½®çš„å¯¦é«”ï¼Œè‹¥ä¸å­˜åœ¨å‰‡å›å‚³ null</returns>
     public T GetEntity<T>(EntityData.SpawnableEntityType spawnableType, Vector2Int position) where T : MonoBehaviour
     {
         if (_entityDict.TryGetValue(spawnableType, out var entityPositions))
@@ -310,7 +310,7 @@ public class EnvEntityManager : ITickable
         return null;
     }
 
-    //  ========= ¤½¶}¤èªk¦h¸ü =========
+    //  ========= å…¬é–‹æ–¹æ³•å¤šè¼‰ =========
     private Vector2Int V3toV2Int(Vector3 v3)
     {
         return new Vector2Int(Mathf.RoundToInt(v3.x), Mathf.RoundToInt(v3.y));
@@ -352,7 +352,7 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// ²MªÅ©Ò¦³¹êÅé©Mª«¥ó¦À
+    /// æ¸…ç©ºæ‰€æœ‰å¯¦é«”å’Œç‰©ä»¶æ± 
     /// </summary>
     public void ClearAll()
     {
@@ -363,32 +363,32 @@ public class EnvEntityManager : ITickable
         }
     }
 
-    // ========== ¨p¦³¤èªk ==========
-    
+    // ========== ç§æœ‰æ–¹æ³• ==========
+
     /// <summary>
-    /// ÀH¾÷¥Í¦¨«ü©wÃş«¬ªº¹êÅé
+    /// éš¨æ©Ÿç”ŸæˆæŒ‡å®šé¡å‹çš„å¯¦é«”
     /// </summary>
-    /// <param name="spawnableType">­n¥Í¦¨ªº¹êÅéÃş«¬</param>
+    /// <param name="spawnableType">è¦ç”Ÿæˆçš„å¯¦é«”é¡å‹</param>
     private void RandomlySpawnEntity(EntityData.SpawnableEntityType spawnableType)
     {
         SpawnableEntity entityData = EntityData.GetSpawnableEntity(spawnableType);
-        
-        // ÀË¬d¬O§_¹F¨ì³Ì¤j¼Æ¶q­­¨î
+
+        // æª¢æŸ¥æ˜¯å¦é”åˆ°æœ€å¤§æ•¸é‡é™åˆ¶
         if (GetEntityCount(spawnableType) >= entityData.MaxSpawnableValue) return;
 
-        // ÀH¾÷¿ï¾Ü¤@­Ó°_©l¦ì¸m
+        // éš¨æ©Ÿé¸æ“‡ä¸€å€‹èµ·å§‹ä½ç½®
         Vector2Int position = new Vector2Int(
             Random.Range(MINSPAWNRANGE, MAXSPAWNRANGE + 1),
             Random.Range(MINSPAWNRANGE, MAXSPAWNRANGE + 1)
         );
 
-        // ÀË¬d°_©l¦ì¸m¬O§_¤w³Q¦û¥Î
+        // æª¢æŸ¥èµ·å§‹ä½ç½®æ˜¯å¦å·²è¢«ä½”ç”¨
         if (_entityDict[spawnableType].ContainsKey(position)) return;
 
-        // ¦b°_©l¦ì¸m©P³òÀH¾÷¨ú±o¦h­Ó¦ì¸m
+        // åœ¨èµ·å§‹ä½ç½®å‘¨åœéš¨æ©Ÿå–å¾—å¤šå€‹ä½ç½®
         var randomPositions = GetRandomPosition(position, 3, Random.Range(1, 5));
-        
-        // ¹Á¸Õ¦b¨C­Ó¦ì¸m¥Í¦¨¹êÅé
+
+        // å˜—è©¦åœ¨æ¯å€‹ä½ç½®ç”Ÿæˆå¯¦é«”
         foreach (var pos in randomPositions)
         {
             SpawnEntity(spawnableType, pos);
@@ -396,32 +396,32 @@ public class EnvEntityManager : ITickable
     }
 
     /// <summary>
-    /// ¦b«ü©w¦ì¸m©P³òÀH¾÷¨ú±o¦h­Ó¤£­«½Æªº¦ì¸m
+    /// åœ¨æŒ‡å®šä½ç½®å‘¨åœéš¨æ©Ÿå–å¾—å¤šå€‹ä¸é‡è¤‡çš„ä½ç½®
     /// </summary>
-    /// <param name="position">¤¤¤ß¦ì¸m</param>
-    /// <param name="r">³Ì¤j¥b®|</param>
-    /// <param name="n">»İ­nªº¦ì¸m¼Æ¶q</param>
-    /// <returns>ÀH¾÷¦ì¸m¦Cªí</returns>
+    /// <param name="position">ä¸­å¿ƒä½ç½®</param>
+    /// <param name="r">æœ€å¤§åŠå¾‘</param>
+    /// <param name="n">éœ€è¦çš„ä½ç½®æ•¸é‡</param>
+    /// <returns>éš¨æ©Ÿä½ç½®åˆ—è¡¨</returns>
     private List<Vector2Int> GetRandomPosition(Vector2Int position, int r, int n)
     {
         List<Vector2Int> positions = new();
         HashSet<Vector2Int> usedPositions = new();
         uint tries = 0;
-        
-        // ¹Á¸Õ¨ú±o n ­Ó¤£­«½Æªº¦ì¸m
+
+        // å˜—è©¦å–å¾— n å€‹ä¸é‡è¤‡çš„ä½ç½®
         while (positions.Count < n && tries < n * 10)
         {
-            // ÀH¾÷¨¤«×©M¥b®|
+            // éš¨æ©Ÿè§’åº¦å’ŒåŠå¾‘
             float angle = Random.Range(0f, 360f);
             float radius = Random.Range(0f, r);
-            
-            // ­pºâ·s¦ì¸m
+
+            // è¨ˆç®—æ–°ä½ç½®
             Vector2Int newPosition = position + new Vector2Int(
                 Mathf.RoundToInt(radius * Mathf.Cos(angle * Mathf.Deg2Rad)),
                 Mathf.RoundToInt(radius * Mathf.Sin(angle * Mathf.Deg2Rad))
             );
-            
-            // ÀË¬d¬O§_¤w¨Ï¥Î¹L
+
+            // æª¢æŸ¥æ˜¯å¦å·²ä½¿ç”¨é
             if (!usedPositions.Contains(newPosition))
             {
                 usedPositions.Add(newPosition);
@@ -429,7 +429,7 @@ public class EnvEntityManager : ITickable
             }
             tries++;
         }
-        
+
         return positions;
     }
 }
