@@ -38,6 +38,15 @@ public partial class Creature : MonoBehaviour
         {
             reproductionCD -= 1;
         }
+        if (stunTimer > 0)
+        {
+            isStunned = true;
+            stunTimer--;
+        }
+        else
+        {
+            isStunned = false;
+        }
     }
 
 

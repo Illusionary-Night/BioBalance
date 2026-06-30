@@ -91,15 +91,7 @@ public partial class Creature : MonoBehaviour, ITickable
         UpdateCooldowns();
         UpdateGrowth();
         UpdateColorGenes();
-        if (stunTimer > 0)
-        {
-            isStunned = true;
-            stunTimer--;
-        }
-        else
-        {
-            isStunned = false;
-        }
+
 
 
         if (actionCooldown <= 0) DoAction();
