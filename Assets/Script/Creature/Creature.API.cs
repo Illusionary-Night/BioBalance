@@ -44,19 +44,6 @@ public partial class Creature : MonoBehaviour
         this.isInvincible = isInvincible;
     }
 
-    /// <summary> 啟動睡眠狀態：觸發數值加成開關（飢餓消耗降低、回血提高） </summary>
-    public void StartSleeping()
-    {
-        isSleeping = true;
-        // 這裡可以觸發動畫或視覺效果
-    }
-
-    /// <summary> 結束睡眠狀態：恢復常規數值消耗比例 </summary>
-    public void StopSleeping()
-    {
-        isSleeping = false;
-    }
-
 
 
     /// <summary>
@@ -147,83 +134,6 @@ public partial class Creature : MonoBehaviour
     }
     #endregion
 
-    #region --- 受擊系統 ---
-
-    /// <summary> 執行基礎傷害扣血，並確保生命值不低於 0 </summary>
-    public void Hurt(float damage, Creature attacker = null)
-    {
-        underAttackDirection = Direction.None;
-        health -= damage;
-        health = Mathf.Max(health, 0);
-        if (attacker != null) enemy = attacker;
-    }
-
-    /// <summary> 執行傷害並記錄攻擊來源方位，用於觸發受傷逃跑判定或者之後進一步的動畫或特效 </summary>
-    public void Hurt(float damage, Vector2 attackerPosition, Creature attacker = null)
-    {
-        // 計算攻擊者相對於自己的方位向量
-        Vector2 direction = attackerPosition - (Vector2)transform.position;
-        underAttackDirection = GetDirectionFromVector(direction);
-        health -= damage;
-        health = Mathf.Max(health, 0);
-        if (attacker != null) enemy = attacker;
-    }
-
-    /// <summary> 將向量轉換為 8 方向列舉，以 45 度角為一個判斷區間 </summary>
-    private Direction GetDirectionFromVector(Vector2 direction)
-    {
-        if (direction.sqrMagnitude < 0.001f) return Direction.None;
-
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        if (angle < 0) angle += 360;
-        //TODO: 角度判斷可能要移到Constant
-        if (angle >= 337.5f || angle < 22.5f) return Direction.East;
-        if (angle >= 22.5f && angle < 67.5f) return Direction.Northeast;
-        if (angle >= 67.5f && angle < 112.5f) return Direction.North;
-        if (angle >= 112.5f && angle < 157.5f) return Direction.Northwest;
-        if (angle >= 157.5f && angle < 202.5f) return Direction.West;
-        if (angle >= 202.5f && angle < 247.5f) return Direction.Southwest;
-        if (angle >= 247.5f && angle < 292.5f) return Direction.South;
-        if (angle >= 292.5f && angle < 337.5f) return Direction.Southeast;
-
-        return Direction.None;
-    }
-
-    /// <summary> 檢查目前是否處於受擊狀態（方位不為 None 代表受擊中） </summary>
-    public bool UnderAttack()
-    {
-        return underAttackDirection != Direction.None;
-    }
-
-    /// <summary> 取得受擊方位</summary>
-    public Direction GetUnderAttackDirection()
-    {
-        return underAttackDirection;
-    }
-
-    /// <summary> 取得受擊方位並立刻重置狀態，確保單次受傷僅觸發一次反應 </summary>
-    public Direction GetAndResetUnderAttackDirection()
-    {
-        Direction result = underAttackDirection;
-        underAttackDirection = Direction.None;
-        return result;
-    }
-
-    public void ResetUnderAttackDirection()
-    {
-        underAttackDirection = Direction.None;
-    }
-    public void Repel(Vector2 drection, float strength = 1f)
-    {
-        movement.Pushed(drection, strength);
-    }
-
-    public void SetEnemy(Creature enemy)
-    {
-        this.enemy = enemy;
-    }
-
-    #endregion
 
     #region --- 資料轉換與系統重置 ---
     /// <summary> 將當前個體的遺傳屬性轉換為屬性結構，供繁殖或保存使用 </summary>
@@ -259,66 +169,7 @@ public partial class Creature : MonoBehaviour
     }
     #endregion
 
-    #region --- 移動控制與導航 ---
-    /// <summary> 指令生物移動至目標格座座標。會自動觸發尋路與物理移動 </summary>
-    /// <param name="destination"> 目標格座 (Vector2Int) </param>
-    public void MoveTo(Vector2Int destination, bool isRunning = false)
-    {
-        if (isDead || movement == null) return;
-        movement.SetDestination(destination, isRunning);
-    }
 
-    /// <summary> 強制重新執行尋路演算法（A*）。用於目標位置改變或環境障礙物更新時 </summary>
-    public void ForceNavigate()
-    {
-        if (isDead || movement == null) return;
-        movement.Navigate();
-    }
-
-    public void SetMovementState(CreatureMovementState state)
-    {
-        movementState = state;
-    }
-
-    #endregion
-
-    #region --- 空間與位置查詢  ---
-
-    /// <summary> 取得當前經過物理修正後的整數格座標（四捨五入） </summary>
-    /// <returns> 當前所處的格座位置 </returns>
-    public Vector2Int GetRoundedPosition()
-    {
-        if (movement == null) return Vector2Int.zero;
-        return movement.GetVector2IntCurrentPosition();
-    }
-
-    /// <summary> 計算當前位置與導航目的地之間的直線距離。若無目的地則回傳 -1 </summary>
-    public float GetDistanceToDestination()
-    {
-        // 如果 movement 沒啟動、或是沒在動，就回傳 -1
-        if (movement == null || movement.GetDestination() == null)
-        {
-            return -1f;
-        }
-        Vector2 currentPos = transform.position;
-        Vector2 dest = new Vector2(movement.GetDestination().x, movement.GetDestination().y);
-
-        return Vector2.Distance(currentPos, dest);
-    }
-
-    /// <summary> 取得當前移動組件預設的目的地座標 </summary>
-    public Vector2Int GetMovementDestination()
-    {
-        return movement != null ? movement.GetDestination() : Vector2Int.zero;
-    }
-
-    /// <summary> 取得生物目前在移動過程中被障礙物卡住的累計次數（Ticks） </summary>
-    /// <returns> 卡住的次數，可用於判定是否需要重新導航或變換行為 </returns>
-    // public int GetMovementStuckTimes()
-    // {
-    //     return movement != null ? movement.GetStuckTimes() : 0;
-    // }
-    #endregion
 
     #region 尚未歸類function 
     public void SetMotherID(string motherID)

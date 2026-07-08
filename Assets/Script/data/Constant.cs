@@ -93,10 +93,7 @@ public static class DefaultTerrainCosts
 
 }
 
-public enum Direction
-{
-    None, North, South, East, West, Northwest, Southwest, Northeast, Southeast
-}
+
 
 public enum CreatureBase
 {
