@@ -40,12 +40,6 @@ public class InGameManager
 
         EnvEntityManager = new EnvEntityManager();
 
-        // 啟用 EnvEntityManager 的 Tick 訂閱
-        if (EnvEntityManager != null)
-        {
-            TickManager?.RegisterTickable(EnvEntityManager.OnTick);
-        }
-
         // 紀錄初始化完成
         LogManager.Log("[Manager] 初始化完成");
     }
