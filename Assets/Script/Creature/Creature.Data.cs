@@ -5,6 +5,20 @@ using static Perception;
 
 public partial class Creature : MonoBehaviour, ITickable
 {
+    //TODO: 這邊的屬性可以用Attribute包裝，然後用Dictionary<ActionType, Attribute>來管理
+    public List<int> preyIDList => mySpecies.preyIDList;
+    public List<int> predatorIDList => mySpecies.predatorIDList;
+    public List<FoodType> foodTypes => mySpecies.foodTypes;
+    public float attackPower { get; private set; }
+    public bool isSleeping { get; private set; } = false;
+    public Creature enemy { get; private set; }
+    public CreatureMovementState movementState { get; private set; }
+    public Gender gender;
+    //public Creature matingPartner; // 目前鎖定的配對對象
+    public float reproductionCD; // 成功繁殖的冷卻
+    public string fatherID { get; private set; }
+    public string motherID { get; private set; }
+
     //TODO: 把各種屬性包含運行中的數據包裝成DTO像是ToCreatureAttribute()類似
     //TODO: Design Pattern: Strategy Pattern、State Pattern
     public Species mySpecies;
@@ -15,19 +29,17 @@ public partial class Creature : MonoBehaviour, ITickable
     //TODO: lambda表達式有辦法設定get set嗎？這樣感覺有點危險
     public int speciesID => mySpecies.speciesID;
     public CreatureBase creatureBase => mySpecies.creatureBase;
-    public List<int> preyIDList => mySpecies.preyIDList;
-    public List<int> predatorIDList => mySpecies.predatorIDList;
+
     public List<ActionType> actionList => mySpecies.actionList;
-    public List<FoodType> foodTypes => mySpecies.foodTypes;
     public Dictionary<ActionType, int> actionMaxCD => mySpecies.actionMaxCD;
     public float variation => mySpecies.variation;
+
 
     // --- 個體遺傳屬性 ---
     public float size { get; private set; }
     public float speed { get; private set; }
     public float maxHealth { get; private set; }
     public float reproductionRate { get; private set; }
-    public float attackPower { get; private set; }
     public float lifespan { get; private set; }
     public float perceptionRange { get; private set; }
     //public int sleepingHead { get; private set; }
@@ -44,7 +56,6 @@ public partial class Creature : MonoBehaviour, ITickable
     public float age { get; private set; }
     public int actionCooldown { get; private set; }
     public float stunTimer { get; private set; } = 0f;
-    public bool isSleeping { get; private set; } = false;
     public bool isDead { get; private set; } = false;
     public bool isInvincible { get; private set; } = false;
     public bool isStunned { get; private set; } = false;
@@ -53,13 +64,8 @@ public partial class Creature : MonoBehaviour, ITickable
     public Direction underAttackDirection { get; private set; }
     public LifeState currentLifeState { get; private set; }
     public Dictionary<ActionType, int> actionCD { get; private set; } = new();
-    public Creature enemy { get; private set; }
-    public CreatureMovementState movementState { get; private set; }
-    public Gender gender;
-    //public Creature matingPartner; // 目前鎖定的配對對象
-    public float reproductionCD; // 成功繁殖的冷卻
-    public string fatherID { get; private set; }
-    public string motherID { get; private set; }
+
+    // ===================================包一包==================================
     // 儲存六色比例，和必須為 1
     // 索引：0:紅, 1:橙, 2:黃, 3:綠, 4:藍, 5:紫
     public float[] colorGenes = new float[6];
@@ -83,6 +89,6 @@ public partial class Creature : MonoBehaviour, ITickable
     // 強烈建議：將所有生物放在同一個 Layer (例如 "Creature")
     // 這樣 Physics2D 就不會去掃描地形或其他無關的物件
     public LayerMask creatureLayer;
+    // ========================================================================
+
 }
-
-
