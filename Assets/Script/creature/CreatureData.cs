@@ -81,7 +81,7 @@ public class CreatureData
     public float[] colorGenes = new float[6];
 
     // 狀態判定
-    private bool isWandering = false;
+    public bool isWandering = false;
     public float fadeSpeed = 0.1f; // 褪色速度
     public bool isUsingColorGenes = true; // 是否啟用顏色基因影響外觀
     // 渲染相關

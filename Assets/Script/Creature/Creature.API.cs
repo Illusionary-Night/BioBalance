@@ -7,7 +7,6 @@
  */
 using System.Collections.Generic;
 using UnityEngine;
-using static Perception;
 
 public partial class Creature : MonoBehaviour
 {
