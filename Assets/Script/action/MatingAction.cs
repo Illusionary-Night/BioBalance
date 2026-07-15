@@ -10,8 +10,8 @@ public class MatingAction : ActionBase
     public override bool IsConditionMet(Creature creature)
     {
         // --- 1. 基本生理限制 (男女通用) ---
-        if (creature.age < creature.lifespan * 0.2f) return false;     // 未成年不交配
-        if (creature.hunger < creature.maxHunger * 0.5f) return false; // 肚子餓不交配
+        if (creature.data.age.Percentage < 0.2f) return false;     // 未成年不交配
+        if (creature.data.hunger.Percentage < 0.5f) return false; // 肚子餓不交配
         if (creature.reproductionCD > 0) return false;                 // 冷卻中不交配
 
         // --- 2. 確保視線內有「合法」的對象 ---
@@ -20,8 +20,8 @@ public class MatingAction : ActionBase
             // 母找公：對方也必須是成年、吃飽、且不在冷卻中
             bool maleInSight = Perception.Creatures.HasTarget(creature, creature.speciesID, 1.5f,
                 c => c.gender == Gender.Male &&
-                     c.age >= c.lifespan * 0.2f &&
-                     c.hunger >= c.maxHunger * 0.5f);
+                     c.data.age.Percentage >= 0.2f &&
+                     c.data.hunger.Percentage >= 0.5f);
 
             if (!maleInSight) return false;
         }
@@ -30,8 +30,8 @@ public class MatingAction : ActionBase
             // 公找母：對方也必須是成年、吃飽、且不在冷卻中
             bool femaleInSight = Perception.Creatures.HasTarget(creature, creature.speciesID, 1.5f,
                 c => c.gender == Gender.Female &&
-                     c.age >= c.lifespan * 0.2f &&
-                     c.hunger >= c.maxHunger * 0.5f);
+                     c.data.age.Percentage >= 0.2f &&
+                     c.data.hunger.Percentage >= 0.5f);
 
             if (!femaleInSight) return false;
         }

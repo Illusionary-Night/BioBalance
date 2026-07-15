@@ -10,14 +10,14 @@ public class MoveAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
     {
-        // ¥Ã»·¥i¥H²¾°Ê
+        // æ°¸é å¯ä»¥ç§»å‹•
         return true;
     }
 
     public override float GetWeight(Creature creature)
     {
         return 0.3f;
-        // ®Ú¾Ú°§¾j­È¨M©w²¾°ÊÅv­«¡A°§¾j­È¶V°ª¡A²¾°ÊÅv­«¶V°ª
+        // æ ¹æ“šé£¢é¤“å€¼æ±ºå®šç§»å‹•æ¬Šé‡ï¼Œé£¢é¤“å€¼è¶Šé«˜ï¼Œç§»å‹•æ¬Šé‡è¶Šé«˜
         //return (creature.Hunger / creature.MaxHunger) / Perception.Creatures.CountTargetNumber(creature, creature.SpeciesID);
     }
 
@@ -29,67 +29,14 @@ public class MoveAction : ActionBase
     public override void Execute(Creature creature, ActionContext context = null)
     {
         //Debug.Log("move");
-        // ÀH¾÷²¾°Ê¨ì¾Fªñ¦ì¸m
+        // éš¨æ©Ÿç§»å‹•åˆ°é„°è¿‘ä½ç½®
         Vector2Int currentPosition = creature.GetRoundedPosition();
         int rangeInt = Mathf.FloorToInt(creature.perceptionRange);
         Vector2Int randomDisplacement = new(Random.Range(-rangeInt, rangeInt + 1), Random.Range(-rangeInt, rangeInt + 1));
         //Vector2Int randomDisplacement = new(Random.Range(-MoveDistance, MoveDistance + 1), Random.Range(-MoveDistance, MoveDistance + 1));
         Vector2Int newPosition = currentPosition + randomDisplacement;
 
-        // ©I¥sCreature¦Û¦æ¾É¯è¦aÂI
+        // å‘¼å«Creatureè‡ªè¡Œå°èˆªåœ°é»
         creature.MoveTo(newPosition);
     }
-    //private void Execute_type2(Creature creature, ActionContext context = null)
-    //{
-    //    Vector2Int currentPos = creature.GetRoundedPosition();
-    //    float range = creature.PerceptionRange;
-
-    //    // 1. ¨ú±o¦P±Ú²M³æ
-    //    List<Creature> kindreds = Perception.Creatures.GetAllTargets(creature, creature.SpeciesID);
-
-    //    // ¦pªG©P³ò¨S¤H¡A´NÀH¾÷¨«
-    //    if (kindreds == null || kindreds.Count == 0)
-    //    {
-    //        int rangeInt = Mathf.FloorToInt(creature.PerceptionRange);
-    //        Vector2Int randomDisplacement = new(Random.Range(-rangeInt, rangeInt + 1), Random.Range(-rangeInt, rangeInt + 1));
-    //        //Vector2Int randomDisplacement = new(Random.Range(-MoveDistance, MoveDistance + 1), Random.Range(-MoveDistance, MoveDistance + 1));
-    //        Vector2Int newPosition = currentPos + randomDisplacement;
-
-    //        // ©I¥sCreature¦Û¦æ¾É¯è¦aÂI
-    //        creature.MoveTo(newPosition);
-    //        return;
-    //    }
-
-    //    Vector2Int bestPosition = currentPos;
-    //    float lowestCrowdScore = float.MaxValue;
-
-    //    // 2. ¦hÂI±Ä¼Ë¡]¨Ò¦p©â 8 ­ÓÂI¨Óµû¤ñ¡^
-    //    int samples = 8;
-    //    for (int i = 0; i < samples; i++)
-    //    {
-    //        Vector2 randomPoint = UnityEngine.Random.insideUnitCircle * range;
-    //        Vector2Int candidatePos = currentPos + Vector2Int.RoundToInt(randomPoint);
-
-    //        // 3. ­pºâ¸ÓÂIªº¾ÖÀ½¤À¼Æ (¨Ï¥Î LINQ §Ö³t­pºâ)
-    //        // ¤À¼Æ = Á`©M( 1 / »P¨C­Ó¦P±Úªº¶ZÂ÷ )
-    //        float crowdScore = kindreds.Sum(k =>
-    //        {
-    //            float dist = Vector2.Distance(candidatePos, k?.transform.position??Vector3.zero);
-    //            // Á×§K°£¥H 0¡A¨Ã³]©w¤@­Ó·PÀ³ìH­È¡]¨Ò¦p¶ZÂ÷ 0.5 ¤ºµø¬°·¥«×¾ÖÀ½¡^
-    //            return 1.0f / Mathf.Max(dist, 0.5f);
-    //        });
-
-    //        // ¥[¤J¤@ÂIÀH¾÷ÂZ°Ê¡AÅı¦æ¬°§ó¦ÛµM
-    //        crowdScore *= UnityEngine.Random.Range(0.8f, 1.2f);
-
-    //        if (crowdScore < lowestCrowdScore)
-    //        {
-    //            lowestCrowdScore = crowdScore;
-    //            bestPosition = candidatePos;
-    //        }
-    //    }
-
-    //    // 4. «e©¹¤H³Ì¤Öªº¦a¤è
-    //    creature.MoveTo(bestPosition);
-    //}
 }

@@ -9,8 +9,8 @@ public class ReproduceAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
     {
-        if (creature.age < creature.lifespan * 0.2f) return false;
-        if (creature.hunger < creature.maxHunger * 0.5f) return false;
+        if (creature.data.age.Percentage < 0.2f) return false;
+        if (creature.data.hunger.Percentage < 0.5f) return false;
         return true;
     }
 

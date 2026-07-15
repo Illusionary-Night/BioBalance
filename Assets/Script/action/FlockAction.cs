@@ -8,33 +8,33 @@ class FlockAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
     {
-        // 1. °ò¥»¦w¥şÀË¬d¡G¨S·w¯t¡B¨S¦º¡B¨S³QÂê©w
+        // 1. åŸºæœ¬å®‰å…¨æª¢æŸ¥ï¼šæ²’æšˆçœ©ã€æ²’æ­»ã€æ²’è¢«é–å®š
         if (creature.isStunned || creature.isDead) return false;
 
-        // 2. ªÀ¥æÀË¬d¡G§ä´M·Pª¾½d³ò¤ºªº¦PÃş
+        // 2. ç¤¾äº¤æª¢æŸ¥ï¼šæ‰¾å°‹æ„ŸçŸ¥ç¯„åœå…§çš„åŒé¡
         var neighbors = Perception.Creatures.GetAllTargets(creature, creature.speciesID);
         if (neighbors.Count < 3) return false;
 
-        // 3. ¥Í²zÀË¬d¡G¨{¤l¤£¯à¤Ó¾j
-        if (creature.hunger < creature.maxHunger * 0.3f) return false;
+        // 3. ç”Ÿç†æª¢æŸ¥ï¼šè‚šå­ä¸èƒ½å¤ªé¤“
+        if (creature.data.hunger.Percentage < 0.3f) return false;
 
         return true;
     }
     public override float GetWeight(Creature creature)
     {
-        float baseWeight = 0.5f; // °òÂ¦ªÀ¥æ¶É¦V
+        float baseWeight = 0.5f; // åŸºç¤ç¤¾äº¤å‚¾å‘
 
-        // 1. ¦PÃş¼Æ¶q¼vÅT (°²³] neighbors ¬O·P´ú¨ìªº¦PÃş²M³æ)
+        // 1. åŒé¡æ•¸é‡å½±éŸ¿ (å‡è¨­ neighbors æ˜¯æ„Ÿæ¸¬åˆ°çš„åŒé¡æ¸…å–®)
         int neighborCount = Perception.Creatures.GetAllTargets(creature, creature.speciesID).Count;
         float densityBonus = Mathf.Clamp(neighborCount * 0.15f, 0, 0.6f);
 
-        // 2. °§¾j«×Ãg»@ (¨{¤l¶V¾j¶V¤£·QªÀ¥æ)
-        float hungerPenalty = Mathf.InverseLerp(0.2f, 0.6f, creature.hunger / creature.maxHunger);
+        // 2. é£¢é¤“åº¦æ‡²ç½° (è‚šå­è¶Šé¤“è¶Šä¸æƒ³ç¤¾äº¤)
+        float hungerPenalty = Mathf.InverseLerp(0.2f, 0.6f, creature.data.hunger.Percentage);
 
-        // 3. ¦æ¬°ºD©Ê (©µÄò·P)
+        // 3. è¡Œç‚ºæ…£æ€§ (å»¶çºŒæ„Ÿ)
         float inertia = (creature.currentAction == ActionType.Flock) ? 0.4f : 0f;
 
-        // ³Ì²×Åv­«
+        // æœ€çµ‚æ¬Šé‡
         return (baseWeight + densityBonus + inertia) * hungerPenalty;
     }
 
@@ -45,22 +45,22 @@ class FlockAction : ActionBase
 
     public override void Execute(Creature creature, ActionContext context)
     {
-        // 1. ­pºâ¸s»E¤è¦V (Boids ¦V¶q)
+        // 1. è¨ˆç®—ç¾¤èšæ–¹å‘ (Boids å‘é‡)
         Vector2 flockDir = GetFlockingDirection(creature, Perception.Creatures.GetAllTargets(creature, creature.speciesID));
 
-        // 2. ¥[¤WÁ×»Ù»PÀH¾÷ÂZ°Ê¡A¿ï©w¤@­Ó 5 ®æ¥~ªºÂI
+        // 2. åŠ ä¸Šé¿éšœèˆ‡éš¨æ©Ÿæ“¾å‹•ï¼Œé¸å®šä¸€å€‹ 5 æ ¼å¤–çš„é»
         Vector2Int targetPos = creature.GetRoundedPosition() + Vector2Int.RoundToInt(flockDir * 5f);
 
-        // 3. ©I¥s§Aªº Movement ¨t²Î¡A³]©w¬° Walk
+        // 3. å‘¼å«ä½ çš„ Movement ç³»çµ±ï¼Œè¨­å®šç‚º Walk
         creature.MoveTo(targetPos, isRunning: false);
 
-        // 4. ºÊÅ¥©è¹F¨Æ¥ó¨Ó¥s°±
+        // 4. ç›£è½æŠµé”äº‹ä»¶ä¾†å«åœ
         creature.OnMovementComplete += OnArrived;
 
         void OnArrived(Vector2Int pos)
         {
             creature.OnMovementComplete -= OnArrived;
-            context.Complete(); 
+            context.Complete();
         }
     }
     Vector2 GetFlockingDirection(Creature creature, List<Creature> neighbors)
@@ -72,14 +72,14 @@ class FlockAction : ActionBase
 
         foreach (var n in neighbors)
         {
-            // 1. ¤ÀÂ÷¡G»·Â÷¤Óªñªº¦PÃş
+            // 1. åˆ†é›¢ï¼šé é›¢å¤ªè¿‘çš„åŒé¡
             Vector2 diff = (Vector2)creature.transform.position - (Vector2)n.transform.position;
             separation += diff.normalized / diff.magnitude;
 
-            // 2. ¹ï»ô¡G¥[Á`¾F©~ªº³t«×¦V¶q
+            // 2. å°é½Šï¼šåŠ ç¸½é„°å±…çš„é€Ÿåº¦å‘é‡
             alignment += n.GetComponent<Rigidbody2D>().linearVelocity;
 
-            // 3. ¾®»E¡G²Ö¥[¦ì¸m¥H­pºâ¤¤¤ßÂI
+            // 3. å‡èšï¼šç´¯åŠ ä½ç½®ä»¥è¨ˆç®—ä¸­å¿ƒé»
             centerOfMass += (Vector2)n.transform.position;
         }
 
@@ -90,7 +90,7 @@ class FlockAction : ActionBase
             alignment /= neighbors.Count;
         }
 
-        // ±N¤TªÌ¥[Åvµ²¦X (Åv­«¥i¨Ìª«ºØ¯S©Ê½Õ¾ã)
+        // å°‡ä¸‰è€…åŠ æ¬Šçµåˆ (æ¬Šé‡å¯ä¾ç‰©ç¨®ç‰¹æ€§èª¿æ•´)
         return (separation * 1.5f + alignment * 1.0f + cohesion * 1.0f).normalized;
     }
 }

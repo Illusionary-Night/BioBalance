@@ -13,11 +13,8 @@ public partial class Creature : MonoBehaviour
     #region --- 生命狀態控制 ---
 
     //TODO: 數值的合不合法交給data自行判斷即可
-    /// <summary> 立即設置當前飢餓值，並確保在合法範圍內 </summary>
-    public void SetHunger(float value)
-    {
-        hunger = Mathf.Clamp(value, 0, maxHunger);
-    }
+    //TODO: set數值的部分，不確定該怎麼set
+
 
     /// <summary> 立即設置當前生命值，並確保在合法範圍內 </summary>
     public void SetHealth(float value)
@@ -31,16 +28,12 @@ public partial class Creature : MonoBehaviour
         age = Mathf.Clamp(value, 0, lifespan);
     }
 
-    /// <summary> 恢復飽食度，增加數值並限制在 maxHunger 以內 </summary>
-    public void RestoreHunger(float nutritionalValue)
-    {
-        hunger = Mathf.Min(hunger + nutritionalValue, maxHunger);
-    }
+
 
     /// <summary> 設置是否進入無敵狀態（用於 Debug 或特殊事件，不會死亡） </summary>
     public void SetInvincible(bool isInvincible)
     {
-        this.isInvincible = isInvincible;
+        data.isInvincible = isInvincible;
     }
 
 
@@ -52,7 +45,7 @@ public partial class Creature : MonoBehaviour
     public void SetStun(float duration)
     {
         // 如果已經在暈眩中，可以選擇「取最大值」或「疊加」
-        stunTimer = Mathf.Max(stunTimer, duration);
+        data.stunTimer = Mathf.Max(data.stunTimer, duration);
 
     }
 
@@ -139,28 +132,28 @@ public partial class Creature : MonoBehaviour
     public CreatureAttributes ToCreatureAttribute()
     {
         CreatureAttributes attributes = new CreatureAttributes();
-        attributes.size = size;
-        attributes.max_health = maxHealth;
-        attributes.speed = speed;
+        attributes.size = data.size;
+        attributes.max_health = data.health.maxHealth;
+        attributes.speed = data.speed;
         attributes.attack_power = attackPower;
-        attributes.reproduction_rate = reproductionRate;
-        attributes.lifespan = lifespan;
-        attributes.perception_range = perceptionRange;
+        attributes.reproduction_rate = data.reproductionRate;
+        attributes.lifespan = data.age.maxAge;
+        attributes.perception_range = data.perceptionRange;
         attributes.gender = gender;
-        attributes.UUID = UUID;
+        attributes.UUID = data.UUID;
         attributes.colorGenes = colorGenes;
         return attributes;
     }
-
+    //TODO: 感覺有點怪怪的，reset不是這樣吧？
     /// <summary> 重置生物狀態（供物件池重用時調用）/// </summary>
     public void ResetState()
     {
-        isDead = false;
-        isInvincible = false;
-        underAttackDirection = Direction.None;
+        data.isDead = false;
+        data.isInvincible = false;
+        data.underAttackDirection = Direction.None;
 
         // 重置狀態機
-        actionStateMachine = null;
+        data.actionStateMachine = null;
         movement = null;
 
         // 重置冷卻
@@ -216,19 +209,19 @@ public partial class Creature : MonoBehaviour
     {
         // 1. 年齡門檻：必須是成年體 (假設你有 lifespan 或 matureAge 的設定)
         // 這裡假設超過壽命的 20% 才算成年
-        if (age < lifespan * 0.2f)
+        if (data.age.Percentage < 0.2f)
             return false;
 
         // 2. 老年停經 (選配)：如果太老了也不生了，避免佔用資源
-        if (age > lifespan * 0.9f)
+        if (data.age.Percentage > 0.9f)
             return false;
 
         // 3. 能量門檻：肚子至少要有 60% 飽，才有體力繁衍
-        if (hunger < maxHunger * 0.6f)
+        if (data.hunger.Percentage < 0.6f)
             return false;
 
         // 4. 健康門檻 (選配)：如果快死了 (血量低於 30%)，優先保命不發情
-        if (health < maxHealth * 0.3f)
+        if (data.health.Percentage < 0.3f)
             return false;
 
         // 5. 冷卻期檢查：(針對雌性產後的 CD 時間，假設你有個計時器 matingCooldown)

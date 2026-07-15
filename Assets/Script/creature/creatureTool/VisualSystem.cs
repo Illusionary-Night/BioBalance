@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class VisualSystem
+public static class VisualSystem
 {
     //TODO: 可能要考慮掛到Species上面
-    private void SetCreatureSprite(CreatureBase baseType)
+    public static void SetCreatureSprite(Creature creature, CreatureBase baseType)
     {
 
         // 1. 將 Enum 轉為字串 (例如 "Slime")
@@ -14,9 +14,9 @@ public class VisualSystem
 
         if (loadedSprite != null)
         {
-            GetComponent<SpriteRenderer>().sprite = loadedSprite;
+            creature.GetComponent<SpriteRenderer>().sprite = loadedSprite;
 
-            var col = GetComponent<CircleCollider2D>();
+            var col = creature.GetComponent<CircleCollider2D>();
             if (col != null)
             {
                 // 讓它自動抓！
@@ -31,7 +31,7 @@ public class VisualSystem
         }
     }
     //TODO: 有點忘記他為什麼要存在的東西
-    private void AutoSetLayer(GameObject obj)
+    public static void AutoSetLayer(GameObject obj)
     {
         // 將名稱轉為索引編號 (例如 "Creature" 是第 6 層，layerIndex 就會是 6)
         int layerIndex = LayerMask.NameToLayer("Creature");
@@ -46,7 +46,7 @@ public class VisualSystem
         SetLayerRecursive(obj, layerIndex);
     }
 
-    private void SetLayerRecursive(GameObject obj, int layer)
+    public static void SetLayerRecursive(GameObject obj, int layer)
     {
         obj.layer = layer;
         foreach (Transform child in obj.transform)

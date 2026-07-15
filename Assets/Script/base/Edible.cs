@@ -16,7 +16,7 @@ public abstract class Edible : MonoBehaviour, ITickable
     // The category of this food (e.g., Plant or Meat).
     public abstract FoodType Type { get; }
 
-    // °O¿ı¥Í¦¨®Éªº¦ì¸m¡A¥Î©ó²¾°£®É¨Ï¥Î
+    // è¨˜éŒ„ç”Ÿæˆæ™‚çš„ä½ç½®ï¼Œç”¨æ–¼ç§»é™¤æ™‚ä½¿ç”¨
     protected Vector2Int spawnPosition;
 
     public virtual void Initialize()
@@ -45,7 +45,7 @@ public abstract class Edible : MonoBehaviour, ITickable
         MainManager.inGameManager.TickManager?.UnregisterTickable(OnTick);
     }
 
-    protected virtual void NaturalDespawn ()
+    protected virtual void NaturalDespawn()
     {
         RemoveFromManager();
     }
@@ -56,19 +56,19 @@ public abstract class Edible : MonoBehaviour, ITickable
     }
 
     /// <summary>
-    /// ±q EnvEntityManager ¤¤²¾°£¦Û¤v
+    /// å¾ EnvEntityManager ä¸­ç§»é™¤è‡ªå·±
     /// </summary>
     protected virtual void RemoveFromManager()
     {
-        // ¨ú±o¹ïÀ³ªº SpawnableEntityType
+        // å–å¾—å°æ‡‰çš„ SpawnableEntityType
         EntityData.SpawnableEntityType entityType = GetEntityType();
-        
-        // ³qª¾ EnvEntityManager ²¾°£
+
+        // é€šçŸ¥ EnvEntityManager ç§»é™¤
         MainManager.inGameManager?.EnvEntityManager?.RemoveEntity(entityType, spawnPosition);
     }
 
     /// <summary>
-    /// ¤lÃş»İ­n¹ê§@¦¹¤èªk¥Hªğ¦^¹ïÀ³ªº SpawnableEntityType
+    /// å­é¡éœ€è¦å¯¦ä½œæ­¤æ–¹æ³•ä»¥è¿”å›å°æ‡‰çš„ SpawnableEntityType
     /// </summary>
     protected abstract EntityData.SpawnableEntityType GetEntityType();
 }

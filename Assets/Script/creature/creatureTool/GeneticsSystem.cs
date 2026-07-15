@@ -18,7 +18,6 @@ public class GeneticsSystem
         newCreatureData.speed = Inherit(species, species.baseSpeed, parentAttr1?.speed, parentAttr2?.speed);
         newCreatureData.maxHealth = Inherit(species, species.baseMaxHealth, parentAttr1?.max_health, parentAttr2?.max_health);
         newCreatureData.reproductionRate = Inherit(species, species.baseReproductionRate, parentAttr1?.reproduction_rate, parentAttr2?.reproduction_rate);
-        newCreatureData.attackPower = Inherit(species, species.baseAttackPower, parentAttr1?.attack_power, parentAttr2?.attack_power);
         newCreatureData.lifespan = Inherit(species, species.baseLifespan, parentAttr1?.lifespan, parentAttr2?.lifespan);
         newCreatureData.perceptionRange = Inherit(species, species.basePerceptionRange, parentAttr1?.perception_range, parentAttr2?.perception_range);
 
@@ -47,7 +46,8 @@ public class GeneticsSystem
 
         //計算衍生屬性
         //sleepTime = sleepingTail - sleepingHead;
-        newCreatureData.hungerRate = AttributesCalculator.CalculateHungerRate(newCreatureData.size, newCreatureData.speed, newCreatureData.attackPower);
+        //TODO: 這玩意現在改成這樣不能這個時候塞，需要提早
+        newCreatureData.hunger.hungerRate = AttributesCalculator.CalculateHungerRate(newCreatureData.size, newCreatureData.speed, newCreatureData.attackPower);
         newCreatureData.maxHunger = AttributesCalculator.CalculateMaxHunger(newCreatureData.size, newCreatureData.maxHealth, newCreatureData.foodTypes);
         newCreatureData.healthRegeneration = AttributesCalculator.CalculateHealthRegeneration(newCreatureData.maxHealth, newCreatureData.size);
 

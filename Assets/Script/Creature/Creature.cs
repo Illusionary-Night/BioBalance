@@ -12,32 +12,27 @@ public partial class Creature : MonoBehaviour, ITickable
 {
     public Rigidbody2D rb;
     public CreatureData data;
+    public SpriteRenderer _spriteRenderer;
     private void Awake()
     {
-        if (movement == null)
-            movement = new Movement(this);
-
-        if (actionStateMachine == null)
-            actionStateMachine = new ActionStateMachine(this);
-
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     public void Initialize(Species species, CreatureAttributes? parentAttr1 = null, CreatureAttributes? parentAttr2 = null)
     {
+        data = GeneticsSystem.AttributeInheritance(species, parentAttr1, parentAttr2);
         data.species = species;
-        GeneticsSystem.AttributeInheritance(data, species, parentAttr1, parentAttr2);
-        //個體編號
-        UUID = System.Guid.NewGuid().ToString();
+        data.UUID = System.Guid.NewGuid().ToString();
         rb = GetComponent<Rigidbody2D>();
         ResetRuntimeStates();
         //角色物件調適
-        transform.localScale = new Vector3(size * constantData.NORMAL_SIZE, size * constantData.NORMAL_SIZE, 1f);
+        transform.localScale = new Vector3(data.size * constantData.NORMAL_SIZE, data.size * constantData.NORMAL_SIZE, 1f);
         // 生物圖片
-        SetCreatureSprite(species.creatureBase);
-        //OnEnable();
-        AutoSetLayer(gameObject);
-        UpdateVisuals();
+        VisualSystem.SetCreatureSprite(this, species.creatureBase);
+        //TODO: 這個OnEnable到底開不開？
+        OnEnable();
+        VisualSystem.AutoSetLayer(gameObject);
+        ColorSystem.UpdateVisuals(data);
     }
 
     public void OnEnable()
@@ -52,17 +47,17 @@ public partial class Creature : MonoBehaviour, ITickable
 
     public void DoAction()
     {
-        if (isDead) return;
+        if (data.isDead) return;
         // 委派給狀態機處理
-        actionStateMachine.EvaluateAndExecute();
+        data.actionStateMachine.EvaluateAndExecute();
     }
 
 
     public void Die()
     {
         // 防止重複執行
-        if (isDead) return;
-        isDead = true;
+        if (data.isDead) return;
+        data.isDead = true;
 
         // 重要：先取消訂閱事件
         OnDisable();
@@ -86,72 +81,19 @@ public partial class Creature : MonoBehaviour, ITickable
     public void OnTick()
     {
         //TODO: 這邊要決定各種東西多久Update一次
-        if (isDead || this == null) return;
+        if (data.isDead || this == null) return;
 
         UpdateVitalSigns();
         UpdateCooldowns();
         UpdateGrowth();
-        UpdateColorGenes();
+        ColorSystem.UpdateColorGenes(data);
 
 
 
-        if (actionCooldown <= 0) DoAction();
+        if (data.actionCooldown <= 0) DoAction();
 
-        movement?.MoveOnTick();
+        MovementSystem.OnTick(data, rb);
         //-----------------------------------
     }
-    /*
-        //TODO: 可能要考慮掛到Species上面
-        private void SetCreatureSprite(CreatureBase baseType)
-        {
 
-            // 1. 將 Enum 轉為字串 (例如 "Slime")
-            string spriteName = baseType.ToString();
-
-            // 2. 從 Resources 加載 (路徑需放在 Resources/Sprites/ 下)
-            Sprite loadedSprite = Resources.Load<Sprite>($"Sprites/{spriteName}");
-
-            if (loadedSprite != null)
-            {
-                GetComponent<SpriteRenderer>().sprite = loadedSprite;
-
-                var col = GetComponent<CircleCollider2D>();
-                if (col != null)
-                {
-                    // 讓它自動抓！
-                    // 取圖片寬高之中較大的一半作為半徑，完美貼合任何形狀的生物圖片
-                    float maxDim = Mathf.Max(loadedSprite.bounds.size.x, loadedSprite.bounds.size.y);
-                    col.radius = maxDim * 0.5f;
-                }
-            }
-            else
-            {
-                Debug.LogError($"找不到對應圖片: Sprites/{spriteName}");
-            }
-        }
-        //TODO: 有點忘記他為什麼要存在的東西
-        private void AutoSetLayer(GameObject obj)
-        {
-            // 將名稱轉為索引編號 (例如 "Creature" 是第 6 層，layerIndex 就會是 6)
-            int layerIndex = LayerMask.NameToLayer("Creature");
-
-            if (layerIndex == -1)
-            {
-                Debug.LogError("找不到名為 'Creature' 的 Layer，請先在選單中手動建立！");
-                return;
-            }
-
-            // 設置該物件及其所有子物件的 Layer
-            SetLayerRecursive(obj, layerIndex);
-        }
-
-        private void SetLayerRecursive(GameObject obj, int layer)
-        {
-            obj.layer = layer;
-            foreach (Transform child in obj.transform)
-            {
-                SetLayerRecursive(child.gameObject, layer);
-            }
-        }
-        */
 }

@@ -70,8 +70,7 @@ public class CreatureEditor : Editor
         DrawProgressBar("Health", creature.health, healthPct, hpColor);
 
         // 飢餓 (橘色)
-        float hungerPct = Mathf.Clamp01(creature.hunger / creature.maxHunger);
-        DrawProgressBar("Hunger", creature.hunger, hungerPct, new Color(1f, 0.6f, 0f));
+        DrawProgressBar("Hunger", creature.data.hunger.hunger, creature.data.hunger.Percentage, new Color(1f, 0.6f, 0f));
 
         // 年齡 (灰色)
         float agePct = Mathf.Clamp01(creature.age / creature.lifespan);
@@ -207,6 +206,7 @@ public class CreatureEditor : Editor
         EditorGUILayout.BeginVertical("box");
         EditorGUILayout.LabelField("Life Management", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
+        //TODO: 目前好像還沒有個set的功能？
         if (GUILayout.Button("Full Restore"))
         {
             creature.SetHealth(creature.maxHealth);
@@ -286,7 +286,7 @@ public class CreatureEditor : Editor
             // 在世界座標中，+Y 通常是往上，所以不需要負號
             Vector2 worldDir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
             Vector2 spawnPos = (Vector2)creature.transform.position + worldDir;
-            Debug.Log("Hurt from "+worldDir);
+            Debug.Log("Hurt from " + worldDir);
             creature.Hurt(10, spawnPos);
         }
     }
@@ -362,7 +362,7 @@ public class CreatureEditor : Editor
         EditorGUILayout.LabelField("Perception Range", creature.perceptionRange.ToString("F2"));
         EditorGUILayout.LabelField("Lifespan", creature.lifespan.ToString("F1") + " ticks");
         EditorGUILayout.LabelField("Max Health", creature.maxHealth.ToString("F1"));
-        EditorGUILayout.LabelField("Max Hunger", creature.maxHunger.ToString("F1"));
+        EditorGUILayout.LabelField("Max Hunger", creature.data.hunger.maxHunger.ToString("F1"));
 
         EditorGUIUtility.labelWidth = oldWidth;
         EditorGUILayout.EndVertical();

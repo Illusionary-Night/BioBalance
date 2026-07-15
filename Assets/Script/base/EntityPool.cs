@@ -1,81 +1,81 @@
 /*
  * ===========================================================================================
- * EntityPool<T> - ªx«¬¹êÅéª«¥ó¦À
+ * EntityPool<T> - æ³›å‹å¯¦é«”ç‰©ä»¶æ± 
  * ===========================================================================================
  * 
- * [¥\¯à»¡©ú]
- * ¨Ï¥Î Unity ªº ObjectPool ¨ÓºŞ²z¯S©wÃş«¬¹êÅéªº¥Í¦¨»P¦^¦¬¡A
- * Á×§KÀWÁcªº Instantiate/Destroy ³y¦¨ªº®Ä¯à°İÃD»P GC À£¤O¡C
+ * [åŠŸèƒ½èªªæ˜]
+ * ä½¿ç”¨ Unity çš„ ObjectPool ä¾†ç®¡ç†ç‰¹å®šé¡å‹å¯¦é«”çš„ç”Ÿæˆèˆ‡å›æ”¶ï¼Œ
+ * é¿å…é »ç¹çš„ Instantiate/Destroy é€ æˆçš„æ•ˆèƒ½å•é¡Œèˆ‡ GC å£“åŠ›ã€‚
  * 
- * [³]­p¯SÂI]
- * - ªx«¬³]­p¡G¨CºØ¹êÅéÃş«¬¡]Grass¡BMeat µ¥¡^³£¦³¿W¥ßªº¦À
- * - ¹ê§@ IEntityPool ¤¶­±¡G¤¹³\³z¹L«Dªx«¬¤è¦¡¾Ş§@¦À
- * - ¦Û°ÊºŞ²z Prefab ¸ü¤J©M¤÷ª«¥ó³Ğ«Ø
- * - ´£¨Ñ§¹¾ãªº¥Í©R¶g´Á¦^½Õ¡]³Ğ«Ø¡B¨ú±o¡BÄÀ©ñ¡B¾P·´¡^
- * 
- * -------------------------------------------------------------------------------------------
- * [¤½¶}Äİ©Ê]
- * -------------------------------------------------------------------------------------------
- * 
- * ¡´ CountActive (int)
- *   - »¡©ú¡G¥Ø«e¥¿¦b³õ´º¤¤¨Ï¥Îªº¹êÅé¼Æ¶q
- * 
- * ¡´ CountInactive (int)
- *   - »¡©ú¡G¥Ø«e¦b¦À¤¤¶¢¸mªº¹êÅé¼Æ¶q
- * 
- * ¡´ CountAll (int)
- *   - »¡©ú¡G¦ÀºŞ²zªº¹êÅéÁ`¼Æ¡]¬¡ÅD + ¶¢¸m¡^
+ * [è¨­è¨ˆç‰¹é»]
+ * - æ³›å‹è¨­è¨ˆï¼šæ¯ç¨®å¯¦é«”é¡å‹ï¼ˆGrassã€Meat ç­‰ï¼‰éƒ½æœ‰ç¨ç«‹çš„æ± 
+ * - å¯¦ä½œ IEntityPool ä»‹é¢ï¼šå…è¨±é€ééæ³›å‹æ–¹å¼æ“ä½œæ± 
+ * - è‡ªå‹•ç®¡ç† Prefab è¼‰å…¥å’Œçˆ¶ç‰©ä»¶å‰µå»º
+ * - æä¾›å®Œæ•´çš„ç”Ÿå‘½é€±æœŸå›èª¿ï¼ˆå‰µå»ºã€å–å¾—ã€é‡‹æ”¾ã€éŠ·æ¯€ï¼‰
  * 
  * -------------------------------------------------------------------------------------------
- * [¤½¶}¤èªk¡]ªx«¬ª©¥»¡^]
+ * [å…¬é–‹å±¬æ€§]
  * -------------------------------------------------------------------------------------------
  * 
- * ¡´ GetEntityTyped()
- *   - »¡©ú¡G±q¦À¤¤¨ú±o¤@­Ó¨ãÅéÃş«¬ªº¹êÅé
- *   - ¦^¶Ç¡GT Ãş«¬ªº¹êÅé
- *   - ¥Îªk¡GGrass grass = grassPool.GetEntityTyped();
+ * â— CountActive (int)
+ *   - èªªæ˜ï¼šç›®å‰æ­£åœ¨å ´æ™¯ä¸­ä½¿ç”¨çš„å¯¦é«”æ•¸é‡
  * 
- * ¡´ GetEntityTyped(Vector2Int position, Transform parent = null)
- *   - »¡©ú¡G±q¦À¤¤¨ú±o¹êÅé¡A¨Ã³]©w¦ì¸m©M¤÷ª«¥ó
- *   - °Ñ¼Æ¡G
- *       position - ¥Í¦¨¦ì¸m¡]®æ®y¼Ğ¡^
- *       parent   - ¤÷ª«¥ó¡]¥i¿ï¡^
- *   - ¦^¶Ç¡GT Ãş«¬ªº¹êÅé
+ * â— CountInactive (int)
+ *   - èªªæ˜ï¼šç›®å‰åœ¨æ± ä¸­é–’ç½®çš„å¯¦é«”æ•¸é‡
  * 
- * ¡´ ReleaseEntityTyped(T entity)
- *   - »¡©ú¡G±N¨ãÅéÃş«¬ªº¹êÅé¦^¦¬¨ì¦À¤¤
- *   - °Ñ¼Æ¡Gentity - ­n¦^¦¬ªº¹êÅé
- * 
- * ¡´ ClearPool()
- *   - »¡©ú¡G²MªÅª«¥ó¦À¡A¾P·´©Ò¦³¹êÅé
+ * â— CountAll (int)
+ *   - èªªæ˜ï¼šæ± ç®¡ç†çš„å¯¦é«”ç¸½æ•¸ï¼ˆæ´»èº + é–’ç½®ï¼‰
  * 
  * -------------------------------------------------------------------------------------------
- * [IEntityPool ¤¶­±¹ê§@]
+ * [å…¬é–‹æ–¹æ³•ï¼ˆæ³›å‹ç‰ˆæœ¬ï¼‰]
  * -------------------------------------------------------------------------------------------
- * ´£¨Ñ«Dªx«¬ª©¥»ªº¤èªk¡A¨Ñ EnvEntityManager ³z¹L¤¶­±¾Ş§@¡G
+ * 
+ * â— GetEntityTyped()
+ *   - èªªæ˜ï¼šå¾æ± ä¸­å–å¾—ä¸€å€‹å…·é«”é¡å‹çš„å¯¦é«”
+ *   - å›å‚³ï¼šT é¡å‹çš„å¯¦é«”
+ *   - ç”¨æ³•ï¼šGrass grass = grassPool.GetEntityTyped();
+ * 
+ * â— GetEntityTyped(Vector2Int position, Transform parent = null)
+ *   - èªªæ˜ï¼šå¾æ± ä¸­å–å¾—å¯¦é«”ï¼Œä¸¦è¨­å®šä½ç½®å’Œçˆ¶ç‰©ä»¶
+ *   - åƒæ•¸ï¼š
+ *       position - ç”Ÿæˆä½ç½®ï¼ˆæ ¼åº§æ¨™ï¼‰
+ *       parent   - çˆ¶ç‰©ä»¶ï¼ˆå¯é¸ï¼‰
+ *   - å›å‚³ï¼šT é¡å‹çš„å¯¦é«”
+ * 
+ * â— ReleaseEntityTyped(T entity)
+ *   - èªªæ˜ï¼šå°‡å…·é«”é¡å‹çš„å¯¦é«”å›æ”¶åˆ°æ± ä¸­
+ *   - åƒæ•¸ï¼šentity - è¦å›æ”¶çš„å¯¦é«”
+ * 
+ * â— ClearPool()
+ *   - èªªæ˜ï¼šæ¸…ç©ºç‰©ä»¶æ± ï¼ŒéŠ·æ¯€æ‰€æœ‰å¯¦é«”
+ * 
+ * -------------------------------------------------------------------------------------------
+ * [IEntityPool ä»‹é¢å¯¦ä½œ]
+ * -------------------------------------------------------------------------------------------
+ * æä¾›éæ³›å‹ç‰ˆæœ¬çš„æ–¹æ³•ï¼Œä¾› EnvEntityManager é€éä»‹é¢æ“ä½œï¼š
  * - GetEntity() / GetEntity(position, parent)
  * - ReleaseEntity(entity)
  * 
  * -------------------------------------------------------------------------------------------
- * [¤º³¡¹B§@¬yµ{]
+ * [å…§éƒ¨é‹ä½œæµç¨‹]
  * -------------------------------------------------------------------------------------------
  * 
- * ³Ğ«Ø¹êÅé (CreateEntity)¡G
- * 1. ½T«O Prefab ¤w¸ü¤J
- * 2. ¨Ï¥Î Instantiate ³Ğ«Ø¹ê¨Ò
- * 3. ³]¬°«D±Ò¥Îª¬ºA
- * 4. ©ñ¸m©ó¦À¤÷ª«¥ó¤U
+ * å‰µå»ºå¯¦é«” (CreateEntity)ï¼š
+ * 1. ç¢ºä¿ Prefab å·²è¼‰å…¥
+ * 2. ä½¿ç”¨ Instantiate å‰µå»ºå¯¦ä¾‹
+ * 3. è¨­ç‚ºéå•Ÿç”¨ç‹€æ…‹
+ * 4. æ”¾ç½®æ–¼æ± çˆ¶ç‰©ä»¶ä¸‹
  * 
- * ¨ú±o¹êÅé (ActionOnGet)¡G
- * 1. ±Ò¥Î GameObject
- * 2. ±q¦À¤÷ª«¥ó²æÂ÷
- * 3. ­«¸mÁY©ñ
+ * å–å¾—å¯¦é«” (ActionOnGet)ï¼š
+ * 1. å•Ÿç”¨ GameObject
+ * 2. å¾æ± çˆ¶ç‰©ä»¶è„«é›¢
+ * 3. é‡ç½®ç¸®æ”¾
  * 
- * ÄÀ©ñ¹êÅé (ActionOnRelease)¡G
- * 1. °±¤î©Ò¦³¨óµ{
- * 2. °±¥Î GameObject
- * 3. ²¾¦^¦À¤÷ª«¥ó¤U
- * 4. ­«¸m¦ì¸m©M±ÛÂà
+ * é‡‹æ”¾å¯¦é«” (ActionOnRelease)ï¼š
+ * 1. åœæ­¢æ‰€æœ‰å”ç¨‹
+ * 2. åœç”¨ GameObject
+ * 3. ç§»å›æ± çˆ¶ç‰©ä»¶ä¸‹
+ * 4. é‡ç½®ä½ç½®å’Œæ—‹è½‰
  * 
  * ===========================================================================================
  */
@@ -85,95 +85,95 @@ using UnityEngine.Pool;
 using System;
 
 /// <summary>
-/// ªx«¬¹êÅéª«¥ó¦À - ºŞ²z¯S©wÃş«¬¹êÅéªº¥Í¦¨»P¦^¦¬
+/// æ³›å‹å¯¦é«”ç‰©ä»¶æ±  - ç®¡ç†ç‰¹å®šé¡å‹å¯¦é«”çš„ç”Ÿæˆèˆ‡å›æ”¶
 /// </summary>
-/// <typeparam name="T">¹êÅéªº MonoBehaviour Ãş«¬¡]¦p Grass¡BMeat¡^</typeparam>
+/// <typeparam name="T">å¯¦é«”çš„ MonoBehaviour é¡å‹ï¼ˆå¦‚ Grassã€Meatï¼‰</typeparam>
 public class EntityPool<T> : IEntityPool where T : MonoBehaviour
 {
-    // ========== ¨p¦³Äæ¦ì ==========
-    
-    /// <summary>¦¹¹êÅéÃş«¬ªº¸ê®Æ</summary>
+    // ========== ç§æœ‰æ¬„ä½ ==========
+
+    /// <summary>æ­¤å¯¦é«”é¡å‹çš„è³‡æ–™</summary>
     private readonly SpawnableEntity _entityData;
-    
-    /// <summary>¸ü¤Jªº Prefab</summary>
+
+    /// <summary>è¼‰å…¥çš„ Prefab</summary>
     private GameObject _prefab;
-    
-    /// <summary>¦Àªº¤÷ª«¥ó¡]¥Î©ó²ÕÂ´¶¢¸mªº¹êÅé¡^</summary>
+
+    /// <summary>æ± çš„çˆ¶ç‰©ä»¶ï¼ˆç”¨æ–¼çµ„ç¹”é–’ç½®çš„å¯¦é«”ï¼‰</summary>
     private Transform _poolParent;
 
-    /// <summary>Unity ¤º«Øªºª«¥ó¦À</summary>
+    /// <summary>Unity å…§å»ºçš„ç‰©ä»¶æ± </summary>
     private ObjectPool<T> pool;
 
-    // ========== ¤½¶}Äİ©Ê ==========
-    
-    /// <summary>¥Ø«e¥¿¦b¨Ï¥Î¤¤ªº¹êÅé¼Æ¶q</summary>
+    // ========== å…¬é–‹å±¬æ€§ ==========
+
+    /// <summary>ç›®å‰æ­£åœ¨ä½¿ç”¨ä¸­çš„å¯¦é«”æ•¸é‡</summary>
     public int CountActive => pool.CountActive;
-    
-    /// <summary>¥Ø«e¦b¦À¤¤¶¢¸mªº¹êÅé¼Æ¶q</summary>
+
+    /// <summary>ç›®å‰åœ¨æ± ä¸­é–’ç½®çš„å¯¦é«”æ•¸é‡</summary>
     public int CountInactive => pool.CountInactive;
-    
-    /// <summary>¦ÀºŞ²zªº¹êÅéÁ`¼Æ</summary>
+
+    /// <summary>æ± ç®¡ç†çš„å¯¦é«”ç¸½æ•¸</summary>
     public int CountAll => pool.CountAll;
 
-    // ========== «Øºc¤l ==========
-    
+    // ========== å»ºæ§‹å­ ==========
+
     /// <summary>
-    /// «Øºc¤l - ³Ğ«Ø«ü©wÃş«¬ªº¹êÅé¦À
+    /// å»ºæ§‹å­ - å‰µå»ºæŒ‡å®šé¡å‹çš„å¯¦é«”æ± 
     /// </summary>
-    /// <param name="spawnableType">¹êÅéÃş«¬</param>
-    /// <param name="defaultCapacity">¹w³]®e¶q¡]¹w³] 1000¡^</param>
+    /// <param name="spawnableType">å¯¦é«”é¡å‹</param>
+    /// <param name="defaultCapacity">é è¨­å®¹é‡ï¼ˆé è¨­ 1000ï¼‰</param>
     public EntityPool(EntityData.SpawnableEntityType spawnableType, int defaultCapacity = 1000)
     {
-        // ¨ú±o¦¹Ãş«¬ªº¹êÅé¸ê®Æ
+        // å–å¾—æ­¤é¡å‹çš„å¯¦é«”è³‡æ–™
         _entityData = EntityData.GetSpawnableEntity(spawnableType);
 
-        // ½T«O¸ê·½¤wªì©l¤Æ
+        // ç¢ºä¿è³‡æºå·²åˆå§‹åŒ–
         EnsureInitialized();
 
-        // ³Ğ«Ø Unity ¤º«Øªºª«¥ó¦À
+        // å‰µå»º Unity å…§å»ºçš„ç‰©ä»¶æ± 
         pool = new ObjectPool<T>(
-            createFunc: CreateEntity,           // ³Ğ«Ø·s¹êÅé®É©I¥s
-            actionOnGet: ActionOnGet,           // ±q¦À¤¤¨ú±o¹êÅé®É©I¥s
-            actionOnRelease: ActionOnRelease,   // ±N¹êÅé©ñ¦^¦À¤¤®É©I¥s
-            actionOnDestroy: ActionOnDestroy,   // ¾P·´¹êÅé®É©I¥s
-            collectionCheck: false,             // Ãö³¬­«½Æ¦^¦¬ÀË¬d¡]®Ä¯à¦Ò¶q¡^
-            defaultCapacity: defaultCapacity,   // ¹w³]®e¶q
-            maxSize: Math.Min(_entityData.MaxSpawnableValue, 100_000)  // ³Ì¤j®e¶q
+            createFunc: CreateEntity,           // å‰µå»ºæ–°å¯¦é«”æ™‚å‘¼å«
+            actionOnGet: ActionOnGet,           // å¾æ± ä¸­å–å¾—å¯¦é«”æ™‚å‘¼å«
+            actionOnRelease: ActionOnRelease,   // å°‡å¯¦é«”æ”¾å›æ± ä¸­æ™‚å‘¼å«
+            actionOnDestroy: ActionOnDestroy,   // éŠ·æ¯€å¯¦é«”æ™‚å‘¼å«
+            collectionCheck: false,             // é—œé–‰é‡è¤‡å›æ”¶æª¢æŸ¥ï¼ˆæ•ˆèƒ½è€ƒé‡ï¼‰
+            defaultCapacity: defaultCapacity,   // é è¨­å®¹é‡
+            maxSize: Math.Min(_entityData.MaxSpawnableValue, 100_000)  // æœ€å¤§å®¹é‡
         );
     }
 
-    // ========== ªì©l¤Æ ==========
-    
+    // ========== åˆå§‹åŒ– ==========
+
     /// <summary>
-    /// ½T«O Prefab ©M¤÷ª«¥ó¤wªì©l¤Æ
+    /// ç¢ºä¿ Prefab å’Œçˆ¶ç‰©ä»¶å·²åˆå§‹åŒ–
     /// </summary>
     private void EnsureInitialized()
     {
-        // ¸ü¤J Prefab
+        // è¼‰å…¥ Prefab
         if (_prefab == null)
         {
             _prefab = Resources.Load<GameObject>(_entityData.PrefabPath);
             if (_prefab == null)
             {
-                Debug.LogError($"[EntityPool<{typeof(T).Name}>] µLªk±q {_entityData.PrefabPath} ¸ü¤J Prefab");
+                Debug.LogError($"[EntityPool<{typeof(T).Name}>] ç„¡æ³•å¾ {_entityData.PrefabPath} è¼‰å…¥ Prefab");
             }
         }
 
-        // ³Ğ«Ø¦À¤÷ª«¥ó
+        // å‰µå»ºæ± çˆ¶ç‰©ä»¶
         if (_poolParent == null)
         {
             GameObject parentObj = new GameObject($"[{typeof(T).Name}Pool]");
             _poolParent = parentObj.transform;
-            UnityEngine.Object.DontDestroyOnLoad(parentObj);  // ³õ´º¤Á´«®É¤£¾P·´
+            UnityEngine.Object.DontDestroyOnLoad(parentObj);  // å ´æ™¯åˆ‡æ›æ™‚ä¸éŠ·æ¯€
         }
     }
 
-    // ========== ªx«¬¤½¶}¤èªk ==========
-    
+    // ========== æ³›å‹å…¬é–‹æ–¹æ³• ==========
+
     /// <summary>
-    /// ±q¦À¤¤¨ú±o¤@­Ó¹êÅé¡]ªx«¬ª©¥»¡^
+    /// å¾æ± ä¸­å–å¾—ä¸€å€‹å¯¦é«”ï¼ˆæ³›å‹ç‰ˆæœ¬ï¼‰
     /// </summary>
-    /// <returns>T Ãş«¬ªº¹êÅé</returns>
+    /// <returns>T é¡å‹çš„å¯¦é«”</returns>
     public T GetEntityTyped()
     {
         EnsureInitialized();
@@ -181,11 +181,11 @@ public class EntityPool<T> : IEntityPool where T : MonoBehaviour
     }
 
     /// <summary>
-    /// ±q¦À¤¤¨ú±o¤@­Ó¹êÅé¡A¨Ã³]©w¦ì¸m©M¤÷ª«¥ó¡]ªx«¬ª©¥»¡^
+    /// å¾æ± ä¸­å–å¾—ä¸€å€‹å¯¦é«”ï¼Œä¸¦è¨­å®šä½ç½®å’Œçˆ¶ç‰©ä»¶ï¼ˆæ³›å‹ç‰ˆæœ¬ï¼‰
     /// </summary>
-    /// <param name="position">¥Í¦¨¦ì¸m¡]®æ®y¼Ğ¡^</param>
-    /// <param name="parent">¤÷ª«¥ó¡]¥i¿ï¡^</param>
-    /// <returns>T Ãş«¬ªº¹êÅé</returns>
+    /// <param name="position">ç”Ÿæˆä½ç½®ï¼ˆæ ¼åº§æ¨™ï¼‰</param>
+    /// <param name="parent">çˆ¶ç‰©ä»¶ï¼ˆå¯é¸ï¼‰</param>
+    /// <returns>T é¡å‹çš„å¯¦é«”</returns>
     public T GetEntityTyped(Vector2Int position, Transform parent = null)
     {
         EnsureInitialized();
@@ -197,18 +197,18 @@ public class EntityPool<T> : IEntityPool where T : MonoBehaviour
     }
 
     /// <summary>
-    /// ±N¹êÅé¦^¦¬¨ì¦À¤¤¡]ªx«¬ª©¥»¡^
+    /// å°‡å¯¦é«”å›æ”¶åˆ°æ± ä¸­ï¼ˆæ³›å‹ç‰ˆæœ¬ï¼‰
     /// </summary>
-    /// <param name="entity">­n¦^¦¬ªº¹êÅé</param>
+    /// <param name="entity">è¦å›æ”¶çš„å¯¦é«”</param>
     public void ReleaseEntityTyped(T entity)
     {
         if (entity != null) pool.Release(entity);
     }
 
-    // ========== IEntityPool ¤¶­±¹ê§@ ==========
-    
+    // ========== IEntityPool ä»‹é¢å¯¦ä½œ ==========
+
     /// <summary>
-    /// ±q¦À¤¤¨ú±o¤@­Ó¹êÅé¡]¤¶­±ª©¥»¡^
+    /// å¾æ± ä¸­å–å¾—ä¸€å€‹å¯¦é«”ï¼ˆä»‹é¢ç‰ˆæœ¬ï¼‰
     /// </summary>
     MonoBehaviour IEntityPool.GetEntity()
     {
@@ -216,7 +216,7 @@ public class EntityPool<T> : IEntityPool where T : MonoBehaviour
     }
 
     /// <summary>
-    /// ±q¦À¤¤¨ú±o¤@­Ó¹êÅé¡A¨Ã³]©w¦ì¸m©M¤÷ª«¥ó¡]¤¶­±ª©¥»¡^
+    /// å¾æ± ä¸­å–å¾—ä¸€å€‹å¯¦é«”ï¼Œä¸¦è¨­å®šä½ç½®å’Œçˆ¶ç‰©ä»¶ï¼ˆä»‹é¢ç‰ˆæœ¬ï¼‰
     /// </summary>
     MonoBehaviour IEntityPool.GetEntity(Vector2Int position, Transform parent)
     {
@@ -224,29 +224,29 @@ public class EntityPool<T> : IEntityPool where T : MonoBehaviour
     }
 
     /// <summary>
-    /// ±N¹êÅé¦^¦¬¨ì¦À¤¤¡]¤¶­±ª©¥»¡^
+    /// å°‡å¯¦é«”å›æ”¶åˆ°æ± ä¸­ï¼ˆä»‹é¢ç‰ˆæœ¬ï¼‰
     /// </summary>
     void IEntityPool.ReleaseEntity(MonoBehaviour entity)
     {
-        // ¹Á¸ÕÂà«¬¬°¥¿½TªºÃş«¬
+        // å˜—è©¦è½‰å‹ç‚ºæ­£ç¢ºçš„é¡å‹
         if (entity is T typedEntity)
         {
             ReleaseEntityTyped(typedEntity);
         }
         else if (entity != null)
         {
-            Debug.LogWarning($"[EntityPool<{typeof(T).Name}>] µLªk¦^¦¬Ãş«¬¬° {entity.GetType().Name} ªº¹êÅé");
+            Debug.LogWarning($"[EntityPool<{typeof(T).Name}>] ç„¡æ³•å›æ”¶é¡å‹ç‚º {entity.GetType().Name} çš„å¯¦é«”");
         }
     }
 
     /// <summary>
-    /// ²MªÅª«¥ó¦À¡A¾P·´©Ò¦³¹êÅé
+    /// æ¸…ç©ºç‰©ä»¶æ± ï¼ŒéŠ·æ¯€æ‰€æœ‰å¯¦é«”
     /// </summary>
     public void ClearPool()
     {
         pool.Clear();
-        
-        // ¾P·´¦À¤÷ª«¥ó
+
+        // éŠ·æ¯€æ± çˆ¶ç‰©ä»¶
         if (_poolParent != null)
         {
             UnityEngine.Object.Destroy(_poolParent.gameObject);
@@ -256,10 +256,10 @@ public class EntityPool<T> : IEntityPool where T : MonoBehaviour
         _prefab = null;
     }
 
-    // ========== ObjectPool ¦^½Õ¤èªk ==========
-    
+    // ========== ObjectPool å›èª¿æ–¹æ³• ==========
+
     /// <summary>
-    /// ³Ğ«Ø·s¹êÅé®É©I¥s
+    /// å‰µå»ºæ–°å¯¦é«”æ™‚å‘¼å«
     /// </summary>
     private T CreateEntity()
     {
@@ -267,20 +267,20 @@ public class EntityPool<T> : IEntityPool where T : MonoBehaviour
 
         if (_prefab == null)
         {
-            Debug.LogError($"[EntityPool<{typeof(T).Name}>] Prefab ¬° null¡AµLªk³Ğ«Ø¹êÅé");
+            Debug.LogError($"[EntityPool<{typeof(T).Name}>] Prefab ç‚º nullï¼Œç„¡æ³•å‰µå»ºå¯¦é«”");
             return null;
         }
 
-        // ¹ê¨Ò¤Æ Prefab
+        // å¯¦ä¾‹åŒ– Prefab
         GameObject obj = UnityEngine.Object.Instantiate(_prefab, _poolParent);
         obj.name = "Pooled" + _prefab.name;
-        obj.SetActive(false);  // ³Ğ«Ø®É«O«ù°±¥Î
+        obj.SetActive(false);  // å‰µå»ºæ™‚ä¿æŒåœç”¨
 
-        // ¨ú±o²Õ¥ó
+        // å–å¾—çµ„ä»¶
         T entity = obj.GetComponent<T>();
         if (entity == null)
         {
-            Debug.LogError($"[EntityPool<{typeof(T).Name}>] Prefab ¤W¨S¦³ {typeof(T).Name} ²Õ¥ó");
+            Debug.LogError($"[EntityPool<{typeof(T).Name}>] Prefab ä¸Šæ²’æœ‰ {typeof(T).Name} çµ„ä»¶");
             UnityEngine.Object.Destroy(obj);
             return null;
         }
@@ -288,34 +288,34 @@ public class EntityPool<T> : IEntityPool where T : MonoBehaviour
     }
 
     /// <summary>
-    /// ±q¦À¤¤¨ú±o¹êÅé®É©I¥s
+    /// å¾æ± ä¸­å–å¾—å¯¦é«”æ™‚å‘¼å«
     /// </summary>
     private void ActionOnGet(T entity)
     {
         if (entity == null) return;
 
-        entity.gameObject.SetActive(true);          // ±Ò¥Î GameObject
-        entity.transform.SetParent(null);           // ²æÂ÷¦À¤÷ª«¥ó
-        entity.transform.localScale = Vector3.one;  // ­«¸mÁY©ñ
+        entity.gameObject.SetActive(true);          // å•Ÿç”¨ GameObject
+        entity.transform.SetParent(null);           // è„«é›¢æ± çˆ¶ç‰©ä»¶
+        entity.transform.localScale = Vector3.one;  // é‡ç½®ç¸®æ”¾
     }
 
     /// <summary>
-    /// ±N¹êÅé©ñ¦^¦À¤¤®É©I¥s
+    /// å°‡å¯¦é«”æ”¾å›æ± ä¸­æ™‚å‘¼å«
     /// </summary>
     private void ActionOnRelease(T entity)
     {
         if (entity == null) return;
 
-        entity.StopAllCoroutines();  // °±¤î©Ò¦³¨óµ{
+        entity.StopAllCoroutines();  // åœæ­¢æ‰€æœ‰å”ç¨‹
 
-        entity.gameObject.SetActive(false);             // °±¥Î GameObject
-        entity.transform.SetParent(_poolParent);        // ²¾¦^¦À¤÷ª«¥ó¤U
-        entity.transform.position = Vector3.zero;       // ­«¸m¦ì¸m
-        entity.transform.rotation = Quaternion.identity; // ­«¸m±ÛÂà
+        entity.gameObject.SetActive(false);             // åœç”¨ GameObject
+        entity.transform.SetParent(_poolParent);        // ç§»å›æ± çˆ¶ç‰©ä»¶ä¸‹
+        entity.transform.position = Vector3.zero;       // é‡ç½®ä½ç½®
+        entity.transform.rotation = Quaternion.identity; // é‡ç½®æ—‹è½‰
     }
 
     /// <summary>
-    /// ¾P·´¹êÅé®É©I¥s¡]¦À¹F¨ì³Ì¤j®e¶q©Î²MªÅ®É¡^
+    /// éŠ·æ¯€å¯¦é«”æ™‚å‘¼å«ï¼ˆæ± é”åˆ°æœ€å¤§å®¹é‡æˆ–æ¸…ç©ºæ™‚ï¼‰
     /// </summary>
     private void ActionOnDestroy(T entity)
     {

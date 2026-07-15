@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ColorSystem
+public static class ColorSystem
 {
     // 定義六角形的基礎顏色 (這在 C# 裡定義)
     private Color[] _baseColors = new Color[] {
@@ -62,7 +62,7 @@ public class ColorSystem
         }
     }
 
-    void UpdateColorGenes(CreatureData data)
+    public static void UpdateColorGenes(CreatureData data)
     {
         CheckWandering();
         if (data.isWandering)
@@ -79,7 +79,7 @@ public class ColorSystem
 
 
 
-    public void UpdateVisuals(CreatureData data)
+    public static void UpdateVisuals(CreatureData data)
     {
         // 建立暫存陣列，保護原始基因資料 (總和維持 1)
         float[] renderColors = new float[6];

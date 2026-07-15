@@ -6,22 +6,22 @@ class EatAction : ActionBase
 {
     public override ActionType Type => ActionType.Eat;
     //public override int Cooldown => 10;
-    
+
     public override bool IsConditionMet(Creature creature)
     {
         return Perception.Items.HasTarget(creature, creature.foodTypes);
     }
-    
+
     public override float GetWeight(Creature creature)
     {
-        return Mathf.Sqrt(Mathf.Sqrt(1-creature.hunger/creature.maxHunger));
+        return Mathf.Sqrt(Mathf.Sqrt(1 - creature.data.hunger.Percentage));
     }
-    
+
     public override bool IsSuccess(Creature creature)
     {
-        return Random.Range(0,9)< 9;
+        return Random.Range(0, 9) < 9;
     }
-    
+
     public override void Execute(Creature creature, ActionContext context = null)
     {
         List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.foodTypes);
@@ -29,10 +29,10 @@ class EatAction : ActionBase
         {
             Edible food = edibleTargets[Random.Range(0, Mathf.Min(edibleTargets.Count, 6))];
             Vector2Int foodPosition = Vector2Int.RoundToInt(food.transform.position);
-            
+
             // 使用狀態機註冊移動回調
             var stateMachine = creature.GetStateMachine();
-            
+
             System.Action<Vector2Int> onArrived = (arrivedPosition) =>
             {
                 // 檢查 Context 是否仍然有效
@@ -40,9 +40,9 @@ class EatAction : ActionBase
                 {
                     return;
                 }
-                
+
                 // 確認到達的是目標位置
-                if (Vector2.Distance(arrivedPosition,foodPosition)<1.8f)
+                if (Vector2.Distance(arrivedPosition, foodPosition) < 1.8f)
                 {
                     // 檢查食物是否仍然存在
                     if (food != null)
@@ -55,12 +55,12 @@ class EatAction : ActionBase
                     {
                         Debug.Log("food is null");
                     }
-                    
+
                     // 標記 Action 完成
                     context?.Complete();
                 }
             };
-            
+
             // 透過狀態機註冊回調（自動管理清理）
             stateMachine.RegisterMovementCallback(onArrived);
             creature.MoveTo(foodPosition);
