@@ -16,6 +16,12 @@ public abstract class MathAttribute<T> : IAttribute where T : struct
     public T Value => CalculateFinalValue();
     public float Multiplier => _multiplier;
 
+    public void SetBaseValue(T value)
+    {
+        _baseValue = value;
+        Validate();
+    }
+
     public void Add(T amount)
     {
         _baseValue = PerformAdd(_baseValue, amount);
