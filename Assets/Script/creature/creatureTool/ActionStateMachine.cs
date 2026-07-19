@@ -43,10 +43,10 @@ public class ActionStateMachine
         // 收集可用的 Actions
         List<KeyValuePair<ActionType, float>> availableActions = new List<KeyValuePair<ActionType, float>>();
 
-        for (int i = 0; i < owner.actionList.Count; i++)
+        for (int i = 0; i < owner.data.actionList.Count; i++)
         {
             // 加入存取一些給Creature Editor監測的數據
-            ActionType type = owner.actionList[i];
+            ActionType type = owner.data.actionList[i];
             bool met = ActionSystem.IsConditionMet(owner, type);
             float weight = met ? ActionSystem.GetWeight(owner, type) : 0;
 

@@ -1,5 +1,5 @@
 /*
- * [¥Ø«eª©¥»] µL¤À¿ëÂyª«ºØÃþ¥ý«á¶¶§Ç¡A¥u¥H»·ªñ©w½×
+ * [ç›®å‰ç‰ˆæœ¬] ç„¡åˆ†è¾¨çµç‰©ç¨®é¡žå…ˆå¾Œé †åºï¼Œåªä»¥é è¿‘å®šè«–
 */
 using System.Collections.Generic;
 using System.Linq;
@@ -10,25 +10,25 @@ using static UnityEngine.GraphicsBuffer;
 
 public class AttackAction : ActionBase
 {
-	public override ActionType Type => ActionType.Attack;
+    public override ActionType Type => ActionType.Attack;
 
     public override bool IsConditionMet(Creature creature)
-	{
-		return Perception.Creatures.HasTarget(creature, creature.preyIDList);
-	}
+    {
+        return Perception.Creatures.HasTarget(creature, creature.preyIDList);
+    }
 
-	public override float GetWeight(Creature creature)
-	{
-		return 0.8f;
-	}
+    public override float GetWeight(Creature creature)
+    {
+        return 0.8f;
+    }
 
-	public override bool IsSuccess(Creature creature)
-	{
-		return Random.Range(0,9)<8;
-	}
+    public override bool IsSuccess(Creature creature)
+    {
+        return Random.Range(0, 9) < 8;
+    }
 
-	public override void Execute(Creature creature, ActionContext context = null)
-	{
+    public override void Execute(Creature creature, ActionContext context = null)
+    {
         Creature target = FindTarget(creature, context);
         if (target != null)
         {
@@ -36,7 +36,7 @@ public class AttackAction : ActionBase
         }
         else
         {
-            // ¨S¦³§ä¨ì¥Ø¼Ð¡Aª½±µ¼Ð°O¬°§¹¦¨
+            // æ²’æœ‰æ‰¾åˆ°ç›®æ¨™ï¼Œç›´æŽ¥æ¨™è¨˜ç‚ºå®Œæˆ
             context?.Complete();
         }
     }
@@ -45,8 +45,9 @@ public class AttackAction : ActionBase
         List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.preyIDList);
         return optionalTargets.FirstOrDefault();
 
-    } 
-    protected virtual void MoveAndAttack(Creature creature, Creature target, ActionContext context) {
+    }
+    protected virtual void MoveAndAttack(Creature creature, Creature target, ActionContext context)
+    {
         Vector2Int targetPosition = Vector2Int.RoundToInt(target.transform.position);
         Collider2D targetCollider = target.GetComponent<Collider2D>();
         if (targetCollider == null)
@@ -55,20 +56,20 @@ public class AttackAction : ActionBase
             return;
         }
 
-        // ¨Ï¥Îª¬ºA¾÷µù¥U²¾°Ê¦^½Õ
+        // ä½¿ç”¨ç‹€æ…‹æ©Ÿè¨»å†Šç§»å‹•å›žèª¿
         var stateMachine = creature.GetStateMachine();
 
         System.Action<Vector2Int> onArrived = (arrivedPosition) =>
         {
-            // ÀË¬d Context ¬O§_¤´µM¦³®Ä
+            // æª¢æŸ¥ Context æ˜¯å¦ä»ç„¶æœ‰æ•ˆ
             if (context != null && !context.IsValid)
             {
                 return;
             }
-            // ½T»{¬O§_¦³¥Ø¼Ð¸I¼²½c
+            // ç¢ºèªæ˜¯å¦æœ‰ç›®æ¨™ç¢°æ’žç®±
             if (IsInAttackArrange(creature, target, targetCollider))
             {
-                // ÀË¬d¥Ø¼Ð¬O§_¤´µM¦s¦b
+                // æª¢æŸ¥ç›®æ¨™æ˜¯å¦ä»ç„¶å­˜åœ¨
                 if (target != null)
                 {
                     Attack(creature, target);
@@ -78,25 +79,25 @@ public class AttackAction : ActionBase
                     Debug.Log("target is null");
                 }
 
-                // ¼Ð°O Action §¹¦¨
+                // æ¨™è¨˜ Action å®Œæˆ
                 context?.Complete();
             }
         };
 
-        // ³z¹Lª¬ºA¾÷µù¥U¦^½Õ¡]¦Û°ÊºÞ²z²M²z¡^
+        // é€éŽç‹€æ…‹æ©Ÿè¨»å†Šå›žèª¿ï¼ˆè‡ªå‹•ç®¡ç†æ¸…ç†ï¼‰
         stateMachine.RegisterMovementCallback(onArrived);
-        creature.MoveTo(targetPosition, true);
+        MovementSystem.MoveTo(creature, targetPosition, true);
     }
     protected virtual bool IsInAttackArrange(Creature creature, Creature target, Collider2D targetCollider)
     {
         int creatureLayerMask = LayerMask.GetMask("Creature");
-        Collider2D[] potentialTargets = Physics2D.OverlapCircleAll(creature.transform.position, creature.size * 1.5f, creatureLayerMask);//·|¥d¦A§ï
+        Collider2D[] potentialTargets = Physics2D.OverlapCircleAll(creature.transform.position, creature.size * 1.5f, creatureLayerMask);//æœƒå¡å†æ”¹
         return potentialTargets.Any(c => c == targetCollider);
-        
+
     }
     protected virtual void Attack(Creature creature, Creature target)
     {
         //Debug.Log(creature.creatureBase + " Attack!");
-        target.Hurt(creature.attackPower, creature.transform.position, creature);
+        HurtSystem.Hurt(target, creature.attackPower, creature.transform.position, creature);
     }
 }

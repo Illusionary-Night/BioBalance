@@ -9,40 +9,39 @@ public static class MovementSystem
     public static void Initialize(CreatureData data)
     {
 
-        data.movementState = CreatureMovementState.Idle;
-        data.destination = Vector2Int.zero;
-        data.path.Clear();
-        data.currentPathIndex = 0;
-        data.ClearMovementEvents();
+        data.movement.movementState = CreatureMovementState.Idle;
+        data.movement.destination = Vector2Int.zero;
+        data.movement.path.Clear();
+        data.movement.currentPathIndex = 0;
+        data.movement.ClearMovementEvents();
     }
-    public static void MoveTo(CreatureData data, Vector2Int dest, bool isRunning)
+    public static void MoveTo(Creature creature, Vector2Int dest, bool isRunning)
     {
-        if (data.isDead) return;
-
-        data.destination = dest;
-        data.movementState = isRunning ? CreatureMovementState.Run : CreatureMovementState.Walk;
-        Navigate(data);
+        if (creature.data.isDead) return;
+        creature.data.movement.destination = dest;
+        creature.data.movement.movementState = isRunning ? CreatureMovementState.Run : CreatureMovementState.Walk;
+        Navigate(creature.data);
     }
 
     private static void Navigate(CreatureData data)
     {
-        Vector2Int start = Vector2Int.RoundToInt(data.position);
-        List<Vector2Int> rawPath = AStar.FindPath(start, data.destination, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
-        data.path.Clear();
-        data.currentPathIndex = 0;
+        Vector2Int start = Vector2Int.RoundToInt(data.movement.position);
+        List<Vector2Int> rawPath = AStar.FindPath(start, data.movement.GridDestination, TerrainGenerator.Instance.GetDefinitionMap().GetTerrainWeight);
+        data.movement.path.Clear();
+        data.movement.currentPathIndex = 0;
         if (rawPath == null || rawPath.Count == 0)
         {
             return;
         }
         foreach (var p in rawPath)
         {
-            data.path.Add(new Vector2(p.x, p.y));
+            data.movement.path.Add(new Vector2(p.x, p.y));
         }
     }
 
     public static void OnTick(CreatureData data, Rigidbody2D rb)
     {
-        if (data.isDead || !data.isMoving || data.isStunned || data.path.Count == 0)
+        if (data.isDead || !data.isMoving || data.isStunned || data.movement.path.Count == 0)
         {
             rb.linearVelocity = Vector2.zero;
             return;
@@ -50,9 +49,9 @@ public static class MovementSystem
 
         Vector2 currentActualPos = rb.position;
 
-        if (data.currentPathIndex < data.path.Count)
+        if (data.movement.currentPathIndex < data.movement.path.Count)
         {
-            Vector2 target = data.path[data.currentPathIndex];
+            Vector2 target = data.movement.path[data.movement.currentPathIndex];
             Vector2 direction = (target - currentActualPos).normalized;
 
             float currentSpeed = GetCurrentSpeed(data);
@@ -68,7 +67,7 @@ public static class MovementSystem
             float dynamicRadius = Mathf.Max(0.2f, currentSpeed * Time.fixedDeltaTime * 1.5f);
             if (Vector2.Distance(currentActualPos, target) < dynamicRadius)
             {
-                data.currentPathIndex++;
+                data.movement.currentPathIndex++;
             }
         }
         else
@@ -78,9 +77,9 @@ public static class MovementSystem
         }
 
         // 抵達最終目的地判定
-        if (Vector2.Distance(currentActualPos, data.destination) < 0.5f)
+        if (Vector2.Distance(currentActualPos, data.movement.destination) < 0.5f)
         {
-            data.movementState = CreatureMovementState.Idle;
+            data.movement.movementState = CreatureMovementState.Idle;
 
             //TODO: 事件呼叫完成，但我覺得事件寫法好像怪怪的
         }
@@ -88,33 +87,15 @@ public static class MovementSystem
     //TODO: 之後由data自己管理
     private static float GetCurrentSpeed(CreatureData data)
     {
-        return data.movementState switch
+        return data.movement.movementState switch
         {
             CreatureMovementState.Run => data.speed * 2f,
             CreatureMovementState.Walk => data.speed * 1f,
             _ => 0f
         };
     }
-    public static Vector2Int GetRoundedPosition(CreatureData data)
+    public static void Pushed(Creature creature, Vector2 direction, float strength)
     {
-        return Vector2Int.RoundToInt(data.position);
-    }
-
-    public static Vector2Int GetMovementDestination(CreatureData data)
-    {
-        if (data.destination != null)
-        {
-            return data.destination;
-        }
-        else
-        {
-            return Vector2Int.zero;
-        }
-
-    }
-    // TODO: 怪怪的，理論上我這邊不能直接對RB操作？
-    public static void Pushed(CreatureData data, Vector2 direction, float strength)
-    {
-        rb.AddForce(direction.normalized * strength, ForceMode2D.Impulse);
+        creature.rb.AddForce(direction.normalized * strength, ForceMode2D.Impulse);
     }
 }

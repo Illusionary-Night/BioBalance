@@ -37,7 +37,7 @@ public class CreatureData
     public float speed;
     public float reproductionRate;
     public float perceptionRange;
-    public float healthRegeneration;
+    // public float healthRegeneration;
 
     // --- 運行時動態狀態 ---
     //TODO: 邊界處理直接在這邊做
@@ -48,10 +48,12 @@ public class CreatureData
     public bool isDead = false;
     public bool isInvincible = false;
     public bool isStunned = false;
+    public bool isMoving = false;
     public float stunTimer;
     public ActionType currentAction;
     public BodyType currentBodyType;
     public Direction underAttackDirection;
     public LifeState currentLifeState;
     public Dictionary<ActionType, int> actionCD = new();
+    public MovementAttr movement;
 }

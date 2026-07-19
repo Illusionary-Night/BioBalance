@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Action °õ¦æªº¤W¤U¤å¡A¥Î©ó°lÂÜ©M±±¨î Action ªº¥Í©R¶g´Á
+/// Action åŸ·è¡Œçš„ä¸Šä¸‹æ–‡ï¼Œç”¨æ–¼è¿½è¹¤å’Œæ§åˆ¶ Action çš„ç”Ÿå‘½é€±æœŸ
 /// </summary>
 public class ActionContext
 {
@@ -22,7 +22,7 @@ public class ActionContext
     }
 
     /// <summary>
-    /// ¨ú®ø¦¹ Action
+    /// å–æ¶ˆæ­¤ Action
     /// </summary>
     public void Cancel()
     {
@@ -34,7 +34,7 @@ public class ActionContext
     }
 
     /// <summary>
-    /// ¼Ğ°O Action ¬°¤w§¹¦¨
+    /// æ¨™è¨˜ Action ç‚ºå·²å®Œæˆ
     /// </summary>
     public void Complete()
     {
@@ -46,13 +46,13 @@ public class ActionContext
     }
 
     /// <summary>
-    /// ÀË¬d Context ¬O§_¤´µM¦³®Ä¡]¥¼¨ú®ø¥B¥¼§¹¦¨¡^
+    /// æª¢æŸ¥ Context æ˜¯å¦ä»ç„¶æœ‰æ•ˆï¼ˆæœªå–æ¶ˆä¸”æœªå®Œæˆï¼‰
     /// </summary>
     public bool IsValid => !isCancelled && !isCompleted;
 
-    // ¨Æ¥ó¡G·í Action ³Q¨ú®ø®ÉÄ²µo
+    // äº‹ä»¶ï¼šç•¶ Action è¢«å–æ¶ˆæ™‚è§¸ç™¼
     public event System.Action OnCancelled;
-    
-    // ¨Æ¥ó¡G·í Action §¹¦¨®ÉÄ²µo
+
+    // äº‹ä»¶ï¼šç•¶ Action å®Œæˆæ™‚è§¸ç™¼
     public event System.Action OnCompleted;
 }

@@ -10,16 +10,16 @@ public partial class Creature : MonoBehaviour
     private void UpdateVitalSigns()
     {
         // 飢餓處理
-        data.hunger.Add(-GetCurrentHungerDrain());
+        data.hunger.Digest();
 
         // 老化處理
-        data.age.Add(1);
+        data.age.Aging();
 
         // 死亡判定
         if (!data.isInvincible && (data.health.Percentage <= 0 || data.hunger.Percentage <= 0 || data.age.Percentage >= 1)) Die();
 
         // 回血處理
-        data.health.Add(data.healthRegeneration);
+        data.health.Regenerate();
     }
     private void UpdateCooldowns()
     {
@@ -98,7 +98,7 @@ public partial class Creature : MonoBehaviour
         float multiplier = 1f;
         // TODO: 之後可以把multiplier的get set 調成屬性，方便Action直接調整。
         // 1. 根據移動狀態決定倍率
-        switch (data.movementState)
+        switch (data.movement.movementState)
         {
             case CreatureMovementState.Sleep:
                 multiplier = 0.5f;
@@ -130,9 +130,9 @@ public partial class Creature : MonoBehaviour
     {
         //初始狀態
         // TODO: 初始化需要裝一個新的嗎？
-        data.hunger. = data.maxHunger;
-        data.health = data.maxHealth;
-        data.age = 0;
+        data.hunger.SetBaseValue(data.hunger.maxHunger);
+        data.health.SetBaseValue(data.health.maxHealth);
+        data.age.SetBaseValue(0);
         data.actionCooldown = 0;
         data.reproductionCD = 0;
         data.stunTimer = 0f;

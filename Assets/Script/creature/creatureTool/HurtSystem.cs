@@ -7,8 +7,7 @@ public class HurtSystem
     public void Hurt(CreatureData data, float damage, Creature attacker = null)
     {
         data.underAttackDirection = Direction.None;
-        data.health -= damage;
-        data.health = Mathf.Max(data.health, 0);
+        data.health.Add(-damage);
         if (attacker != null) data.enemy = attacker;
     }
 
@@ -22,8 +21,7 @@ public class HurtSystem
         // 計算攻擊者相對於自己的方位向量
         Vector2 direction = attackerPosition - (Vector2)data.position;
         data.underAttackDirection = DirectionHelper.GetDirectionFromVector(direction);
-        data.health -= damage;
-        data.health = Mathf.Max(data.health, 0);
+        data.health.Add(-damage);
         if (attacker != null) data.enemy = attacker;
     }
 
@@ -57,9 +55,9 @@ public class HurtSystem
         data.underAttackDirection = Direction.None;
     }
     // TODO: 這裡要轉接給另外一個tool感覺怪怪的？
-    public void Repeled(CreatureData data, Vector2 drection, float strength = 1f)
+    public void Repeled(Creature creature, Vector2 drection, float strength = 1f)
     {
-        MovementSystem.Pushed(data, drection, strength);
+        MovementSystem.Pushed(creature, drection, strength);
     }
 
 }

@@ -5,7 +5,7 @@ public class DazeAction : ActionBase
 {
 	public override ActionType Type => ActionType.Daze;
 
-    public override bool IsConditionMet(Creature creature)
+	public override bool IsConditionMet(Creature creature)
 	{
 		return true;
 	}
@@ -13,7 +13,7 @@ public class DazeAction : ActionBase
 	public override float GetWeight(Creature creature)
 	{
 		return 0.1f;
-		// ®Ú¾Ú°§¾j­È¨M©w²¾°ÊÅv­«¡A°§¾j­È¶V°ª¡A²¾°ÊÅv­«¶V°ª
+		// æ ¹æ“šé£¢é¤“å€¼æ±ºå®šç§»å‹•æ¬Šé‡ï¼Œé£¢é¤“å€¼è¶Šé«˜ï¼Œç§»å‹•æ¬Šé‡è¶Šé«˜
 	}
 
 	public override bool IsSuccess(Creature creature)
@@ -23,7 +23,7 @@ public class DazeAction : ActionBase
 
 	public override void Execute(Creature creature, ActionContext context = null)
 	{
-		creature.MoveTo(creature.GetRoundedPosition());
-        context?.Complete();
-    }
+		MovementSystem.MoveTo(creature, creature.data.movement.GridPosition, false);
+		context?.Complete();
+	}
 }

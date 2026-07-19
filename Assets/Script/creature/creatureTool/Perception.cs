@@ -14,7 +14,7 @@ public static class Perception
         public static bool HasTarget(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起偵測的生物必須存在且存活
-            if (current_creature == null || current_creature.isDead)
+            if (current_creature == null || current_creature.data.isDead)
                 return false;
 
             // 檢查目標物種是否存在於 Manager 中
@@ -23,13 +23,13 @@ public static class Perception
 
             // 使用 Max(0) 因為有時我們會需要 > 1.0 的加成（如：警戒狀態 150% 視野）
             float finalMultiplier = Mathf.Max(0f, rangeMultiplier);
-            float range = current_creature.perceptionRange * finalMultiplier;
+            float range = current_creature.data.perceptionRange * finalMultiplier;
             float rangeSq = range * range;
 
             // 執行搜尋與過濾
             return target_species.creatures.Values.Any(c =>
                 c != null &&
-                !c.isDead &&
+                !c.data.isDead &&
                 c != current_creature &&
                 (filter == null || filter(c)) &&
                 (current_creature.transform.position - c.transform.position).sqrMagnitude <= rangeSq
@@ -39,7 +39,7 @@ public static class Perception
         public static bool HasTarget(Creature creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
-            if (creature == null || creature.isDead) return false;
+            if (creature == null || creature.data.isDead) return false;
 
             // 列表檢查：若清單為 null 或長度為 0，直接回傳 false
             if (target_ID_list == null || target_ID_list.Count == 0) return false;
@@ -50,7 +50,7 @@ public static class Perception
         public static int CountTargetNumber(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起偵測的生物必須存在且存活
-            if (current_creature == null || current_creature.isDead)
+            if (current_creature == null || current_creature.data.isDead)
                 return 0;
 
             // 檢查目標物種是否存在於 Manager 中
@@ -58,11 +58,11 @@ public static class Perception
                 return 0;
 
             float finalMultiplier = Mathf.Max(0f, rangeMultiplier);
-            float range = current_creature.perceptionRange * finalMultiplier;
-            float rangeSq = range * range; 
+            float range = current_creature.data.perceptionRange * finalMultiplier;
+            float rangeSq = range * range;
 
             return target_species.creatures.Values.Count(c =>
-                c != null && !c.isDead && c != current_creature &&
+                c != null && !c.data.isDead && c != current_creature &&
                 (filter == null || filter(c)) &&
                 (current_creature.transform.position - c.transform.position).sqrMagnitude < rangeSq
             );
@@ -71,7 +71,7 @@ public static class Perception
         public static int CountTargetNumber(Creature current_creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
-            if (current_creature == null || current_creature.isDead) return 0;
+            if (current_creature == null || current_creature.data.isDead) return 0;
 
             // 列表檢查：若清單為 null 或長度為 0，直接回傳 false
             if (target_ID_list == null || target_ID_list.Count == 0) return 0;
@@ -82,21 +82,21 @@ public static class Perception
         public static List<Creature> GetAllTargets(Creature current_creature, int target_ID, float rangeMultiplier = 1.0f, bool sorted = true, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起偵測的生物必須存在且存活
-            if (current_creature == null || current_creature.isDead)
+            if (current_creature == null || current_creature.data.isDead)
                 return new List<Creature>();
 
             // 檢查目標物種是否存在於 Manager 中
             if (!MainManager.inGameManager.Species.TryGetValue(target_ID, out var target_species))
                 return new List<Creature>();
-                
+
             Vector2 currentPos = current_creature.transform.position;
             float finalMultiplier = Mathf.Max(0f, rangeMultiplier);
-            float range = current_creature.perceptionRange * finalMultiplier;
+            float range = current_creature.data.perceptionRange * finalMultiplier;
             float rangeSq = range * range;
 
             // 先進行基礎篩選
             var query = target_species.creatures.Values
-                .Where(c => c != null && !c.isDead && c != current_creature &&
+                .Where(c => c != null && !c.data.isDead && c != current_creature &&
                 (filter == null || filter(c)) &&
                 ((Vector2)c.transform.position - currentPos).sqrMagnitude < rangeSq);
 
@@ -114,15 +114,15 @@ public static class Perception
         public static List<Creature> GetAllTargets(Creature current_creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, bool sorted = true, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
-            if (current_creature == null || current_creature.isDead) return new List<Creature>();
+            if (current_creature == null || current_creature.data.isDead) return new List<Creature>();
 
             // 列表檢查：若清單為 null 或長度為 0，直接回傳 false
             if (target_ID_list == null || target_ID_list.Count == 0) return new List<Creature>();
-            
+
             Vector2 currentPos = current_creature.transform.position;
 
             var query = target_ID_list
-                .SelectMany(id => GetAllTargets(current_creature, id, rangeMultiplier, false , filter));
+                .SelectMany(id => GetAllTargets(current_creature, id, rangeMultiplier, false, filter));
             if (sorted)
             {
                 return query
@@ -138,7 +138,7 @@ public static class Perception
 
     public static class Items
     {
-        
+
         private static List<Vector2Int> GetAllIntPos(Vector2Int pos, float radius)
         {
             float r2 = radius * radius;
@@ -172,7 +172,7 @@ public static class Perception
                 return false;
             }
 
-            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange))
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.data.perceptionRange))
             {
 
 
@@ -187,7 +187,7 @@ public static class Perception
         // Checks if there is at least one food item from the list of types within perception range
         public static bool HasTarget(Creature creature, List<FoodType> food_type_list)
         {
-            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange);
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.data.perceptionRange);
 
             foreach (var food_type in food_type_list)
             {
@@ -221,7 +221,7 @@ public static class Perception
                 return 0;
             }
 
-            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange))
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.data.perceptionRange))
             {
                 Edible edible = MainManager.inGameManager.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
 
@@ -236,7 +236,7 @@ public static class Perception
         public static int CountTarget(Creature creature, List<FoodType> food_type_list)
         {
             int count = 0;
-            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange);
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.data.perceptionRange);
 
             foreach (var food_type in food_type_list)
             {
@@ -263,7 +263,7 @@ public static class Perception
         public static List<Edible> GetAllTargets(Creature creature, FoodType food_type)
         {
             List<Edible> targets = new();
-            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange);
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.data.perceptionRange);
 
             EntityData.SpawnableEntityType? spawnabletype = (EntityData.SpawnableEntityType)EntityData.FoodType2SpawnableType(food_type);
             if (spawnabletype == null)
@@ -272,7 +272,7 @@ public static class Perception
                 return targets;
             }
 
-            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange))
+            foreach (var ediblePos in GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.data.perceptionRange))
             {
                 Edible edible = MainManager.inGameManager.EnvEntityManager.GetEntity<Edible>((EntityData.SpawnableEntityType)spawnabletype, ediblePos);
 
@@ -294,7 +294,7 @@ public static class Perception
         public static List<Edible> GetAllTargets(Creature creature, List<FoodType> food_type_list)
         {
             List<Edible> targets = new();
-            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.perceptionRange);
+            var allPos = GetAllIntPos(Vector2Int.FloorToInt(creature.transform.position), creature.data.perceptionRange);
 
             foreach (var food_type in food_type_list)
             {

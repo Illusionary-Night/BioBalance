@@ -16,10 +16,23 @@ public class GeneticsSystem
         //TODO: 在賦予數值時包裝內會自動檢查邊界問題
         newCreatureData.size = Inherit(species, species.baseSize, parentAttr1?.size, parentAttr2?.size);
         newCreatureData.speed = Inherit(species, species.baseSpeed, parentAttr1?.speed, parentAttr2?.speed);
-        newCreatureData.maxHealth = Inherit(species, species.baseMaxHealth, parentAttr1?.max_health, parentAttr2?.max_health);
         newCreatureData.reproductionRate = Inherit(species, species.baseReproductionRate, parentAttr1?.reproduction_rate, parentAttr2?.reproduction_rate);
-        newCreatureData.lifespan = Inherit(species, species.baseLifespan, parentAttr1?.lifespan, parentAttr2?.lifespan);
         newCreatureData.perceptionRange = Inherit(species, species.basePerceptionRange, parentAttr1?.perception_range, parentAttr2?.perception_range);
+
+        // 血量處理
+        float _maxHealth = Inherit(species, species.baseMaxHealth, parentAttr1?.max_health, parentAttr2?.max_health);
+        float _regenerationRata = AttributesCalculator.CalculateHealthRegeneration(_maxHealth, newCreatureData.size);
+        newCreatureData.health = new HealthAttr(_maxHealth, _regenerationRata);
+
+        // 飢餓處理
+        float _maxHunger = AttributesCalculator.CalculateMaxHunger(newCreatureData.size, _maxHealth, newCreatureData.foodTypes);
+        float _hungerRate = AttributesCalculator.CalculateHungerRate(newCreatureData.size, newCreatureData.speed, newCreatureData.attackPower);
+        newCreatureData.hunger = new HungerAttr(_maxHunger, _hungerRate);
+
+        //年齡處理
+        float _maxAge = Inherit(species, species.baseLifespan, parentAttr1?.lifespan, parentAttr2?.lifespan);
+        float _agingRate = 1;
+        newCreatureData.age = new AgeAttr(_maxAge, _agingRate);
 
         if (!parentAttr1.HasValue && !parentAttr2.HasValue)
         {
@@ -46,10 +59,6 @@ public class GeneticsSystem
 
         //計算衍生屬性
         //sleepTime = sleepingTail - sleepingHead;
-        //TODO: 這玩意現在改成這樣不能這個時候塞，需要提早
-        newCreatureData.hunger.hungerRate = AttributesCalculator.CalculateHungerRate(newCreatureData.size, newCreatureData.speed, newCreatureData.attackPower);
-        newCreatureData.maxHunger = AttributesCalculator.CalculateMaxHunger(newCreatureData.size, newCreatureData.maxHealth, newCreatureData.foodTypes);
-        newCreatureData.healthRegeneration = AttributesCalculator.CalculateHealthRegeneration(newCreatureData.maxHealth, newCreatureData.size);
 
         // 色彩基因初始化
         // float[] parent1Color = parentAttr1?.colorGenes;

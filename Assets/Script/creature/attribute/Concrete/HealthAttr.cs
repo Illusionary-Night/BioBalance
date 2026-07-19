@@ -3,12 +3,12 @@ using UnityEngine;
 public class HealthAttr : FloatAttribute
 {
     public float maxHealth { get; private set; }
-    public float healthRegeneration { get; private set; }
+    public float regenerationRate { get; private set; }
     public float Percentage => maxHealth > 0 ? Mathf.Clamp01(CalculateFinalValue() / maxHealth) : 0f;
     public HealthAttr(float maxValue, float increaseRate, float multiplier = 1) : base(maxValue, multiplier)
     {
         maxHealth = maxValue > 0 ? maxValue : 0;
-        healthRegeneration = increaseRate > 0 ? increaseRate : 0;
+        regenerationRate = increaseRate > 0 ? increaseRate : 0;
     }
 
     protected override void Validate()
@@ -23,6 +23,6 @@ public class HealthAttr : FloatAttribute
     }
     public void Regenerate()
     {
-        Add(healthRegeneration);
+        Add(regenerationRate);
     }
 }
