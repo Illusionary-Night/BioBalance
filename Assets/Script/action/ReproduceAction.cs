@@ -28,7 +28,7 @@ public class ReproduceAction : ActionBase
 
         // 核心公式：使用 Sigmoid 的變體或簡單的線性下降
         // 這裡使用 1 / (1 + e^(N-T)) 的邏輯簡化版
-        int kindredCount = Perception.Creatures.CountTargetNumber(creature, creature.speciesID);
+        int kindredCount = Perception.Creatures.CountTargetNumber(creature, creature.data.speciesID);
         float crowdPressure = Mathf.Pow(kindredCount / crowdThreshold, steepness);
         float finalChance = maxChance * (1f - Mathf.Clamp01(crowdPressure));
 
@@ -41,13 +41,13 @@ public class ReproduceAction : ActionBase
     {
         // 使用物件池取得新生物
         Vector3 spawnPosition = creature.transform.position + new Vector3(Random.value % 100 / 100f, Random.value % 100 / 100f, 0);
-        Creature new_creature = CreaturePool.GetCreature(creature.mySpecies, spawnPosition, creature.ToCreatureAttribute());
+        Creature new_creature = CreaturePool.GetCreature(creature.data.species, spawnPosition, creature.ToCreatureAttribute());
         if (new_creature == null)
         {
             Debug.LogWarning("Failed to spawn new creature because the pool is exhausted.");
             return;
         }
-        new_creature.gameObject.name = new_creature.creatureBase + "_" + new_creature.UUID;
+        new_creature.gameObject.name = new_creature.data.creatureBase + "_" + new_creature.data.UUID;
         MainManager.inGameManager.RegisterCreature(new_creature);
 
         // 繁殖是立即完成的 Action

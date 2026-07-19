@@ -49,7 +49,7 @@ class EatAction : ActionBase
                     {
                         //Debug.Log("eat");
                         food.Eaten();
-                        creature.RestoreHunger(food.NutritionalValue);
+                        creature.data.hunger.Add(food.NutritionalValue);
                     }
                     else
                     {
@@ -63,7 +63,7 @@ class EatAction : ActionBase
 
             // 透過狀態機註冊回調（自動管理清理）
             stateMachine.RegisterMovementCallback(onArrived);
-            creature.MoveTo(foodPosition);
+            MovementSystem.MoveTo(creature, foodPosition, false);
         }
         else
         {

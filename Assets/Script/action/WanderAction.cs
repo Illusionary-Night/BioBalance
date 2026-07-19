@@ -30,13 +30,13 @@ public class MoveAction : ActionBase
     {
         //Debug.Log("move");
         // 隨機移動到鄰近位置
-        Vector2Int currentPosition = creature.GetRoundedPosition();
-        int rangeInt = Mathf.FloorToInt(creature.perceptionRange);
+        Vector2Int currentPosition = creature.data.movement.GridPosition;
+        int rangeInt = Mathf.FloorToInt(creature.data.perceptionRange);
         Vector2Int randomDisplacement = new(Random.Range(-rangeInt, rangeInt + 1), Random.Range(-rangeInt, rangeInt + 1));
         //Vector2Int randomDisplacement = new(Random.Range(-MoveDistance, MoveDistance + 1), Random.Range(-MoveDistance, MoveDistance + 1));
         Vector2Int newPosition = currentPosition + randomDisplacement;
 
         // 呼叫Creature自行導航地點
-        creature.MoveTo(newPosition);
+        MovementSystem.MoveTo(creature, newPosition, false);
     }
 }

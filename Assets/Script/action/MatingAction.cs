@@ -18,7 +18,7 @@ public class MatingAction : ActionBase
         if (creature.gender == Gender.Female)
         {
             // 母找公：對方也必須是成年、吃飽、且不在冷卻中
-            bool maleInSight = Perception.Creatures.HasTarget(creature, creature.speciesID, 1.5f,
+            bool maleInSight = Perception.Creatures.HasTarget(creature, creature.data.speciesID, 1.5f,
                 c => c.gender == Gender.Male &&
                      c.data.age.Percentage >= 0.2f &&
                      c.data.hunger.Percentage >= 0.5f);
@@ -28,7 +28,7 @@ public class MatingAction : ActionBase
         else if (creature.gender == Gender.Male)
         {
             // 公找母：對方也必須是成年、吃飽、且不在冷卻中
-            bool femaleInSight = Perception.Creatures.HasTarget(creature, creature.speciesID, 1.5f,
+            bool femaleInSight = Perception.Creatures.HasTarget(creature, creature.data.speciesID, 1.5f,
                 c => c.gender == Gender.Female &&
                      c.data.age.Percentage >= 0.2f &&
                      c.data.hunger.Percentage >= 0.5f);
@@ -45,7 +45,7 @@ public class MatingAction : ActionBase
         {
 
             // 只要周邊有可以受孕的雌性，就維持追逐興趣
-            if (Perception.Creatures.HasTarget(creature, creature.speciesID, 1, c => c.IsInHeat()))
+            if (Perception.Creatures.HasTarget(creature, creature.data.speciesID, 1, c => c.IsInHeat()))
             {
                 return 0.65f; // 比漫遊高，比吃飯低
             }
@@ -58,7 +58,7 @@ public class MatingAction : ActionBase
             if (!creature.IsInHeat()) return 0f;
 
             // 2. 看看身邊有沒有已經貼過來的雄性 (範圍要小，例如 1.0f)
-            bool maleNearby = Perception.Creatures.HasTarget(creature, creature.speciesID, 1.5f, c => c.IsNearby(creature) && c.gender == Gender.Male && c.IsInHeat());
+            bool maleNearby = Perception.Creatures.HasTarget(creature, creature.data.speciesID, 1.5f, c => c.IsNearby(creature) && c.gender == Gender.Male && c.IsInHeat());
 
             if (maleNearby)
             {
@@ -81,7 +81,7 @@ public class MatingAction : ActionBase
         if (creature.gender == Gender.Male)
         {
             //衝去找雌性
-            List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.speciesID, 1, true, c => c.gender == Gender.Female && c.IsInHeat());
+            List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.data.speciesID, 1, true, c => c.gender == Gender.Female && c.IsInHeat());
             Creature target = optionalTargets.FirstOrDefault();
             if (target != null)
             {
@@ -114,7 +114,7 @@ public class MatingAction : ActionBase
 
                 // 透過狀態機註冊回調（自動管理清理）
                 stateMachine.RegisterMovementCallback(onArrived);
-                creature.MoveTo(targetPosition, false);
+                MovementSystem.MoveTo(creature, targetPosition, false);
             }
             else
             {
@@ -125,7 +125,7 @@ public class MatingAction : ActionBase
         if (creature.gender == Gender.Female)
         {
             //選老公
-            List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.speciesID, 1, true, c => c.IsNearby(creature) && c.gender == Gender.Male && c.IsInHeat());
+            List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.data.speciesID, 1, true, c => c.IsNearby(creature) && c.gender == Gender.Male && c.IsInHeat());
             Creature target = optionalTargets.FirstOrDefault();
             if (target != null)
             {
@@ -151,7 +151,7 @@ public class MatingAction : ActionBase
     //TODO: 之後Builder會把出生整合在一起
     private void GiveBirth(Creature mother, Creature father)
     {
-        Species species = MainManager.inGameManager.Species[mother.speciesID];
+        Species species = MainManager.inGameManager.Species[mother.data.speciesID];
         if (species.creatures.Count >= 300)
         {
             return;
@@ -159,19 +159,19 @@ public class MatingAction : ActionBase
         //Debug.LogAssertion("mating success!");
         // 使用物件池取得新生物
         Vector3 spawnPosition = mother.transform.position + (Vector3)(Random.insideUnitCircle * 0.5f);
-        Creature baby = CreaturePool.GetCreature(mother.mySpecies, spawnPosition, mother.ToCreatureAttribute(), father.ToCreatureAttribute());
+        Creature baby = CreaturePool.GetCreature(mother.data.species, spawnPosition, mother.ToCreatureAttribute(), father.ToCreatureAttribute());
         if (baby == null)
         {
             Debug.LogWarning("Failed to spawn baby creature because the pool is exhausted.");
             return;
         }
-        baby.gameObject.name = baby.creatureBase + "_" + baby.UUID;
+        baby.gameObject.name = baby.data.creatureBase + "_" + baby.data.UUID;
         MainManager.inGameManager.RegisterCreature(baby);
         if (baby != null)
         {
             // 2. 紀錄父母的 ID
-            baby.SetFatherID(father.UUID);
-            baby.SetMotherID(mother.UUID);
+            baby.SetFatherID(father.data.UUID);
+            baby.SetMotherID(mother.data.UUID);
 
         }
     }

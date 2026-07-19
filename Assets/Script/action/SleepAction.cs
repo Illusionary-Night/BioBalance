@@ -10,12 +10,12 @@ public class SleepAction : ActionBase
         int sleepHead = 900;
         int sleepTail = 1800;
         int nowHour = MainManager.inGameManager.TickManager.CurrentHour;
-        
-        if (sleepHead > sleepTail) 
+
+        if (sleepHead > sleepTail)
         {
             return nowHour >= sleepHead || nowHour < sleepTail;
-        } 
-        else 
+        }
+        else
         {
             return nowHour >= sleepHead && nowHour < sleepTail;
         }
@@ -32,7 +32,7 @@ public class SleepAction : ActionBase
         int hoursPerDay = constantData.HOURS_PER_DAY;
 
         if (sleepDuration == 0) return 0f;
-        
+
         // �p����e�ɶ��b�ίv�϶�������m
         int hoursIntoSleep = sleepHead <= sleepTail
             ? nowHour - sleepHead

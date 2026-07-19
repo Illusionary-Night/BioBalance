@@ -21,7 +21,7 @@ public class FleeAction : ActionBase
     public override bool IsConditionMet(Creature creature)
     {
         // ���� 1�G���b�Q����
-        if (creature.UnderAttack())
+        if (HurtSystem.UnderAttack(creature.data))
         {
             return true;
         }
@@ -42,7 +42,7 @@ public class FleeAction : ActionBase
     public override float GetWeight(Creature creature)
     {
         // �k�]�u���Ÿ����A�S�O�O�b��������
-        if (creature.UnderAttack())
+        if (HurtSystem.UnderAttack(creature.data))
         {
             return 5.0f;
         }
@@ -58,7 +58,7 @@ public class FleeAction : ActionBase
     public override void Execute(Creature creature, ActionContext context = null)
     {
         // �����m�������A�A�קK������򺡨��ɭP����Ĳ�o
-        creature.GetAndResetUnderAttackDirection();
+        HurtSystem.GetAndResetUnderAttackDirection(creature.data);
 
         // �p��¯ٰѦ��I
         Vector2 threatPosition = GetThreatReferencePoint(creature);
@@ -70,7 +70,7 @@ public class FleeAction : ActionBase
         Vector2Int fleeTarget = CalculateFleeTarget(creature, fleeDirection);
 
         // �ˬd�ؼЬO�_����
-        Vector2Int currentPos = creature.GetRoundedPosition();
+        Vector2Int currentPos = creature.data.movement.GridPosition;
         if (fleeTarget == currentPos)
         {
             // �L�k�k�]�A��������
@@ -106,7 +106,7 @@ public class FleeAction : ActionBase
 
         // �z�L���A�����U�^�ա]�۰ʺ޲z�M�z�^
         stateMachine.RegisterMovementCallback(onArrived);
-        creature.MoveTo(fleeTarget, true);
+        MovementSystem.MoveTo(creature, fleeTarget, true);
     }
 
     /// <summary>
@@ -163,7 +163,7 @@ public class FleeAction : ActionBase
     private Vector2Int CalculateFleeTarget(Creature creature, Vector2 fleeDirection)
     {
         Vector2 creaturePos = creature.transform.position;
-        float fleeDistance = Random.Range(creature.perceptionRange * MIN_FLEE_RATE, creature.perceptionRange * MAX_FLEE_RATE);
+        float fleeDistance = Random.Range(creature.data.perceptionRange * MIN_FLEE_RATE, creature.data.perceptionRange * MAX_FLEE_RATE);
 
         // ���ժ����k�]��V
         Vector2Int targetPos = Vector2Int.RoundToInt(creaturePos + fleeDirection * fleeDistance);

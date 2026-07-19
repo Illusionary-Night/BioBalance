@@ -6,11 +6,11 @@ public class DualGridTileData : ScriptableObject
 {
     public TerrainType terrainType;
 
-    [Tooltip("Àu¥ı¯Å¡G¼Æ­È¶V¤j¡A¶V·|»\¦b§O¤H¤W­± (¨Ò¦p¡G©¥¥Û > ¯ó > ¨F > ¤ô)")]
+    [Tooltip("å„ªå…ˆç´šï¼šæ•¸å€¼è¶Šå¤§ï¼Œè¶Šæœƒè“‹åœ¨åˆ¥äººä¸Šé¢ (ä¾‹å¦‚ï¼šå²©çŸ³ > è‰ > æ²™ > æ°´)")]
     public int priority;
 
     [Header("16 Tiles (Dual-Grid)")]
-    [Tooltip("½Ğ¨Ì·Ó 0-15 ªº¶¶§Ç©ñ¤J¹ïÀ³ªº Tile Asset")]
-    // ¶¶§Ç³q±`¬O bitmask: TL=8, TR=4, BL=2, BR=1
+    [Tooltip("è«‹ä¾ç…§ 0-15 çš„é †åºæ”¾å…¥å°æ‡‰çš„ Tile Asset")]
+    // é †åºé€šå¸¸æ˜¯ bitmask: TL=8, TR=4, BL=2, BR=1
     public TileBase[] tiles = new TileBase[16];
 }

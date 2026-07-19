@@ -9,7 +9,7 @@ class FlockAction : ActionBase
     public override bool IsConditionMet(Creature creature)
     {
         // 1. 基本安全檢查：沒暈眩、沒死、沒被鎖定
-        if (creature.isStunned || creature.isDead) return false;
+        if (creature.data.isStunned || creature.data.isDead) return false;
 
         // 2. 社交檢查：找尋感知範圍內的同類
         var neighbors = Perception.Creatures.GetAllTargets(creature, creature.speciesID);
@@ -25,14 +25,14 @@ class FlockAction : ActionBase
         float baseWeight = 0.5f; // 基礎社交傾向
 
         // 1. 同類數量影響 (假設 neighbors 是感測到的同類清單)
-        int neighborCount = Perception.Creatures.GetAllTargets(creature, creature.speciesID).Count;
+        int neighborCount = Perception.Creatures.GetAllTargets(creature, creature.data.speciesID).Count;
         float densityBonus = Mathf.Clamp(neighborCount * 0.15f, 0, 0.6f);
 
         // 2. 飢餓度懲罰 (肚子越餓越不想社交)
         float hungerPenalty = Mathf.InverseLerp(0.2f, 0.6f, creature.data.hunger.Percentage);
 
         // 3. 行為慣性 (延續感)
-        float inertia = (creature.currentAction == ActionType.Flock) ? 0.4f : 0f;
+        float inertia = (creature.data.currentAction == ActionType.Flock) ? 0.4f : 0f;
 
         // 最終權重
         return (baseWeight + densityBonus + inertia) * hungerPenalty;
@@ -46,13 +46,13 @@ class FlockAction : ActionBase
     public override void Execute(Creature creature, ActionContext context)
     {
         // 1. 計算群聚方向 (Boids 向量)
-        Vector2 flockDir = GetFlockingDirection(creature, Perception.Creatures.GetAllTargets(creature, creature.speciesID));
+        Vector2 flockDir = GetFlockingDirection(creature, Perception.Creatures.GetAllTargets(creature, creature.data.speciesID));
 
         // 2. 加上避障與隨機擾動，選定一個 5 格外的點
-        Vector2Int targetPos = creature.GetRoundedPosition() + Vector2Int.RoundToInt(flockDir * 5f);
+        Vector2Int targetPos = creature.data.movement.GridPosition + Vector2Int.RoundToInt(flockDir * 5f);
 
         // 3. 呼叫你的 Movement 系統，設定為 Walk
-        creature.MoveTo(targetPos, isRunning: false);
+        MovementSystem.MoveTo(creature, targetPos, isRunning: false);
 
         // 4. 監聽抵達事件來叫停
         creature.OnMovementComplete += OnArrived;

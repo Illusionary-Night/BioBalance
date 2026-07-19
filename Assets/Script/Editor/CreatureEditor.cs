@@ -65,16 +65,16 @@ public class CreatureEditor : Editor
         EditorGUILayout.LabelField("Live Status Monitor", EditorStyles.boldLabel);
 
         // 血量 (動態變色)
-        float healthPct = Mathf.Clamp01(creature.health / creature.maxHealth);
+        float healthPct = creature.data.health.Percentage;
         Color hpColor = Color.Lerp(Color.red, Color.green, healthPct);
-        DrawProgressBar("Health", creature.health, healthPct, hpColor);
+        DrawProgressBar("Health", creature.data.health.Value, healthPct, hpColor);
 
         // 飢餓 (橘色)
-        DrawProgressBar("Hunger", creature.data.hunger.hunger, creature.data.hunger.Percentage, new Color(1f, 0.6f, 0f));
+        DrawProgressBar("Hunger", creature.data.hunger.Value, creature.data.hunger.Percentage, new Color(1f, 0.6f, 0f));
 
         // 年齡 (灰色)
-        float agePct = Mathf.Clamp01(creature.age / creature.lifespan);
-        DrawProgressBar("Age", creature.age, agePct, Color.gray);
+        float agePct = creature.data.age.Percentage;
+        DrawProgressBar("Age", creature.data.age.Value, agePct, Color.gray);
     }
 
     /// <summary>
@@ -92,8 +92,8 @@ public class CreatureEditor : Editor
 
         // 1. 通用全域冷卻 (Universal CD)
         int maxUCD = Mathf.Max(1, constantData.UNIVERSAL_ACTION_COOLDOWN);
-        float ucdPct = Mathf.Clamp01((float)creature.actionCooldown / maxUCD);
-        DrawProgressBar("Universal CD", creature.actionCooldown, ucdPct, Color.gray);
+        float ucdPct = Mathf.Clamp01((float)creature.data.actionCooldown / maxUCD);
+        DrawProgressBar("Universal CD", creature.data.actionCooldown, ucdPct, Color.gray);
 
         EditorGUILayout.Space(5);
 
@@ -209,13 +209,13 @@ public class CreatureEditor : Editor
         //TODO: 目前好像還沒有個set的功能？
         if (GUILayout.Button("Full Restore"))
         {
-            creature.SetHealth(creature.maxHealth);
-            creature.SetHunger(creature.maxHunger);
+            creature.data.health.SetBaseValue(creature.data.health.maxHealth);
+            creature.data.hunger.SetBaseValue(creature.data.hunger.maxHunger);
         }
         if (GUILayout.Button("Set 40%"))
         {
-            creature.SetHealth(creature.maxHealth * 0.4f);
-            creature.SetHunger(creature.maxHunger * 0.4f);
+            creature.data.health.SetBaseValue(creature.data.health.maxHealth * 0.4f);
+            creature.data.hunger.SetBaseValue(creature.data.hunger.maxHunger * 0.4f);
         }
         EditorGUILayout.EndHorizontal();
 
@@ -229,8 +229,8 @@ public class CreatureEditor : Editor
     {
         EditorGUILayout.BeginVertical("box");
         EditorGUILayout.LabelField("Special States", EditorStyles.boldLabel);
-        bool nextInvincible = EditorGUILayout.Toggle("Invincible Mode", creature.isInvincible);
-        if (nextInvincible != creature.isInvincible) creature.SetInvincible(nextInvincible);
+        bool nextInvincible = EditorGUILayout.Toggle("Invincible Mode", creature.data.isInvincible);
+        if (nextInvincible != creature.data.isInvincible) creature.SetInvincible(nextInvincible);
         EditorGUILayout.EndVertical();
     }
 
@@ -239,8 +239,8 @@ public class CreatureEditor : Editor
         EditorGUILayout.BeginVertical("box");
         EditorGUILayout.LabelField("Evolution & Time", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Age +10%")) creature.SetAge(creature.age + creature.lifespan * 0.1f);
-        if (GUILayout.Button("Age -10%")) creature.SetAge(creature.age - creature.lifespan * 0.1f);
+        if (GUILayout.Button("Age +10%")) creature.data.age.Add(creature.data.age.maxAge * 0.1f);
+        if (GUILayout.Button("Age -10%")) creature.data.age.Add(-creature.data.age.maxAge * 0.1f);
         EditorGUILayout.EndHorizontal();
         if (GUILayout.Button("Reset All Cooldowns")) creature.ResetAllCooldowns();
         EditorGUILayout.EndVertical();
@@ -251,8 +251,8 @@ public class CreatureEditor : Editor
     {
         EditorGUILayout.LabelField("Direction Test (Counter-Clockwise)", EditorStyles.boldLabel);
 
-        EditorGUILayout.LabelField($"Under Attack Direction: {creature.GetUnderAttackDirection()}");
-        EditorGUILayout.LabelField($"Remain HP: {creature.health:F1}");
+        EditorGUILayout.LabelField($"Under Attack Direction: {HurtSystem.GetUnderAttackDirection(creature.data)}");
+        EditorGUILayout.LabelField($"Remain HP: {creature.data.health.Value:F1}");
 
         // 1. Slider 調整：0度在右側(X+), 90度在上方(Y+)
         testAngle = EditorGUILayout.Slider("Test Angle (deg)", testAngle, 0, 360);
@@ -287,7 +287,7 @@ public class CreatureEditor : Editor
             Vector2 worldDir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
             Vector2 spawnPos = (Vector2)creature.transform.position + worldDir;
             Debug.Log("Hurt from " + worldDir);
-            creature.Hurt(10, spawnPos);
+            HurtSystem.Hurt(creature.data, 10, spawnPos);
         }
     }
 
@@ -299,7 +299,7 @@ public class CreatureEditor : Editor
 
         if (GUILayout.Button("Show Destination In Scene", GUILayout.Height(30)))
         {
-            Vector2Int dest = creature.GetMovementDestination();
+            Vector2Int dest = creature.data.movement.GridDestination;
 
             if (IndicatorController.Instance != null)
             {
@@ -340,9 +340,9 @@ public class CreatureEditor : Editor
         EditorGUILayout.LabelField("Identity & Lineage", EditorStyles.boldLabel);
 
         // 確保 UUID 存在才顯示前/後幾碼，避免畫面太長
-        string uuidDisplay = string.IsNullOrEmpty(creature.UUID) ? "Not Born (In Pool)" : creature.UUID;
+        string uuidDisplay = string.IsNullOrEmpty(creature.data.UUID) ? "Not Born (In Pool)" : creature.data.UUID;
         EditorGUILayout.LabelField("UUID", uuidDisplay);
-        EditorGUILayout.LabelField("Species", creature.mySpecies != null ? creature.mySpecies.name : "Null");
+        EditorGUILayout.LabelField("Species", creature.data.species != null ? creature.data.species.name : "Null");
         EditorGUILayout.LabelField("Father ID", string.IsNullOrEmpty(creature.fatherID) ? "None (First Gen)" : creature.fatherID);
         EditorGUILayout.LabelField("Mother ID", string.IsNullOrEmpty(creature.motherID) ? "None (First Gen)" : creature.motherID);
         EditorGUILayout.EndVertical();
@@ -356,12 +356,12 @@ public class CreatureEditor : Editor
         float oldWidth = EditorGUIUtility.labelWidth;
         EditorGUIUtility.labelWidth = 150; // 讓對齊好看一點
 
-        EditorGUILayout.LabelField("Size (Scale)", creature.size.ToString("F2"));
-        EditorGUILayout.LabelField("Speed", creature.speed.ToString("F2"));
+        EditorGUILayout.LabelField("Size (Scale)", creature.data.size.ToString("F2"));
+        EditorGUILayout.LabelField("Speed", creature.data.speed.ToString("F2"));
         EditorGUILayout.LabelField("Attack Power", creature.attackPower.ToString("F2"));
-        EditorGUILayout.LabelField("Perception Range", creature.perceptionRange.ToString("F2"));
-        EditorGUILayout.LabelField("Lifespan", creature.lifespan.ToString("F1") + " ticks");
-        EditorGUILayout.LabelField("Max Health", creature.maxHealth.ToString("F1"));
+        EditorGUILayout.LabelField("Perception Range", creature.data.perceptionRange.ToString("F2"));
+        EditorGUILayout.LabelField("Lifespan", creature.data.age.maxAge.ToString("F1") + " ticks");
+        EditorGUILayout.LabelField("Max Health", creature.data.health.maxHealth.ToString("F1"));
         EditorGUILayout.LabelField("Max Hunger", creature.data.hunger.maxHunger.ToString("F1"));
 
         EditorGUIUtility.labelWidth = oldWidth;
@@ -392,19 +392,19 @@ public class CreatureEditor : Editor
         EditorGUIUtility.labelWidth = 120;
 
         // 原本的行動狀態
-        EditorGUILayout.LabelField("Current Action:", creature.currentAction.ToString());
-        EditorGUILayout.LabelField("Movement State:", creature.movementState.ToString());
+        EditorGUILayout.LabelField("Current Action:", creature.data.currentAction.ToString());
+        EditorGUILayout.LabelField("Movement State:", creature.data.movementState.ToString());
 
         // 🌟 新增：生命階段與體態
-        EditorGUILayout.LabelField("Life Stage:", creature.currentLifeState.ToString());
-        EditorGUILayout.LabelField("Body Type:", creature.currentBodyType.ToString());
+        EditorGUILayout.LabelField("Life Stage:", creature.data.currentLifeState.ToString());
+        EditorGUILayout.LabelField("Body Type:", creature.data.currentBodyType.ToString());
 
         EditorGUILayout.Space(5);
 
         // 🌟 新增：異常狀態監控
-        if (creature.isSleeping) EditorGUILayout.LabelField("Status:", "💤 Sleeping");
-        else if (creature.isStunned) EditorGUILayout.LabelField("Status:", $"💫 Stunned ({creature.stunTimer:F1}s)");
-        else if (creature.isDead) EditorGUILayout.LabelField("Status:", "💀 Dead");
+        if (creature.data.isSleeping) EditorGUILayout.LabelField("Status:", "💤 Sleeping");
+        else if (creature.data.isStunned) EditorGUILayout.LabelField("Status:", $"💫 Stunned ({creature.data.stunTimer:F1}s)");
+        else if (creature.data.isDead) EditorGUILayout.LabelField("Status:", "💀 Dead");
         else EditorGUILayout.LabelField("Status:", "🟢 Normal");
 
         EditorGUILayout.Space(5);
@@ -422,7 +422,7 @@ public class CreatureEditor : Editor
         string uuid = creature.enemy?.UUID ?? "None";
         string lastFive = uuid.Length >= 5 ? uuid.Substring(uuid.Length - 5) : uuid;
         EditorGUILayout.LabelField("Enemy ID (Last 5):", lastFive);
-        EditorGUILayout.LabelField("Attack Dir:", creature.underAttackDirection.ToString());
+        EditorGUILayout.LabelField("Attack Dir:", creature.data.underAttackDirection.ToString());
 
         EditorGUIUtility.labelWidth = oldWidth;
         EditorGUILayout.EndVertical();
