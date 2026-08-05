@@ -56,4 +56,6 @@ public class CreatureData
     public LifeState currentLifeState;
     public Dictionary<ActionType, int> actionCD = new();
     public MovementAttr movement;
+
+
 }

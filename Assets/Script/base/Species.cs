@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-//TODO: 思考一下為什麼他需要public
 [CreateAssetMenu(fileName = "New Species", menuName = "BioBalance/Species")]
 public class Species : ScriptableObject, ISerializationCallbackReceiver
 {
@@ -28,6 +27,10 @@ public class Species : ScriptableObject, ISerializationCallbackReceiver
     [Header("特殊遺傳項目")]
     public ReproductionType reproductionType;
 
+    [Header("視覺與物理原型範本 (Visual Template)")]
+    [Tooltip("請將已經設定好圖片、碰撞體半徑與 Layer 的生物 Prefab 拖入此處")]
+    public GameObject visualTemplate;
+
     [Header("運行時數據 (Runtime)")]
     // 執行時才產生的 Dictionary，不需要序列化
     public Dictionary<string, Creature> creatures = new();
@@ -39,6 +42,7 @@ public class Species : ScriptableObject, ISerializationCallbackReceiver
     [SerializeField, HideInInspector] private List<ActionType> _cdKeys = new List<ActionType>();
     [SerializeField, HideInInspector] private List<int> _cdValues = new List<int>();
 
+    //TODO: list of action attrs => 使用actionSystem的actions
     // TODO: 根據design決定死亡掉落物
     // public Action<Vector2INT> DropOnDeath;
 
