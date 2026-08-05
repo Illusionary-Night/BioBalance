@@ -100,4 +100,6 @@ public abstract class ActionBase
     
     // 新增 context 參數
     public abstract void Execute(Creature creature, ActionContext context = null);
+
+    public virtual Type GetAttributeTypes() { return null; }
 }
