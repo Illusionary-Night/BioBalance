@@ -30,9 +30,9 @@ public partial class Creature : MonoBehaviour, ITickable
         // 生物圖片
         VisualSystem.SetCreatureSprite(this, species.creatureBase);
         //TODO: 這個OnEnable到底開不開？
-        OnEnable();
+        // OnEnable();
         VisualSystem.AutoSetLayer(gameObject);
-        ColorSystem.UpdateVisuals(data);
+        // ColorSystem.UpdateVisuals(data);
     }
 
     public void OnEnable()
