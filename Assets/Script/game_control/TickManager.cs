@@ -1,17 +1,27 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-//TODO: 需要把各種行動步驟分在不同執行時間，以免效能尖峰
+
 public class TickManager : MonoBehaviour
 {
     public int CurrentHour { get; private set; }
     public int CurrentDay { get; private set; }
 
-    private readonly List<Action> tickable = new();
-    private int tickCount = 0;
-    private int TicksPerSecond = 30;
-    private float realtime_counter = 0;
+    [Tooltip("In Game base TPS")]
+    public int MainTPS = 30;
+
+    private int mainTickCount = 0;
+    private float mainRealtimeCounter = 0;
     private bool isPaused = false;
+
+    private class TickGroup
+    {
+        public int tps;
+        public float counter;
+        public List<Action> actions = new List<Action>();
+    }
+
+    private Dictionary<int, TickGroup> tickGroups = new Dictionary<int, TickGroup>();
 
     private void OnEnable()
     {
@@ -25,12 +35,14 @@ public class TickManager : MonoBehaviour
 
     private void RegisterPauseInput()
     {
-        MainManager.inputManager.OnPausePerformed += OnPausePerformed;
+        if (MainManager.inputManager != null)
+            MainManager.inputManager.OnPausePerformed += OnPausePerformed;
     }
 
     private void UnregisterPauseInput()
     {
-        MainManager.inputManager.OnPausePerformed -= OnPausePerformed;
+        if (MainManager.inputManager != null)
+            MainManager.inputManager.OnPausePerformed -= OnPausePerformed;
     }
 
     private void OnPausePerformed()
@@ -38,60 +50,88 @@ public class TickManager : MonoBehaviour
         SetPause();
     }
 
-    public void RegisterTickable(Action onTick)
+    /// <summary>
+    /// Register Tick Event (targetTPS)
+    /// </summary>
+    public void RegisterTickable(Action onTick, int targetTPS = 30)
     {
-        if (!this.tickable.Contains(onTick))
+        if (targetTPS <= 0) return;
+
+        // 如果該 TPS 群組還不存在，就建立一個新的
+        if (!tickGroups.TryGetValue(targetTPS, out TickGroup group))
         {
-            this.tickable.Add(onTick);
+            group = new TickGroup { tps = targetTPS, counter = 0 };
+            tickGroups[targetTPS] = group;
+        }
+
+        if (!group.actions.Contains(onTick))
+        {
+            group.actions.Add(onTick);
         }
     }
 
-    public void UnregisterTickable(Action onTick)
+    /// <summary>
+    /// Unregister Tick Event, requires the target TPS used during registration
+    /// </summary>
+    public void UnregisterTickable(Action onTick, int targetTPS = 30)
     {
-        if (this.tickable.Contains(onTick))
+        if (tickGroups.TryGetValue(targetTPS, out TickGroup group))
         {
-            this.tickable.Remove(onTick);
+            if (group.actions.Contains(onTick))
+            {
+                group.actions.Remove(onTick);
+            }
         }
-    }
-
-    public void SetTPS(int TPS)
-    {
-        if (TPS > 0) TicksPerSecond = TPS;
     }
 
     public void SetPause(bool? pause = null)
     {
         if (!pause.HasValue) isPaused = !isPaused;
-        else isPaused = (bool)pause;
+        else isPaused = pause.Value;
     }
 
-    private void Tick()
+    // 獨立處理遊戲世界的時間推演
+    private void UpdateGameTime()
     {
-        tickCount++;
-        int total_hours = tickCount / constantData.TICKS_PER_HOUR;
+        mainTickCount++;
+        int total_hours = mainTickCount / constantData.TICKS_PER_HOUR;
         CurrentHour = total_hours % constantData.HOURS_PER_DAY;
         CurrentDay = (total_hours / constantData.HOURS_PER_DAY) + 1;
-
-        // Create a copy of the list to avoid modification during iteration
-        var tickOnTime = new List<Action>(tickable);
-
-        foreach (var t in tickOnTime)
-        {
-            t?.Invoke();
-        }
-
-        // Debug log every hour
-        // if (tickCount % constantData.TICKS_PER_HOUR == 0) Debug.Log($"Now is {CurrentDay} days {CurrentHour} hours");
     }
 
     private void Update()
     {
-        if (!isPaused) realtime_counter += Time.deltaTime;
+        if (isPaused) return;
 
-        while (realtime_counter >= 1f / TicksPerSecond)
+        float dt = Time.deltaTime;
+
+        // Main game timer
+        mainRealtimeCounter += dt;
+        float mainInterval = 1f / MainTPS;
+        while (mainRealtimeCounter >= mainInterval)
         {
-            Tick();
-            realtime_counter -= 1f / TicksPerSecond;
+            UpdateGameTime();
+            mainRealtimeCounter -= mainInterval;
+        }
+
+        foreach (var kvp in tickGroups)
+        {
+            TickGroup group = kvp.Value;
+            group.counter += dt;
+            float interval = 1f / group.tps;
+
+            while (group.counter >= interval)
+            {
+                // Create a copy of the list to avoid modification during iteration
+                var tickOnTime = new List<Action>(group.actions);
+
+                foreach (var t in tickOnTime)
+                {
+                    t?.Invoke();
+                }
+
+                group.counter -= interval;
+            }
         }
     }
 }
