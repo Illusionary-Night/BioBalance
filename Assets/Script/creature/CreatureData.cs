@@ -26,7 +26,7 @@ public class CreatureData
     // --- 物種資料引用 (從 ScriptableObject 抓取，不佔個體空間) ---
     public int speciesID => species.speciesID;
     public CreatureBase creatureBase => species.creatureBase;
-
+    public List<FoodType> foodTypes => species.foodTypes;
     public List<ActionType> actionList => species.actionList;
     public Dictionary<ActionType, int> actionMaxCD => species.actionMaxCD;
     public float variation => species.variation;

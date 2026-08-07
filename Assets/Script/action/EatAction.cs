@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-//TODO: 我們是怎麼把foodType忽略掉的？我推測應該要放species中？
 class EatAction : ActionBase
 {
     public override ActionType Type => ActionType.Eat;
@@ -9,7 +8,7 @@ class EatAction : ActionBase
 
     public override bool IsConditionMet(Creature creature)
     {
-        return Perception.Items.HasTarget(creature, creature.foodTypes);
+        return Perception.Items.HasTarget(creature, creature.data.foodTypes);
     }
 
     public override float GetWeight(Creature creature)
@@ -24,7 +23,7 @@ class EatAction : ActionBase
 
     public override void Execute(Creature creature, ActionContext context = null)
     {
-        List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.foodTypes);
+        List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.data.foodTypes);
         if (edibleTargets.Count > 0)
         {
             Edible food = edibleTargets[Random.Range(0, Mathf.Min(edibleTargets.Count, 6))];

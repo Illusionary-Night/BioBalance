@@ -10,8 +10,7 @@ public static class CreatureBuilder
     public static CreatureData _data;
     private static Species _species;
 
-    // 私有建構子，不允許外面的人使用 new CreatureBuilder()
-    private CreatureBuilder() { }
+    static CreatureBuilder() { }
 
     // ==========================================
     // 流水線組裝步驟

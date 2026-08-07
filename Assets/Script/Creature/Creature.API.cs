@@ -16,25 +16,25 @@ public partial class Creature : MonoBehaviour
     //TODO: set數值的部分，不確定該怎麼set
 
 
-    /// <summary> 立即設置當前生命值，並確保在合法範圍內 </summary>
-    public void SetHealth(float value)
-    {
-        health = Mathf.Clamp(value, 0, maxHealth);
-    }
+    // /// <summary> 立即設置當前生命值，並確保在合法範圍內 </summary>
+    // public void SetHealth(float value)
+    // {
+    //     health = Mathf.Clamp(value, 0, maxHealth);
+    // }
 
-    /// <summary> 立即設置當前年齡，並確保不超過壽命上限 </summary>
-    public void SetAge(float value)
-    {
-        age = Mathf.Clamp(value, 0, lifespan);
-    }
+    // /// <summary> 立即設置當前年齡，並確保不超過壽命上限 </summary>
+    // public void SetAge(float value)
+    // {
+    //     age = Mathf.Clamp(value, 0, lifespan);
+    // }
 
 
 
-    /// <summary> 設置是否進入無敵狀態（用於 Debug 或特殊事件，不會死亡） </summary>
-    public void SetInvincible(bool isInvincible)
-    {
-        data.isInvincible = isInvincible;
-    }
+    // /// <summary> 設置是否進入無敵狀態（用於 Debug 或特殊事件，不會死亡） </summary>
+    // public void SetInvincible(bool isInvincible)
+    // {
+    //     data.isInvincible = isInvincible;
+    // }
 
 
 
@@ -42,35 +42,35 @@ public partial class Creature : MonoBehaviour
     /// 讓生物進入暈眩狀態
     /// </summary>
     /// <param name="duration">暈眩持續的時間 (單位：Tick)</param>
-    public void SetStun(float duration)
-    {
-        // 如果已經在暈眩中，可以選擇「取最大值」或「疊加」
-        data.stunTimer = Mathf.Max(data.stunTimer, duration);
+    // public void SetStun(float duration)
+    // {
+    //     // 如果已經在暈眩中，可以選擇「取最大值」或「疊加」
+    //     data.stunTimer = Mathf.Max(data.stunTimer, duration);
 
-    }
+    // }
 
     #endregion
 
     #region --- 動作與冷卻管理 ---
 
     /// <summary> 取得當前運作中的狀態機實例 </summary>
-    public ActionStateMachine GetStateMachine()
-    {
-        return actionStateMachine;
-    }
+    // public ActionStateMachine GetStateMachine()
+    // {
+    //     return data.actionStateMachine;
+    // }
 
     /// <summary> 記錄目前正在執行的 Action 類型，供觀察者或 UI 顯示 </summary>
     public void SetCurrentAction(ActionType type)
     {
-        currentAction = type;
+        data.currentAction = type;
     }
 
     /// <summary> 重置所有動作冷卻（含通用 CD 與特定動作 CD 字典） </summary>
     public void ResetAllCooldowns()
     {
-        actionCooldown = 0;
+        data.actionCooldown = 0;
         // 清空字典中的冷卻
-        var keys = new List<ActionType>(actionCD.Keys);
+        var keys = new List<ActionType>(data.actionCD.Keys);
         foreach (var key in keys) actionCD[key] = 0;
     }
 

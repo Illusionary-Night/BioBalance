@@ -10,6 +10,7 @@ using System.IO;
 
 public partial class Creature : MonoBehaviour, ITickable
 {
+    public event System.Action<Vector2Int> OnMovementComplete;
     public Rigidbody2D rb;
     public CreatureData data;
     public SpriteRenderer _spriteRenderer;
