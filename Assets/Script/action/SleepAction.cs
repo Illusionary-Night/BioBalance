@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+//TODO:這邊sleep相關的屬性也要包一包，
 public class SleepAction : ActionBase
 {
     public override ActionType Type => ActionType.Sleep;

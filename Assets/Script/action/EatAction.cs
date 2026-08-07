@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-
+//TODO: 我們是怎麼把foodType忽略掉的？我推測應該要放species中？
 class EatAction : ActionBase
 {
     public override ActionType Type => ActionType.Eat;

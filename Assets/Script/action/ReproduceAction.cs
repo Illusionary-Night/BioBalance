@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using static Perception;
-
+//TODO：有點忘了這裡為啥不用RCD
 public class ReproduceAction : ActionBase
 {
     public ReproduceAction() { }

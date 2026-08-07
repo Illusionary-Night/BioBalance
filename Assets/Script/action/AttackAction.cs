@@ -7,7 +7,7 @@ using UnityEngine;
 using static Perception;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 using static UnityEngine.GraphicsBuffer;
-
+//TODO: 這邊需要新增 attack 和 preyIDList 的 attr，然後對應的使用方式也要修改
 public class AttackAction : ActionBase
 {
     public override ActionType Type => ActionType.Attack;
