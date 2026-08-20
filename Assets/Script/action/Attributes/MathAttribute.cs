@@ -16,6 +16,25 @@ public abstract class MathAttribute<T> : IAttribute where T : struct
     public T Value => CalculateFinalValue();
     public float Multiplier => _multiplier;
 
+    public virtual bool Inherit(CreatureData fatherData, CreatureData motherData, CreatureData selfData)
+    {
+        if (fatherData == null || motherData == null)
+        {
+            return false;
+        }
+
+        MathAttribute<T> fatherAttribute = fatherData.GetAttribute(GetType()) as MathAttribute<T>;
+        MathAttribute<T> motherAttribute = motherData.GetAttribute(GetType()) as MathAttribute<T>;
+
+        if (fatherAttribute == null || motherAttribute == null)
+        {
+            return false;
+        }
+
+        SetBaseValue(CalculateMean(fatherAttribute.Value, motherAttribute.Value));
+        return true;
+    }
+
     public void SetBaseValue(T value)
     {
         _baseValue = value;
@@ -63,6 +82,8 @@ public abstract class MathAttribute<T> : IAttribute where T : struct
     protected abstract T PerformSubtract(T a, T b);
     protected abstract T PerformMultiply(T a, T b);
     protected abstract T PerformDivide(T a, T b);
+
+    protected abstract T CalculateMean(T fatherValue, T motherValue);
 
 
     // Concrete class decides how to apply the float multiplier to type T

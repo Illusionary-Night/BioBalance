@@ -10,6 +10,7 @@ using UnityEngine;
 
 public partial class Creature : MonoBehaviour
 {
+    /*
     #region --- 生命狀態控制 ---
 
     //TODO: 數值的合不合法交給data自行判斷即可
@@ -252,7 +253,7 @@ public partial class Creature : MonoBehaviour
     #endregion
 
 
-
+    */
 }
 
 

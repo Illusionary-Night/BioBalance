@@ -6,7 +6,6 @@ public class AttackPowerAttr : FloatAttribute
     public AttackPowerAttr(float initialValue, float multiplier = 1) : base(initialValue, multiplier)
     {
     }
-
     protected override void Validate()
     {
         if (_baseValue < 0)

@@ -19,6 +19,11 @@ public abstract class FloatAttribute : MathAttribute<float>
         return a / b;
     }
 
+    protected override float CalculateMean(float fatherValue, float motherValue)
+    {
+        return (fatherValue + motherValue) / 2.0f;
+    }
+
     protected override float CalculateFinalValue()
     {
         return _baseValue * _multiplier;

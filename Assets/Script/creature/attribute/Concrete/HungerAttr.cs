@@ -11,6 +11,16 @@ public class HungerAttr : FloatAttribute
         hungerRate = decreaseRate > 0 ? decreaseRate : 0;
     }
 
+    public override bool Inherit(CreatureData father, CreatureData mother, CreatureData selfData)
+    {
+        HungerAttr fatherAttr = father.GetAttribute<HungerAttr>();
+        HungerAttr motherAttr = mother.GetAttribute<HungerAttr>();
+        maxHunger = CalculateMean(fatherAttr.maxHunger, motherAttr.maxHunger);
+        hungerRate = CalculateMean(fatherAttr.hungerRate, motherAttr.hungerRate);
+        SetBaseValue(maxHunger);
+        return true;
+    }
+
     protected override void Validate()
     {
         _baseValue = Mathf.Clamp(_baseValue, 0, maxHunger);
