@@ -18,6 +18,12 @@ public abstract class IntAttribute : MathAttribute<int>
         }
         return a / b;
     }
+
+    protected override int CalculateMean(int fatherValue, int motherValue)
+    {
+        return (fatherValue + motherValue) / 2;
+    }
+
     protected override int CalculateFinalValue()
     {
         // Handle double to int conversion safely (e.g., Mathf.RoundToInt)

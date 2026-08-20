@@ -11,6 +11,17 @@ public class AgeAttr : FloatAttribute
         agingRate = increaseRate > 0 ? increaseRate : 0;
     }
 
+    public override bool Inherit(CreatureData father, CreatureData mother, CreatureData selfData)
+    {
+        AgeAttr fatherAttr = father.GetAttribute<AgeAttr>();
+        AgeAttr motherAttr = mother.GetAttribute<AgeAttr>();
+
+        maxAge = CalculateMean(fatherAttr.maxAge, motherAttr.maxAge);
+        agingRate = CalculateMean(fatherAttr.agingRate, motherAttr.agingRate);
+        SetBaseValue(maxAge);
+        return true;
+    }
+
     protected override void Validate()
     {
         _baseValue = Mathf.Clamp(_baseValue, 0, maxAge);

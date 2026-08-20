@@ -11,6 +11,16 @@ public class HealthAttr : FloatAttribute
         regenerationRate = increaseRate > 0 ? increaseRate : 0;
     }
 
+    public override bool Inherit(CreatureData father, CreatureData mother, CreatureData selfData)
+    {
+        HealthAttr fatherAttr = father.GetAttribute<HealthAttr>();
+        HealthAttr motherAttr = mother.GetAttribute<HealthAttr>();
+        maxHealth = CalculateMean(fatherAttr.maxHealth, motherAttr.maxHealth);
+        regenerationRate = CalculateMean(fatherAttr.regenerationRate, motherAttr.regenerationRate);
+        SetBaseValue(maxHealth);
+        return true;
+    }
+
     protected override void Validate()
     {
         _baseValue = Mathf.Clamp(_baseValue, 0, maxHealth);

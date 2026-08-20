@@ -13,6 +13,11 @@ public class CreatureData
         return _attributes.TryGetValue(typeof(T), out IAttribute attribute) ? attribute as T : null;
     }
 
+    public IAttribute GetAttribute(Type attributeType)
+    {
+        return _attributes.TryGetValue(attributeType, out IAttribute attribute) ? attribute : null;
+    }
+
     public void AddAttribute(IAttribute attribute)
     {
         _attributes[attribute.GetType()] = attribute;
