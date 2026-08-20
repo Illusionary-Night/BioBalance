@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-
+//TODO: OnMovementComplete 我有點忘記他相關的東西是寫在哪
 class FlockAction : ActionBase
 {
     public override ActionType Type => ActionType.Flock;
@@ -12,7 +12,7 @@ class FlockAction : ActionBase
         if (creature.data.isStunned || creature.data.isDead) return false;
 
         // 2. 社交檢查：找尋感知範圍內的同類
-        var neighbors = Perception.Creatures.GetAllTargets(creature, creature.speciesID);
+        var neighbors = Perception.Creatures.GetAllTargets(creature, creature.data.speciesID);
         if (neighbors.Count < 3) return false;
 
         // 3. 生理檢查：肚子不能太餓

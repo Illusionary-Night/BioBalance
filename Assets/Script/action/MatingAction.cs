@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Analytics;
-
+//TODO: reproductionCD 和 gender需要處理，RCD是屬於action cd，gender的部分(？
 public class MatingAction : ActionBase
 {
     public override ActionType Type => ActionType.Mating;

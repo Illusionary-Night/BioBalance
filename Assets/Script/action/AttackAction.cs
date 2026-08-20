@@ -2,15 +2,21 @@
  * [目前版本] 無分辨獵物種類先後順序，只以遠近定論
 */
 using System.Collections.Generic;
-using System.Linq;
+using System;
 using UnityEngine;
-using static Perception;
-using static UnityEditor.Timeline.TimelinePlaybackControls;
-using static UnityEngine.GraphicsBuffer;
 
+//TODO: 這邊需要新增 attack 和 preyIDList 的 attr，然後對應的使用方式也要修改
 public class AttackAction : ActionBase
 {
     public override ActionType Type => ActionType.Attack;
+
+    // public override List<Type> GetAttributeTypes()
+    // {
+    //     List<Type> attrs = new List<Type>();
+    //     attrs.Add();
+
+    //     return attrs;
+    // }
 
     public override bool IsConditionMet(Creature creature)
     {
@@ -24,7 +30,7 @@ public class AttackAction : ActionBase
 
     public override bool IsSuccess(Creature creature)
     {
-        return Random.Range(0, 9) < 8;
+        return UnityEngine.Random.Range(0, 9) < 8;
     }
 
     public override void Execute(Creature creature, ActionContext context = null)

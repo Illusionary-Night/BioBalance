@@ -85,6 +85,11 @@ public static class ActionSystem
             creature.ResetActionCooldown(actiontype);
         }
     }
+
+    public static List<Type> GetAttributeTypes(ActionType actiontype)
+    {
+        return actions.TryGetValue(actiontype, out var action) ? action.GetAttributeTypes() : null;
+    }
 }
 
 public abstract class ActionBase
@@ -97,9 +102,9 @@ public abstract class ActionBase
     public abstract bool IsConditionMet(Creature creature);
     public abstract float GetWeight(Creature creature);
     public abstract bool IsSuccess(Creature creature);
-    
+
     // 新增 context 參數
     public abstract void Execute(Creature creature, ActionContext context = null);
 
-    public virtual Type GetAttributeTypes() { return null; }
+    public virtual List<Type> GetAttributeTypes() { return null; }
 }

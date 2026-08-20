@@ -125,3 +125,10 @@ public enum ReproductionType
     Asexual, // 無性：初代給固定性別（例如 Gender.None 或統一是 Female）
     Sexual   // 有性：初代直接 50/50 盲抽
 }
+public enum SpeciesBaseType
+{
+    Slime,
+    Goat,
+    IceDragon,
+    Tiger
+}

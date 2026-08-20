@@ -10,6 +10,7 @@ using System.IO;
 
 public partial class Creature : MonoBehaviour, ITickable
 {
+    public event System.Action<Vector2Int> OnMovementComplete;
     public Rigidbody2D rb;
     public CreatureData data;
     public SpriteRenderer _spriteRenderer;
@@ -30,9 +31,9 @@ public partial class Creature : MonoBehaviour, ITickable
         // 生物圖片
         VisualSystem.SetCreatureSprite(this, species.creatureBase);
         //TODO: 這個OnEnable到底開不開？
-        OnEnable();
+        // OnEnable();
         VisualSystem.AutoSetLayer(gameObject);
-        ColorSystem.UpdateVisuals(data);
+        // ColorSystem.UpdateVisuals(data);
     }
 
     public void OnEnable()

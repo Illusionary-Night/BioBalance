@@ -12,6 +12,10 @@ public class CreatureData
     {
         return _attributes.TryGetValue(typeof(T), out IAttribute attribute) ? attribute as T : null;
     }
+    public IAttribute GetAttribute(Type type)
+    {
+        return _attributes.TryGetValue(type, out IAttribute attribute) ? attribute : null;
+    }
 
     public IAttribute GetAttribute(Type attributeType)
     {
@@ -31,7 +35,7 @@ public class CreatureData
     // --- 物種資料引用 (從 ScriptableObject 抓取，不佔個體空間) ---
     public int speciesID => species.speciesID;
     public CreatureBase creatureBase => species.creatureBase;
-
+    public List<FoodType> foodTypes => species.foodTypes;
     public List<ActionType> actionList => species.actionList;
     public Dictionary<ActionType, int> actionMaxCD => species.actionMaxCD;
     public float variation => species.variation;
@@ -61,4 +65,6 @@ public class CreatureData
     public LifeState currentLifeState;
     public Dictionary<ActionType, int> actionCD = new();
     public MovementAttr movement;
+
+
 }

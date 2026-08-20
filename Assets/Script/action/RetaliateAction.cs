@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+//TODO:enemy應該也是屬於action attr嗎(？
 public class RetaliateAction : AttackAction
 {
     public override ActionType Type => ActionType.Retaliate;
     public override bool IsConditionMet(Creature creature)
     {
         if (!HurtSystem.UnderAttack(creature.data)) return false;
-        if (creature.enemy == null) return false;
+        if (creature.data.enemy == null) return false;
         if (creature.data.health.Percentage < 0.4f) return false;
         return true;
     }
