@@ -1,103 +1,88 @@
 using UnityEngine;
-//
+using System.Collections.Generic;
+using System;
 public static class CreatureBuilder
 {
-    // ==========================================
-    // 共用廠房設置 (Singleton)
-    // ==========================================
-
-    // 當前的組裝材料
-    public static CreatureData _data;
-    private static Species _species;
-
-    static CreatureBuilder() { }
-
-    // ==========================================
-    // 流水線組裝步驟
-    // ==========================================
-
-    /// <summary>
-    /// 步驟一：建立基底
-    /// </summary>
-    //TODO: 改成CreatureBase
-    public static CreatureBuilder Begin(Species species)
+    public static Creature Generate(Species species, CreatureData parentData1 = null, CreatureData parentData2 = null)
     {
-        _instance._species = species;
+        //TODO: 獲取creature，修改creature Pool
+        Creature creature = new Creature();
+        creature.data.species = species;
+        Step1(creature.data, species, parentData1, parentData2);
+        Step2(creature.data, species, parentData1, parentData2);
 
-        // 給一個全新的白板資料
-        _instance._data = new CreatureData();
-        _instance._data.species = species;
-
-        return _instance;
+        return creature;
     }
-    /// <summary>
-    /// 步驟二：核心遺傳與變異
-    /// </summary>
-    public CreatureBuilder ApplyGenetics(CreatureData parent1 = null, CreatureData parent2 = null)
+    private static void Step1(CreatureData data, Species species, CreatureData parentData1, CreatureData parentData2)
     {
-        // 呼叫原本的遺傳公式，計算體質並直接寫入半成品
-        _data.size = Inherit(_species, _species.baseSize, parent1?.size, parent2?.size);
-        _data.speed = Inherit(_species, _species.baseSpeed, parent1?.speed, parent2?.speed);
-        _data.reproductionRate = Inherit(_species, _species.baseReproductionRate, parent1?.reproductionRate, parent2?.reproductionRate);
-        _data.perceptionRange = Inherit(_species, _species.basePerceptionRange, parent1?.perceptionRange, parent2?.perceptionRange);
+        data.size = Inherit(species, species.baseSize, parentData1?.size, parentData2?.size);
+        data.speed = Inherit(species, species.baseSpeed, parentData1?.speed, parentData2?.speed);
+        data.reproductionRate = Inherit(species, species.baseReproductionRate, parentData1?.reproductionRate, parentData2?.reproductionRate);
+        data.perceptionRange = Inherit(species, species.basePerceptionRange, parentData1?.perceptionRange, parentData2?.perceptionRange);
 
-        // 1. 血量
-        float maxHP = Inherit(_species, _species.baseMaxHealth, parent1?.health?.maxHealth, parent2?.health?.maxHealth);
-        float regenRate = AttributesCalculator.CalculateHealthRegeneration(maxHP, _data.size);
-        _data.health = new HealthAttr(maxHP, regenRate);
+        // 血量處理
+        float _maxHealth = Inherit(species, species.baseMaxHealth, parentData1?.health?.maxHealth, parentData2?.health?.maxHealth);
+        float _regenerationRata = AttributesCalculator.CalculateHealthRegeneration(_maxHealth, data.size);
+        data.health = new HealthAttr(_maxHealth, _regenerationRata);
 
-        // 2. 飢餓
-        float maxHunger = AttributesCalculator.CalculateMaxHunger(_data.size, maxHP, _species.foodTypes);
-        float hungerRate = AttributesCalculator.CalculateHungerRate(_data.size, _data.speed, _species.baseAttackPower);
-        _data.hunger = new HungerAttr(maxHunger, hungerRate);
+        // 飢餓處理
+        float _maxHunger = AttributesCalculator.CalculateMaxHunger(data.size, _maxHealth, data.foodTypes);
+        // 有magic number是因為先暫時解決報錯，之後會直接去修改計算公式
+        float _hungerRate = AttributesCalculator.CalculateHungerRate(data.size, data.speed, 10);
+        data.hunger = new HungerAttr(_maxHunger, _hungerRate);
 
-        // 3. 年齡
-        float _maxAge = Inherit(_species, _species.baseLifespan, parent1?.age?.maxAge, parent2?.age?.maxAge);
+        //年齡處理
+        float _maxAge = Inherit(species, species.baseLifespan, parentData1?.age?.maxAge, parentData2?.age?.maxAge);
         float _agingRate = 1;
-        _data.age = new AgeAttr(_maxAge, _agingRate);
+        data.age = new AgeAttr(_maxAge, _agingRate);
 
+        return;
 
-        // 性別判定
-        // TODO: 不過話說性別判定的部分可能還需要再跟隊友考慮一下
-        if (parent1 == null && parent2 == null)
-        {
-            _data.gender = _species.reproductionType == ReproductionType.Asexual ? Gender.None : (Random.value > 0.5f ? Gender.Male : Gender.Female);
-        }
-        else if (parent1 == null || parent2 == null)
-        {
-            _data.gender = parent1?.gender ?? parent2?.gender ?? Gender.None;
-        }
-        else
-        {
-            _data.gender = Random.value > 0.5f ? Gender.Male : Gender.Female;
-        }
-
-        return this;
     }
-
-    /// <summary>
-    /// 步驟三：建立行為衍生屬性
-    /// </summary>
-    public CreatureBuilder Assemble()
+    private static void Step2(CreatureData data, Species species, CreatureData parent1, CreatureData parent2)
     {
-        // 取Enum 清單，動態把行為對應的attr掛進 Attribute 背包裡
-        if (_species.actionList != null)
+        if (species.actionList == null) return;
+
+        HashSet<Type> requiredAttrTypes = new HashSet<Type>();
+
+        foreach (ActionType actionType in species.actionList)
         {
-            //TODO: foreach list of attrs => inherit 
-            foreach (ActionType actionType in _species.actionList)
+            List<Type> types = ActionSystem.GetAttributeTypes(actionType);
+            if (types != null)
             {
+                foreach (Type type in types)
+                {
+                    requiredAttrTypes.Add(type);
+                }
             }
         }
-        return this;
-    }
 
-    /// <summary>
-    /// 步驟四：出廠交貨
-    /// </summary>
-    public CreatureData Build()
-    {
-        // 將組裝好的資料抽出，工作台空出準備迎接下一次 Begin
-        return _data;
+        foreach (Type attrType in requiredAttrTypes)
+        {
+            // 嘗試從父母身上尋找對應的基因
+            IAttribute p1Attr = parent1?.GetAttribute(attrType);
+            IAttribute p2Attr = parent2?.GetAttribute(attrType);
+
+            // 實例化一個全新的技能屬性給孩子（避免共用記憶體）
+            if (Activator.CreateInstance(attrType) is IAttribute newAttr)
+            {
+                if (p1Attr != null || p2Attr != null)
+                {
+                    // 【有遺傳來源】：父母有這個基因！
+                    // TODO: 可以在這裡設計一個機制，把父母的數值 Copy 給 newAttr。
+                    // 例如，你可以讓 IAttribute 實作一個介面 IInheritable，
+                    // 然後呼叫：(newAttr as IInheritable)?.InheritFrom(p1Attr, p2Attr);
+                }
+                else
+                {
+                    // 【初代野生】：父母剛好都沒有這個基因，或者牠是孤兒
+                    // 直接保持 newAttr 剛實例化出來的基礎數值即可
+                }
+
+                // 裝進背包
+                data.AddAttribute(newAttr);
+            }
+        }
     }
 
     /// <summary>
@@ -109,7 +94,7 @@ public static class CreatureBuilder
     /// <param name="parent1Val">親本一號的對應數值。</param>
     /// <param name="parent2Val">親本二號的對應數值。</param>
     /// <returns>經過變異公式疊加後的最終屬性數值。</returns>
-    private float Inherit(Species species, float speciesVal, float? parent1Val, float? parent2Val)
+    public static float Inherit(Species species, float speciesVal, float? parent1Val, float? parent2Val)
     {
         float baseValue = 0;
         if (!parent1Val.HasValue && !parent2Val.HasValue)

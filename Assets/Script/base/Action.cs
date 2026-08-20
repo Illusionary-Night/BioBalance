@@ -85,6 +85,11 @@ public static class ActionSystem
             creature.ResetActionCooldown(actiontype);
         }
     }
+
+    public static List<Type> GetAttributeTypes(ActionType actiontype)
+    {
+        return actions.TryGetValue(actiontype, out var action) ? action.GetAttributeTypes() : null;
+    }
 }
 
 public abstract class ActionBase

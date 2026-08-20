@@ -39,8 +39,9 @@ public static class MovementSystem
         }
     }
 
-    public static void OnTick(CreatureData data, Rigidbody2D rb)
+    public static void OnTick(Creature creature, Rigidbody2D rb)
     {
+        CreatureData data = creature.data;
         if (data.isDead || !data.isMoving || data.isStunned || data.movement.path.Count == 0)
         {
             rb.linearVelocity = Vector2.zero;
@@ -82,6 +83,7 @@ public static class MovementSystem
             data.movement.movementState = CreatureMovementState.Idle;
 
             //TODO: 事件呼叫完成，但我覺得事件寫法好像怪怪的
+            data.movement.TriggerMovementComplete(data.movement.GridDestination);
         }
     }
     //TODO: 之後由data自己管理
