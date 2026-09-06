@@ -36,7 +36,7 @@ public static class Perception
             );
         }
         // Returns true if any target creature from the list is found within perception range
-        public static bool HasTarget(Creature creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
+        public static bool HasTarget(Creature creature, IReadOnlyList<int> target_ID_list, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
             if (creature == null || creature.data.isDead) return false;
@@ -68,7 +68,7 @@ public static class Perception
             );
         }
         // Counts the total number of target creatures from the list of IDs within perception range
-        public static int CountTargetNumber(Creature current_creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
+        public static int CountTargetNumber(Creature current_creature, IReadOnlyList<int> target_ID_list, float rangeMultiplier = 1.0f, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
             if (current_creature == null || current_creature.data.isDead) return 0;
@@ -111,7 +111,7 @@ public static class Perception
             }
         }
         // Retrieves a sorted list of all target creatures from the list of IDs within perception range
-        public static List<Creature> GetAllTargets(Creature current_creature, List<int> target_ID_list, float rangeMultiplier = 1.0f, bool sorted = true, Predicate<Creature> filter = null)
+        public static List<Creature> GetAllTargets(Creature current_creature, IReadOnlyList<int> target_ID_list, float rangeMultiplier = 1.0f, bool sorted = true, Predicate<Creature> filter = null)
         {
             // 安全檢查：發起者必須存在
             if (current_creature == null || current_creature.data.isDead) return new List<Creature>();

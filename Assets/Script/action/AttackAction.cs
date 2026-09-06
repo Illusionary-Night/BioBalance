@@ -4,23 +4,24 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using System.Linq;
 
 //TODO: 這邊需要新增 attack 和 preyIDList 的 attr，然後對應的使用方式也要修改
 public class AttackAction : ActionBase
 {
     public override ActionType Type => ActionType.Attack;
 
-    // public override List<Type> GetAttributeTypes()
-    // {
-    //     List<Type> attrs = new List<Type>();
-    //     attrs.Add();
+    public override List<Type> GetAttributeTypes()
+    {
+        List<Type> attrs = new List<Type>();
+        // attrs.Add();
 
-    //     return attrs;
-    // }
+        return attrs;
+    }
 
     public override bool IsConditionMet(Creature creature)
     {
-        return Perception.Creatures.HasTarget(creature, creature.preyIDList);
+        return Perception.Creatures.HasTarget(creature, creature.data.GetAttribute<PreyIdListAttr>().Query());
     }
 
     public override float GetWeight(Creature creature)
@@ -48,7 +49,7 @@ public class AttackAction : ActionBase
     }
     protected virtual Creature FindTarget(Creature creature, ActionContext context)
     {
-        List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.preyIDList);
+        List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.data.GetAttribute<PreyIdListAttr>().Query());
         return optionalTargets.FirstOrDefault();
 
     }
@@ -63,7 +64,7 @@ public class AttackAction : ActionBase
         }
 
         // 使用狀態機註冊移動回調
-        var stateMachine = creature.GetStateMachine();
+        var stateMachine = creature.data.stateMachine;
 
         System.Action<Vector2Int> onArrived = (arrivedPosition) =>
         {
@@ -104,6 +105,6 @@ public class AttackAction : ActionBase
     protected virtual void Attack(Creature creature, Creature target)
     {
         //Debug.Log(creature.creatureBase + " Attack!");
-        HurtSystem.Hurt(target, creature.attackPower, creature.transform.position, creature);
+        HurtSystem.Hurt(target.data, creature.data.GetAttribute<AttackPowerAttr>().Value, creature.transform.position, creature);
     }
 }

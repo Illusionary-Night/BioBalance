@@ -43,6 +43,8 @@ public class Species : ScriptableObject, ISerializationCallbackReceiver
     [SerializeField, HideInInspector] private List<int> _cdValues = new List<int>();
 
     //TODO: list of action attrs => 使用actionSystem的actions
+
+
     // TODO: 根據design決定死亡掉落物
     // public Action<Vector2INT> DropOnDeath;
 
