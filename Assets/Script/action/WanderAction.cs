@@ -1,13 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class MoveAction : ActionBase
 {
     public override ActionType Type => ActionType.Wander;
     //public override int Cooldown => 10;
     //[SerializeField] private static readonly int MoveDistance = 100;
-
+    public override List<Type> GetAttributeTypes()
+    {
+        return new List<Type>
+        {
+            typeof(PredatorIdListAttr)
+        };
+    }
     public override bool IsConditionMet(Creature creature)
     {
         // 永遠可以移動
@@ -23,7 +30,7 @@ public class MoveAction : ActionBase
 
     public override bool IsSuccess(Creature creature)
     {
-        return Random.Range(0, 9) < 9;
+        return UnityEngine.Random.Range(0, 9) < 9;
     }
 
     public override void Execute(Creature creature, ActionContext context = null)
@@ -32,7 +39,7 @@ public class MoveAction : ActionBase
         // 隨機移動到鄰近位置
         Vector2Int currentPosition = creature.data.movement.GridPosition;
         int rangeInt = Mathf.FloorToInt(creature.data.perceptionRange);
-        Vector2Int randomDisplacement = new(Random.Range(-rangeInt, rangeInt + 1), Random.Range(-rangeInt, rangeInt + 1));
+        Vector2Int randomDisplacement = new(UnityEngine.Random.Range(-rangeInt, rangeInt + 1), UnityEngine.Random.Range(-rangeInt, rangeInt + 1));
         //Vector2Int randomDisplacement = new(Random.Range(-MoveDistance, MoveDistance + 1), Random.Range(-MoveDistance, MoveDistance + 1));
         Vector2Int newPosition = currentPosition + randomDisplacement;
 

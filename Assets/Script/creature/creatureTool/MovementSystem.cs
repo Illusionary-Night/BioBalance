@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 
 //TODO: 事件的部分有漏 OnMovementComplete invoke
+//TODO: SetStun
 public static class MovementSystem
 {
     public static void Initialize(CreatureData data)
@@ -80,9 +81,8 @@ public static class MovementSystem
         // 抵達最終目的地判定
         if (Vector2.Distance(currentActualPos, data.movement.destination) < 0.5f)
         {
-            data.movement.movementState = CreatureMovementState.Idle;
+            data.movement.SetStateBySystem(CreatureMovementState.Idle);
 
-            //TODO: 事件呼叫完成，但我覺得事件寫法好像怪怪的
             data.movement.TriggerMovementComplete(data.movement.GridDestination);
         }
     }
@@ -99,5 +99,13 @@ public static class MovementSystem
     public static void Pushed(Creature creature, Vector2 direction, float strength)
     {
         creature.rb.AddForce(direction.normalized * strength, ForceMode2D.Impulse);
+    }
+    public static void SetStun(Creature creature, float time)
+    {
+        //TODO: wait to write something
+    }
+    public static void SetSleep(Creature creature)
+    {
+        //TODO: wait to write something   
     }
 }

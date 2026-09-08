@@ -1,11 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-//TODO: OnMovementComplete 我有點忘記他相關的東西是寫在哪
+using System;
 class FlockAction : ActionBase
 {
     public override ActionType Type => ActionType.Flock;
-
+    public override List<Type> GetAttributeTypes()
+    {
+        return new List<Type>
+        {
+        };
+    }
     public override bool IsConditionMet(Creature creature)
     {
         // 1. 基本安全檢查：沒暈眩、沒死、沒被鎖定
@@ -40,7 +45,7 @@ class FlockAction : ActionBase
 
     public override bool IsSuccess(Creature creature)
     {
-        return Random.Range(0, 9) < 7;
+        return UnityEngine.Random.Range(0, 9) < 7;
     }
 
     public override void Execute(Creature creature, ActionContext context)

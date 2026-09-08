@@ -1,13 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
-//TODO:enemy應該也是屬於action attr嗎(？
+using System;
 public class RetaliateAction : AttackAction
 {
     public override ActionType Type => ActionType.Retaliate;
+    public override List<Type> GetAttributeTypes()
+    {
+        return new List<Type>
+        {
+            typeof(PredatorIdListAttr)
+        };
+    }
     public override bool IsConditionMet(Creature creature)
     {
         if (!HurtSystem.UnderAttack(creature.data)) return false;
-        if (creature.data.enemy == null) return false;
+
+        if (!creature.data.TryGetAttribute<EnemyAttr>(out var enemyAttr) || enemyAttr.Query() == "") return false;
+
         if (creature.data.health.Percentage < 0.4f) return false;
         return true;
     }
@@ -17,15 +26,19 @@ public class RetaliateAction : AttackAction
     }
     protected override Creature FindTarget(Creature creature, ActionContext context)
     {
-        return creature.enemy;
+        //為了避免無敵人報錯，但理論上不會
+        if (!creature.data.TryGetAttribute<EnemyAttr>(out var enemyAttr) || enemyAttr.Query() == "") return creature;
+        Creature enemy = MainManager.inGameManager.Species[creature.data.speciesID].creatures[enemyAttr.Query()];
+        return enemy;
     }
     protected override void Attack(Creature creature, Creature target)
     {
         //Debug.Log(creature.creatureBase + " Retaliate!");
-        target.SetStun(40);
+        MovementSystem.SetStun(target, 40);
         Vector2 drection = target.transform.position - creature.transform.position;
         HurtSystem.Repeled(target, drection, 50);
-        creature.SetEnemy(null);
+        if (!creature.data.TryGetAttribute<EnemyAttr>(out var enemyAttr)) return;
+        enemyAttr.Set("");
         HurtSystem.ResetUnderAttackDirection(creature.data);
     }
 }

@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using System;
 class EatAction : ActionBase
 {
     public override ActionType Type => ActionType.Eat;
-    //public override int Cooldown => 10;
-
+    public override List<Type> GetAttributeTypes()
+    {
+        return new List<Type>
+        {
+        };
+    }
     public override bool IsConditionMet(Creature creature)
     {
         return Perception.Items.HasTarget(creature, creature.data.foodTypes);
@@ -18,7 +22,7 @@ class EatAction : ActionBase
 
     public override bool IsSuccess(Creature creature)
     {
-        return Random.Range(0, 9) < 9;
+        return UnityEngine.Random.Range(0, 9) < 9;
     }
 
     public override void Execute(Creature creature, ActionContext context = null)
@@ -26,11 +30,11 @@ class EatAction : ActionBase
         List<Edible> edibleTargets = Perception.Items.GetAllTargets(creature, creature.data.foodTypes);
         if (edibleTargets.Count > 0)
         {
-            Edible food = edibleTargets[Random.Range(0, Mathf.Min(edibleTargets.Count, 6))];
+            Edible food = edibleTargets[UnityEngine.Random.Range(0, Mathf.Min(edibleTargets.Count, 6))];
             Vector2Int foodPosition = Vector2Int.RoundToInt(food.transform.position);
 
             // 使用狀態機註冊移動回調
-            var stateMachine = creature.GetStateMachine();
+            var stateMachine = creature.data.actionStateMachine;
 
             System.Action<Vector2Int> onArrived = (arrivedPosition) =>
             {

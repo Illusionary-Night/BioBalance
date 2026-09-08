@@ -1,10 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class DazeAction : ActionBase
 {
 	public override ActionType Type => ActionType.Daze;
-
+	public override List<Type> GetAttributeTypes()
+	{
+		return new List<Type>
+		{
+		};
+	}
 	public override bool IsConditionMet(Creature creature)
 	{
 		return true;

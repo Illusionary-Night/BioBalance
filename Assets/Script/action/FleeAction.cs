@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-//TODO: predatorIDList(？)，這玩意怎麼也不見的。
+using System;
 public class FleeAction : ActionBase
 {
     // �k�]Ĳ�o���¯ٶZ���H��
@@ -13,6 +13,13 @@ public class FleeAction : ActionBase
 
     public override ActionType Type => ActionType.Flee;
 
+    public override List<Type> GetAttributeTypes()
+    {
+        return new List<Type>
+        {
+            typeof(PredatorIdListAttr)
+        };
+    }
     /// <summary>
     /// �e�m�����ˬd�G
     /// 1. ���b�Q�����]������V���� None�^
@@ -79,7 +86,7 @@ public class FleeAction : ActionBase
         }
 
         // �ϥΪ��A�����U���ʦ^��
-        var stateMachine = creature.GetStateMachine();
+        var stateMachine = creature.data.actionStateMachine;
 
         // �ϥ� flag ����ư���
         bool hasCompleted = false;
@@ -114,7 +121,10 @@ public class FleeAction : ActionBase
     /// </summary>
     private List<Creature> GetNearbyPredators(Creature creature)
     {
-        return Perception.Creatures.GetAllTargets(creature, creature.predatorIDList);
+        var predatorAttr = creature.data.GetAttribute<PreyIdListAttr>();
+        if (predatorAttr == null) return null;
+
+        return Perception.Creatures.GetAllTargets(creature, predatorAttr.Query());
     }
 
     /// <summary>
@@ -135,7 +145,7 @@ public class FleeAction : ActionBase
         }
 
         // �L���T�¯ٮɡA�H����ܤ@�Ӥ�V�k�]
-        float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+        float randomAngle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
         return creaturePos + new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
     }
 
@@ -150,7 +160,7 @@ public class FleeAction : ActionBase
         // �p�G��V���s�V�q�A�H����ܤ@�Ӥ�V
         if (fleeDirection.sqrMagnitude < 0.001f)
         {
-            float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            float randomAngle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
             fleeDirection = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
         }
 
@@ -163,7 +173,7 @@ public class FleeAction : ActionBase
     private Vector2Int CalculateFleeTarget(Creature creature, Vector2 fleeDirection)
     {
         Vector2 creaturePos = creature.transform.position;
-        float fleeDistance = Random.Range(creature.data.perceptionRange * MIN_FLEE_RATE, creature.data.perceptionRange * MAX_FLEE_RATE);
+        float fleeDistance = UnityEngine.Random.Range(creature.data.perceptionRange * MIN_FLEE_RATE, creature.data.perceptionRange * MAX_FLEE_RATE);
 
         // ���ժ����k�]��V
         Vector2Int targetPos = Vector2Int.RoundToInt(creaturePos + fleeDirection * fleeDistance);

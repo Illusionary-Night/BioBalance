@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using static Perception;
+using System;
 //TODO：有點忘了這裡為啥不用RCD，雖然沒有寫但還是補一下RCD的需求
 public class ReproduceAction : ActionBase
 {
@@ -40,7 +40,8 @@ public class ReproduceAction : ActionBase
     public override void Execute(Creature creature, ActionContext context = null)
     {
         // 使用物件池取得新生物
-        Vector3 spawnPosition = creature.transform.position + new Vector3(Random.value % 100 / 100f, Random.value % 100 / 100f, 0);
+        Vector3 spawnPosition = creature.transform.position + new Vector3(UnityEngine.Random.value % 100 / 100f, UnityEngine.Random.value % 100 / 100f, 0);
+        //TODO: 關於pool的部分之後再改
         Creature new_creature = CreaturePool.GetCreature(creature.data.species, spawnPosition, creature.ToCreatureAttribute());
         if (new_creature == null)
         {

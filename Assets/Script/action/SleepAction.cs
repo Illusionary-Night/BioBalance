@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 //TODO:這邊sleep相關的屬性也要包一包，然後SetMovementState的部分有點遺失了，應該不會是單純修改enum，估計會是整合在MovementSystem中
 public class SleepAction : ActionBase
 {
@@ -56,7 +57,7 @@ public class SleepAction : ActionBase
 
     public override void Execute(Creature creature, ActionContext context = null)
     {
-        creature.SetMovementState(CreatureMovementState.Sleep);
+        MovementSystem.SetSleep(creature);
         context?.Complete();
     }
 

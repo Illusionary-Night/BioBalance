@@ -5,8 +5,8 @@ public class EnumAttribute<TItem> : IValueAttribute<TItem> where TItem : System.
     private TItem _value;
 
     public TItem Query()
-    { 
-        return _value; 
+    {
+        return _value;
     }
 
     public bool Set(TItem newValue)

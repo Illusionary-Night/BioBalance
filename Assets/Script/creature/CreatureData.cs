@@ -23,6 +23,12 @@ public class CreatureData
         _attributes[attribute.GetType()] = attribute;
     }
 
+    public bool TryGetAttribute<T>(out T attribute) where T : class, IAttribute
+    {
+        attribute = GetAttribute<T>();
+        return attribute != null;
+    }
+
     //TODO: 把各種屬性包含運行中的數據包裝成DTO像是ToCreatureAttribute()類似
     //TODO: Design Pattern: Strategy Pattern、State Pattern
     public Species species;

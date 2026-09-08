@@ -6,22 +6,24 @@ using System;
 using UnityEngine;
 using System.Linq;
 
-//TODO: 這邊需要新增 attack 和 preyIDList 的 attr，然後對應的使用方式也要修改
 public class AttackAction : ActionBase
 {
     public override ActionType Type => ActionType.Attack;
 
     public override List<Type> GetAttributeTypes()
     {
-        List<Type> attrs = new List<Type>();
-        // attrs.Add();
-
-        return attrs;
+        return new List<Type>
+        {
+            typeof(PreyIdListAttr),
+            typeof(AttackPowerAttr)
+        };
     }
 
     public override bool IsConditionMet(Creature creature)
     {
-        return Perception.Creatures.HasTarget(creature, creature.data.GetAttribute<PreyIdListAttr>().Query());
+        var preyAttr = creature.data.GetAttribute<PreyIdListAttr>();
+        if (preyAttr == null) return false;
+        return Perception.Creatures.HasTarget(creature, preyAttr.Query());
     }
 
     public override float GetWeight(Creature creature)
@@ -49,7 +51,10 @@ public class AttackAction : ActionBase
     }
     protected virtual Creature FindTarget(Creature creature, ActionContext context)
     {
-        List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, creature.data.GetAttribute<PreyIdListAttr>().Query());
+        var preyAttr = creature.data.GetAttribute<PreyIdListAttr>();
+        if (preyAttr == null) return null;
+
+        List<Creature> optionalTargets = Perception.Creatures.GetAllTargets(creature, preyAttr.Query());
         return optionalTargets.FirstOrDefault();
 
     }
@@ -64,7 +69,7 @@ public class AttackAction : ActionBase
         }
 
         // 使用狀態機註冊移動回調
-        var stateMachine = creature.data.stateMachine;
+        var stateMachine = creature.data.actionStateMachine;
 
         System.Action<Vector2Int> onArrived = (arrivedPosition) =>
         {
@@ -74,7 +79,7 @@ public class AttackAction : ActionBase
                 return;
             }
             // 確認是否有目標碰撞箱
-            if (IsInAttackArrange(creature, target, targetCollider))
+            if (IsInAttackRange(creature, target, targetCollider))
             {
                 // 檢查目標是否仍然存在
                 if (target != null)
@@ -95,16 +100,17 @@ public class AttackAction : ActionBase
         stateMachine.RegisterMovementCallback(onArrived);
         MovementSystem.MoveTo(creature, targetPosition, true);
     }
-    protected virtual bool IsInAttackArrange(Creature creature, Creature target, Collider2D targetCollider)
+    protected virtual bool IsInAttackRange(Creature creature, Creature target, Collider2D targetCollider)
     {
         int creatureLayerMask = LayerMask.GetMask("Creature");
-        Collider2D[] potentialTargets = Physics2D.OverlapCircleAll(creature.transform.position, creature.size * 1.5f, creatureLayerMask);//會卡再改
+        Collider2D[] potentialTargets = Physics2D.OverlapCircleAll(creature.transform.position, creature.data.size * 1.5f, creatureLayerMask);//會卡再改
         return potentialTargets.Any(c => c == targetCollider);
 
     }
     protected virtual void Attack(Creature creature, Creature target)
     {
-        //Debug.Log(creature.creatureBase + " Attack!");
-        HurtSystem.Hurt(target.data, creature.data.GetAttribute<AttackPowerAttr>().Value, creature.transform.position, creature);
+        var attackAttr = creature.data.GetAttribute<AttackPowerAttr>();
+        float damage = attackAttr != null ? attackAttr.Value : 0f; // 如果沒有屬性，預設傷害為 0
+        HurtSystem.Hurt(target.data, damage, creature.transform.position, creature);
     }
 }
