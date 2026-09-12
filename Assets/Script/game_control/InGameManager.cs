@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class InGameManager
 {
+    public CreaturePool CreaturePool { get; } = new CreaturePool();
+
     // 環境實體管理器
     public EnvEntityManager EnvEntityManager { get; private set; }
 
