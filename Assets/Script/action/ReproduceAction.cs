@@ -42,7 +42,7 @@ public class ReproduceAction : ActionBase
         // 使用物件池取得新生物
         Vector3 spawnPosition = creature.transform.position + new Vector3(UnityEngine.Random.value % 100 / 100f, UnityEngine.Random.value % 100 / 100f, 0);
         //TODO: 關於pool的部分之後再改
-        Creature new_creature = CreaturePool.GetCreature(creature.data.species, spawnPosition, creature.ToCreatureAttribute());
+        Creature new_creature = MainManager.inGameManager.CreaturePool.GetCreature(creature.data.species, spawnPosition, creature.ToCreatureAttribute());
         if (new_creature == null)
         {
             Debug.LogWarning("Failed to spawn new creature because the pool is exhausted.");

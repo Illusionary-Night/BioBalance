@@ -105,35 +105,28 @@
  * 
  * ===========================================================================================
  */
+
 using UnityEngine;
 using UnityEngine.Pool;
+using System.Collections.Generic;
+using System.Linq;
 
-public static class CreaturePool
+
+public class CreaturePool
 {
-    private static GameObject prefab;
-    private static Transform poolParent;
+    private Transform poolParent;
+    private readonly Dictionary<Species, ObjectPool<Creature>> pools = new();
+    private readonly Dictionary<Creature, ObjectPool<Creature>> creaturePools = new();
 
-    // Object pool for Creature instances
-    private static ObjectPool<Creature> pool = new(
-        createFunc: CreateCreature,
-        actionOnGet: ActionOnGet,
-        actionOnRelease: ActionOnRelease,
-        actionOnDestroy: ActionOnDestroy,
-        collectionCheck: false,
-        defaultCapacity: 200,
-        maxSize: 400
-    );
-
-    // 統計資訊
-    public static int CountActive => pool.CountActive;
-    public static int CountInactive => pool.CountInactive;
-    public static int CountAll => pool.CountAll;
+    public int CountActive => GetPools().Sum(pool => pool.CountActive);
+    public int CountInactive => GetPools().Sum(pool => pool.CountInactive);
+    public int CountAll => GetPools().Sum(pool => pool.CountAll);
 
     /// <summary>
     /// 初始化物件池（可選，會自動延遲初始化）
     /// </summary>
     /// <param name="preWarmCount">預熱數量</param>
-    public static void Initialize(int preWarmCount = 0)
+    public void Initialize(int preWarmCount = 0)
     {
         EnsureInitialized();
 
@@ -146,30 +139,32 @@ public static class CreaturePool
     /// <summary>
     /// 預熱：提前創建一批 Creature 並放入池中
     /// </summary>
-    public static void PreWarm(int count)
+    public void PreWarm(int count)
     {
-        EnsureInitialized();
+        Debug.LogWarning("CreaturePool: PreWarm(int) 需要指定 Species，請使用 PreWarm(Species, int)。");
+    }
 
+    public void PreWarm(Species species, int count)
+    {
+        if (species == null || count <= 0) return;
+
+        ObjectPool<Creature> pool = GetPool(species);
         Creature[] creatures = new Creature[count];
-        for (int i = 0; i < count; i++)
-        {
-            creatures[i] = pool.Get();
-        }
-        for (int i = 0; i < count; i++)
-        {
-            pool.Release(creatures[i]);
-        }
-
-        Debug.Log($"CreaturePool: Pre-warmed {count} creatures. Pool size: {CountInactive}");
+        for (int i = 0; i < count; i++) creatures[i] = pool.Get();
+        for (int i = 0; i < count; i++) pool.Release(creatures[i]);
     }
 
     /// <summary>
     /// 從池中取得一個 Creature（未初始化）
     /// </summary>
-    public static Creature GetCreature()
+    public Creature GetCreature(Species species)
     {
-        EnsureInitialized();
-        return pool.Get();
+        if (species == null) return null;
+
+        ObjectPool<Creature> pool = GetPool(species);
+        Creature creature = pool.Get();
+        if (creature != null) creaturePools[creature] = pool;
+        return creature;
     }
 
     /// <summary>
@@ -180,11 +175,10 @@ public static class CreaturePool
     /// <param name="attributes2">遺傳者2屬性(可選)</param >
     /// <param name="attributes1">遺傳者1屬性(可選)</param >
     /// <param name="parent">父物件（可選）</param>
-    public static Creature GetCreature(Species species, Vector3 position, CreatureAttributes? attribuet1 = null, CreatureAttributes? attribuet2 = null, Transform parent = null)
+    public Creature GetCreature(Species species, Vector3 position, CreatureAttributes? attribuet1 = null, CreatureAttributes? attribuet2 = null, Transform parent = null)
     {
-        EnsureInitialized();
-
-        Creature creature = pool.Get();
+        Creature creature = GetCreature(species);
+        if (creature == null) return null;
 
         // 設定位置和父物件
         if (parent != null)
@@ -209,19 +203,25 @@ public static class CreaturePool
     /// <summary>
     /// 將 Creature 回收到池中
     /// </summary>
-    public static void ReleaseCreature(Creature creature)
+    public void ReleaseCreature(Creature creature)
     {
         if (creature == null) return;
 
-        pool.Release(creature);
+        if (creaturePools.TryGetValue(creature, out ObjectPool<Creature> pool))
+        {
+            creaturePools.Remove(creature);
+            pool.Release(creature);
+        }
     }
 
     /// <summary>
     /// 清空整個物件池
     /// </summary>
-    public static void Clear()
+    public void Clear()
     {
-        pool.Clear();
+        foreach (ObjectPool<Creature> pool in pools.Values) pool.Clear();
+        pools.Clear();
+        creaturePools.Clear();
 
         if (poolParent != null)
         {
@@ -229,23 +229,13 @@ public static class CreaturePool
             poolParent = null;
         }
 
-        prefab = null;
     }
 
     /// <summary>
     /// 確保資源已初始化
     /// </summary>
-    private static void EnsureInitialized()
+    private void EnsureInitialized()
     {
-        if (prefab == null)
-        {
-            prefab = Resources.Load<GameObject>("Prefabs/EmptyCreature");
-            if (prefab == null)
-            {
-                Debug.LogError("CreaturePool: Failed to load EmptyCreature prefab");
-            }
-        }
-
         if (poolParent == null)
         {
             GameObject parentObj = new GameObject("[CreaturePool]");
@@ -254,33 +244,53 @@ public static class CreaturePool
         }
     }
 
-    // Factory method to create a new Creature instance
-    private static Creature CreateCreature()
+    private ObjectPool<Creature> GetPool(Species species)
     {
         EnsureInitialized();
-
-        if (prefab == null)
+        if (!pools.TryGetValue(species, out ObjectPool<Creature> pool))
         {
-            Debug.LogError("CreaturePool: Prefab is null, cannot create creature.");
+            pool = new ObjectPool<Creature>(
+                createFunc: () => CreateCreature(species),
+                actionOnGet: ActionOnGet,
+                actionOnRelease: ActionOnRelease,
+                actionOnDestroy: ActionOnDestroy,
+                collectionCheck: false,
+                defaultCapacity: 200,
+                maxSize: 400);
+            pools.Add(species, pool);
+        }
+        return pool;
+    }
+
+    private IEnumerable<ObjectPool<Creature>> GetPools()
+    {
+        return pools.Values;
+    }
+
+    private Creature CreateCreature(Species species)
+    {
+        if (species.visualTemplate == null)
+        {
+            Debug.LogError($"CreaturePool: Species {species.name} 沒有設定 visualTemplate。");
             return null;
         }
 
-        GameObject obj = Object.Instantiate(prefab, poolParent);
-        obj.name = "PooledCreature";
-        obj.SetActive(false);
-
+        // TODO: 利用 SpeciesLoader 建立 Creature 的 visualTemplate，並確保其上有 Creature 元件
+        GameObject obj = Object.Instantiate(species.visualTemplate);
         Creature creature = obj.GetComponent<Creature>();
         if (creature == null)
         {
-            Debug.LogError("CreaturePool: Prefab does not have Creature component.");
+            Debug.LogError($"CreaturePool: {species.name} 的 visualTemplate 沒有 Creature 元件。");
             Object.Destroy(obj);
             return null;
         }
 
+        obj.name = "PooledCreature";
+        obj.SetActive(false);
         return creature;
     }
 
-    private static void ActionOnGet(Creature creature)
+    private void ActionOnGet(Creature creature)
     {
         if (creature == null) return;
 
@@ -292,7 +302,7 @@ public static class CreaturePool
         creature.transform.localScale = Vector3.one;
     }
 
-    private static void ActionOnRelease(Creature creature)
+    private void ActionOnRelease(Creature creature)
     {
         if (creature == null) return;
 
@@ -306,7 +316,7 @@ public static class CreaturePool
         creature.transform.rotation = Quaternion.identity;
     }
 
-    private static void ActionOnDestroy(Creature creature)
+    private void ActionOnDestroy(Creature creature)
     {
         if (creature != null && creature.gameObject != null)
         {

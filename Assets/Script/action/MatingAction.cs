@@ -186,7 +186,7 @@ public class MatingAction : ActionBase
         //Debug.LogAssertion("mating success!");
         // 使用物件池取得新生物
         Vector3 spawnPosition = mother.transform.position + (Vector3)(UnityEngine.Random.insideUnitCircle * 0.5f);
-        Creature baby = CreaturePool.GetCreature(mother.data.species, spawnPosition, mother.ToCreatureAttribute(), father.ToCreatureAttribute());
+        Creature baby = MainManager.inGameManager.CreaturePool.GetCreature(mother.data.species, spawnPosition, mother.ToCreatureAttribute(), father.ToCreatureAttribute());
         if (baby == null)
         {
             Debug.LogWarning("Failed to spawn baby creature because the pool is exhausted.");

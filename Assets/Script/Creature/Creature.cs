@@ -75,7 +75,7 @@ public partial class Creature : MonoBehaviour, ITickable
         //TODO:------------------------
 
         // 使用物件池回收，而不是直接銷毀
-        CreaturePool.ReleaseCreature(this);
+        MainManager.inGameManager?.CreaturePool.ReleaseCreature(this);
     }
 
 
