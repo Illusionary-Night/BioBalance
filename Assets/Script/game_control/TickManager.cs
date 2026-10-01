@@ -8,7 +8,7 @@ public class TickManager : MonoBehaviour
     public int CurrentDay { get; private set; }
 
     private readonly List<Action> tickable = new();
-    private int tickCount = 0;
+    public int tickCount { get; private set; } = 0;
     private int TicksPerSecond = 30;
     private float realtime_counter = 0;
     private bool isPaused = false;

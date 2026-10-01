@@ -19,9 +19,8 @@ public partial class Creature : MonoBehaviour, ITickable
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void Initialize(Species species, CreatureAttributes? parentAttr1 = null, CreatureAttributes? parentAttr2 = null)
+    public void Initialize(Species species)
     {
-        data = GeneticsSystem.AttributeInheritance(species, parentAttr1, parentAttr2);
         data.species = species;
         data.UUID = System.Guid.NewGuid().ToString();
         rb = GetComponent<Rigidbody2D>();
@@ -72,7 +71,6 @@ public partial class Creature : MonoBehaviour, ITickable
         {
             MainManager.inGameManager.UnregisterCreature(this);
         }
-        //TODO:------------------------
 
         // 使用物件池回收，而不是直接銷毀
         MainManager.inGameManager?.CreaturePool.ReleaseCreature(this);
@@ -87,13 +85,13 @@ public partial class Creature : MonoBehaviour, ITickable
         UpdateVitalSigns();
         UpdateCooldowns();
         UpdateGrowth();
-        ColorSystem.UpdateColorGenes(data);
+        // ColorSystem.UpdateColorGenes(data);
 
 
 
         if (data.actionCooldown <= 0) DoAction();
 
-        MovementSystem.OnTick(data, rb);
+        MovementSystem.OnTick(this, rb);
         //-----------------------------------
     }
 

@@ -45,7 +45,7 @@ public class TestRunner : MonoBehaviour
         {
             pos = new Vector3(250, 250, 0);
         }
-        Creature creature = MainManager.inGameManager.CreaturePool.GetCreature(goat, (Vector3)pos, null, null, TestParent);
+        Creature creature = CreatureBuilder.Generate(goat, (Vector3)pos, TestParent);
         creature.gameObject.name = creature.data.creatureBase + "_" + creature.data.UUID;
         MainManager.inGameManager.RegisterCreature(creature);
     }
@@ -58,7 +58,7 @@ public class TestRunner : MonoBehaviour
             pos = new Vector3(260, 250, 0);
         }
         // 使用物件池取得新生物
-        Creature creature = MainManager.inGameManager.CreaturePool.GetCreature(slime, (Vector3)pos, null, null, TestParent);
+        Creature creature = CreatureBuilder.Generate(slime, (Vector3)pos, TestParent);
         creature.gameObject.name = creature.data.creatureBase + "_" + creature.data.UUID;
         MainManager.inGameManager.RegisterCreature(creature);
     }
@@ -69,7 +69,7 @@ public class TestRunner : MonoBehaviour
         {
             pos = new Vector3(270, 270, 0);
         }
-        Creature creature = MainManager.inGameManager.CreaturePool.GetCreature(icedragon, (Vector3)pos, null, null, TestParent);
+        Creature creature = CreatureBuilder.Generate(icedragon, (Vector3)pos, TestParent);
         creature.gameObject.name = creature.data.creatureBase + "_" + creature.data.UUID;
         MainManager.inGameManager.RegisterCreature(creature);
     }
@@ -80,7 +80,7 @@ public class TestRunner : MonoBehaviour
         {
             pos = new Vector3(250, 260, 0);
         }
-        Creature creature = MainManager.inGameManager.CreaturePool.GetCreature(tiger, (Vector3)pos, null, null, TestParent);
+        Creature creature = CreatureBuilder.Generate(tiger, (Vector3)pos, TestParent);
         creature.gameObject.name = creature.data.creatureBase + "_" + creature.data.UUID;
         MainManager.inGameManager.RegisterCreature(creature);
     }

@@ -1,19 +1,33 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+//builder 在 pool 之前
+//理論上要改成純data處理
+//包含基因繼承處理
 public static class CreatureBuilder
 {
-    public static Creature Generate(Species species, CreatureData parentData1 = null, CreatureData parentData2 = null)
+    /// <summary>
+    /// 生物生成的自動化裝配線（包含基因遺傳與實體組裝）。
+    /// 依序執行純資料層的基礎數值繼承、動態行為屬性掛載，最後向物件池提取實體軀殼並完成資料注入。
+    /// </summary>
+    /// <param name="species">生物的物種藍圖，決定基礎生理數值範圍與可執行的行為清單。</param>
+    /// <param name="spawnPosition">生物在遊戲世界中生成的初始世界座標。</param>
+    /// <param name="parentData1">親本一號的基因資料。若與親本二號皆為 null，則視為初代野生生成。</param>
+    /// <param name="parentData2">親本二號的基因資料。若為 null 但親本一號存在，則視為單親無性生殖；若兩者皆存在則進行雙親混血與變異。</param>
+    /// <returns>已完成基因計算、狀態初始化，並從物件池中成功提取的完整生物實體。</returns>
+    public static Creature Generate(Species species, Vector3 spawnPosition, Transform parentTransform = null, CreatureData parentData1 = null, CreatureData parentData2 = null)
     {
-        //TODO: 獲取creature，修改creature Pool
-        Creature creature = new Creature();
-        creature.data.species = species;
-        Step1(creature.data, species, parentData1, parentData2);
-        Step2(creature.data, species, parentData1, parentData2);
+        CreatureData data = new CreatureData();
+        data.species = species;
+        data.UUID = System.Guid.NewGuid().ToString();
+
+        InheritBaseAttributes(data, species, parentData1, parentData2);
+        InheritActionAttributes(data, species, parentData1, parentData2);
+        Creature creature = step3(data, spawnPosition, parentTransform);
 
         return creature;
     }
-    private static void Step1(CreatureData data, Species species, CreatureData parentData1, CreatureData parentData2)
+    private static void InheritBaseAttributes(CreatureData data, Species species, CreatureData parentData1, CreatureData parentData2)
     {
         data.size = Inherit(species, species.baseSize, parentData1?.size, parentData2?.size);
         data.speed = Inherit(species, species.baseSpeed, parentData1?.speed, parentData2?.speed);
@@ -39,7 +53,7 @@ public static class CreatureBuilder
         return;
 
     }
-    private static void Step2(CreatureData data, Species species, CreatureData parent1, CreatureData parent2)
+    private static void InheritActionAttributes(CreatureData data, Species species, CreatureData parent1, CreatureData parent2)
     {
         if (species.actionList == null) return;
 
@@ -115,5 +129,26 @@ public static class CreatureBuilder
 
         // 不管是有性還是無性，最後統統乘上變異係數
         return baseValue + (baseValue * UnityEngine.Random.Range(-species.variation, species.variation));
+    }
+    public static Creature step3(CreatureData data, Vector3 spawnPosition, Transform parentTransform)
+    {
+        Creature creature;
+        if (parentTransform != null)
+        {
+            creature = MainManager.inGameManager.CreaturePool.GetCreature(data.species, parentTransform);
+        }
+        else
+        {
+            creature = MainManager.inGameManager.CreaturePool.GetCreature(data.species);
+        }
+        creature.transform.position = spawnPosition;
+        creature.data = data;
+        creature.rb = creature.GetComponent<Rigidbody2D>();
+        creature.ResetRuntimeStates();//角色物件調適
+        creature.transform.localScale = new Vector3(data.size * constantData.NORMAL_SIZE, data.size * constantData.NORMAL_SIZE, 1f);
+        // 生物圖片
+        VisualSystem.SetCreatureSprite(creature, data.species.creatureBase);
+        VisualSystem.AutoSetLayer(creature.gameObject);
+        return creature;
     }
 }

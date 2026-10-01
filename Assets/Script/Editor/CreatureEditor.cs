@@ -83,7 +83,7 @@ public class CreatureEditor : Editor
     private void DrawActionIntelligence(Creature creature)
     {
         // 防禦性檢查：確保大腦跟冷卻字典都已經準備好
-        if (creature.GetStateMachine() == null || creature.GetActionCDList() == null)
+        if (creature.data.actionStateMachine == null || creature.GetActionCDList() == null)
         {
             EditorGUILayout.HelpBox("Creature Brain or Cooldowns not initialized.", MessageType.Warning);
             return;
@@ -100,7 +100,7 @@ public class CreatureEditor : Editor
         // 2. 個別動作冷卻與條件檢查
         var actionCDs = creature.GetActionCDList();
         var actionMaxCDs = creature.GetActionMaxCDList();
-        var debugCache = creature.GetStateMachine().DebugInfoCache;
+        var debugCache = creature.data.actionStateMachine.DebugInfoCache;
 
         foreach (var action in actionMaxCDs)
         {
@@ -343,8 +343,8 @@ public class CreatureEditor : Editor
         string uuidDisplay = string.IsNullOrEmpty(creature.data.UUID) ? "Not Born (In Pool)" : creature.data.UUID;
         EditorGUILayout.LabelField("UUID", uuidDisplay);
         EditorGUILayout.LabelField("Species", creature.data.species != null ? creature.data.species.name : "Null");
-        EditorGUILayout.LabelField("Father ID", string.IsNullOrEmpty(creature.fatherID) ? "None (First Gen)" : creature.fatherID);
-        EditorGUILayout.LabelField("Mother ID", string.IsNullOrEmpty(creature.motherID) ? "None (First Gen)" : creature.motherID);
+        // EditorGUILayout.LabelField("Father ID", string.IsNullOrEmpty(creature.fatherID) ? "None (First Gen)" : creature.fatherID);
+        // EditorGUILayout.LabelField("Mother ID", string.IsNullOrEmpty(creature.motherID) ? "None (First Gen)" : creature.motherID);
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.Space(5);
@@ -358,7 +358,7 @@ public class CreatureEditor : Editor
 
         EditorGUILayout.LabelField("Size (Scale)", creature.data.size.ToString("F2"));
         EditorGUILayout.LabelField("Speed", creature.data.speed.ToString("F2"));
-        EditorGUILayout.LabelField("Attack Power", creature.attackPower.ToString("F2"));
+        // EditorGUILayout.LabelField("Attack Power", creature.attackPower.ToString("F2"));
         EditorGUILayout.LabelField("Perception Range", creature.data.perceptionRange.ToString("F2"));
         EditorGUILayout.LabelField("Lifespan", creature.data.age.maxAge.ToString("F1") + " ticks");
         EditorGUILayout.LabelField("Max Health", creature.data.health.maxHealth.ToString("F1"));
@@ -370,18 +370,18 @@ public class CreatureEditor : Editor
         EditorGUILayout.Space(5);
 
         // --- 3. God Mode (原有的性別修改) ---
-        EditorGUILayout.BeginVertical("box");
-        EditorGUILayout.LabelField("God Mode Overrides", EditorStyles.boldLabel);
-        EditorGUI.BeginChangeCheck();
-        Gender newGender = (Gender)EditorGUILayout.EnumPopup("Force Gender", creature.gender);
-        if (EditorGUI.EndChangeCheck())
-        {
-            Undo.RecordObject(creature, "Change Creature Gender");
-            creature.gender = newGender;
-            EditorUtility.SetDirty(creature);
-            Debug.Log($"[God Mode] 強制更改生物 {creature.gameObject.name} 的性別為 {newGender}");
-        }
-        EditorGUILayout.EndVertical();
+        // EditorGUILayout.BeginVertical("box");
+        // EditorGUILayout.LabelField("God Mode Overrides", EditorStyles.boldLabel);
+        // EditorGUI.BeginChangeCheck();
+        // // Gender newGender = (Gender)EditorGUILayout.EnumPopup("Force Gender", creature.gender);
+        // if (EditorGUI.EndChangeCheck())
+        // {
+        //     Undo.RecordObject(creature, "Change Creature Gender");
+        //     // creature.gender = newGender;
+        //     EditorUtility.SetDirty(creature);
+        //     Debug.Log($"[God Mode] 強制更改生物 {creature.gameObject.name} 的性別為 {newGender}");
+        // }
+        // EditorGUILayout.EndVertical();
     }
     private void DrawBrainStateMonitor(Creature creature)
     {
@@ -393,7 +393,7 @@ public class CreatureEditor : Editor
 
         // 原本的行動狀態
         EditorGUILayout.LabelField("Current Action:", creature.data.currentAction.ToString());
-        EditorGUILayout.LabelField("Movement State:", creature.data.movementState.ToString());
+        EditorGUILayout.LabelField("Movement State:", creature.data.movement.state.ToString());
 
         // 🌟 新增：生命階段與體態
         EditorGUILayout.LabelField("Life Stage:", creature.data.currentLifeState.ToString());
@@ -402,8 +402,8 @@ public class CreatureEditor : Editor
         EditorGUILayout.Space(5);
 
         // 🌟 新增：異常狀態監控
-        if (creature.data.isSleeping) EditorGUILayout.LabelField("Status:", "💤 Sleeping");
-        else if (creature.data.isStunned) EditorGUILayout.LabelField("Status:", $"💫 Stunned ({creature.data.stunTimer:F1}s)");
+        // if (creature.data.isSleeping) EditorGUILayout.LabelField("Status:", "💤 Sleeping");
+        if (creature.data.isStunned) EditorGUILayout.LabelField("Status:", $"💫 Stunned ({creature.data.stunTimer:F1}s)");
         else if (creature.data.isDead) EditorGUILayout.LabelField("Status:", "💀 Dead");
         else EditorGUILayout.LabelField("Status:", "🟢 Normal");
 
@@ -419,9 +419,9 @@ public class CreatureEditor : Editor
         EditorGUILayout.Space(5);
 
         // 原本的戰鬥追蹤
-        string uuid = creature.enemy?.UUID ?? "None";
-        string lastFive = uuid.Length >= 5 ? uuid.Substring(uuid.Length - 5) : uuid;
-        EditorGUILayout.LabelField("Enemy ID (Last 5):", lastFive);
+        // string uuid = creature.enemy?.UUID ?? "None";
+        // string lastFive = uuid.Length >= 5 ? uuid.Substring(uuid.Length - 5) : uuid;
+        // EditorGUILayout.LabelField("Enemy ID (Last 5):", lastFive);
         EditorGUILayout.LabelField("Attack Dir:", creature.data.underAttackDirection.ToString());
 
         EditorGUIUtility.labelWidth = oldWidth;

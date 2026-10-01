@@ -171,11 +171,8 @@ public class CreaturePool
     /// 從池中取得並初始化一個 Creature
     /// </summary>
     /// <param name="species">生物種族</param>
-    /// <param name="position">生成位置</param>
-    /// <param name="attributes2">遺傳者2屬性(可選)</param >
-    /// <param name="attributes1">遺傳者1屬性(可選)</param >
     /// <param name="parent">父物件（可選）</param>
-    public Creature GetCreature(Species species, Vector3 position, CreatureAttributes? attribuet1 = null, CreatureAttributes? attribuet2 = null, Transform parent = null)
+    public Creature GetCreature(Species species, Transform parent = null)
     {
         Creature creature = GetCreature(species);
         if (creature == null) return null;
@@ -191,11 +188,10 @@ public class CreaturePool
             creature.transform.SetParent(species.parentObject);
         }
 
-        creature.transform.position = position;
         creature.transform.rotation = Quaternion.identity;
 
         // 初始化生物
-        creature.Initialize(species, attribuet1, attribuet2);
+        // creature.Initialize(species, attribuet1, attribuet2);
 
         return creature;
     }

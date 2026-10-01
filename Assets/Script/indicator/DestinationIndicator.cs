@@ -14,7 +14,7 @@ public class DestinationIndicator : IndicatorBase
             Debug.Log("targetCreature is null");
             Hide();
         }
-        var dest = targetCreature.GetMovementDestination();
+        var dest = targetCreature.data.movement.destination;
         transform.position = new Vector3(dest.x, dest.y, 0);
     }
 }

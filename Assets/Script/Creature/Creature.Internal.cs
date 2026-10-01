@@ -36,11 +36,6 @@ public partial class Creature : MonoBehaviour
                 data.actionCD[key] -= 1;
             }
         }
-        //TODO: ActionAttr處理
-        if (reproductionCD > 0)
-        {
-            reproductionCD -= 1;
-        }
         //----------------------------------------------
         if (data.stunTimer > 0)
         {
@@ -98,7 +93,7 @@ public partial class Creature : MonoBehaviour
         float multiplier = 1f;
         // TODO: 之後可以把multiplier的get set 調成屬性，方便Action直接調整。
         // 1. 根據移動狀態決定倍率
-        switch (data.movement.movementState)
+        switch (data.movement.state)
         {
             case CreatureMovementState.Sleep:
                 multiplier = 0.5f;
@@ -126,7 +121,7 @@ public partial class Creature : MonoBehaviour
     /// <summary>
     ///  初始化生物的運行時狀態，確保每次生成或重置時都回到初始狀態。
     /// </summary>
-    private void ResetRuntimeStates()
+    public void ResetRuntimeStates()
     {
         //初始狀態
         // TODO: 初始化需要裝一個新的嗎？
@@ -134,28 +129,39 @@ public partial class Creature : MonoBehaviour
         data.health.SetBaseValue(data.health.maxHealth);
         data.age.SetBaseValue(0);
         data.actionCooldown = 0;
-        data.reproductionCD = 0;
+        if (data.TryGetAttribute<ReproductionCdAttr>(out var reproductionCdAttr))
+        {
+            reproductionCdAttr.SetLastTime(MainManager.inGameManager.TickManager.tickCount);
+        }
         data.stunTimer = 0f;
         data.actionCD.Clear();
 
         data.isDead = false;
-        data.isSleeping = false;
+
+        if (data.TryGetAttribute<IsSleepingAttr>(out var isSleepingAttr))
+        {
+            isSleepingAttr.Set(false);
+        }
         data.isStunned = false;
         data.isInvincible = false;
 
-        //matingPartner = null;
-        data.enemy = null;
-        data.fatherID = string.Empty;
-        data.motherID = string.Empty;
+        if (data.TryGetAttribute<EnemyAttr>(out var enemyAttr))
+        {
+            enemyAttr.Set(string.Empty);
+        }
+        if (data.TryGetAttribute<FatherIdAttr>(out var fatherIdAttr))
+        {
+            fatherIdAttr.Set(string.Empty);
+        }
+        if (data.TryGetAttribute<MotherIdAttr>(out var motherIdAttr))
+        {
+            motherIdAttr.Set(string.Empty);
+        }
         data.currentLifeState = LifeState.Infant;
-        //currentBodyType = BodyType
-        data.movementState = CreatureMovementState.Idle;
+        MovementSystem.SetIdle(this);
         data.underAttackDirection = Direction.None;
 
     }
-
-
-
 
 }
 

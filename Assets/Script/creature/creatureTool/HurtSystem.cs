@@ -8,7 +8,7 @@ public static class HurtSystem
     {
         data.underAttackDirection = Direction.None;
         data.health.Add(-damage);
-        if (attacker != null) data.enemy = attacker;
+        if (attacker != null) data.GetAttribute<EnemyAttr>().Set(attacker.data.UUID);
     }
 
     /// <summary> 執行傷害並記錄攻擊來源方位，用於觸發受傷逃跑判定或者之後進一步的動畫或特效 </summary>
@@ -22,7 +22,7 @@ public static class HurtSystem
         Vector2 direction = attackerPosition - data.movement.position;
         data.underAttackDirection = DirectionHelper.GetDirectionFromVector(direction);
         data.health.Add(-damage);
-        if (attacker != null) data.enemy = attacker;
+        if (attacker != null) data.GetAttribute<EnemyAttr>().Set(attacker.data.UUID);
     }
 
 

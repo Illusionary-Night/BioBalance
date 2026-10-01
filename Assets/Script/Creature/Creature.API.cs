@@ -10,32 +10,32 @@ using UnityEngine;
 
 public partial class Creature : MonoBehaviour
 {
-    /*
+
     #region --- 生命狀態控制 ---
 
     //TODO: 數值的合不合法交給data自行判斷即可
     //TODO: set數值的部分，不確定該怎麼set
 
 
-    // /// <summary> 立即設置當前生命值，並確保在合法範圍內 </summary>
-    // public void SetHealth(float value)
-    // {
-    //     health = Mathf.Clamp(value, 0, maxHealth);
-    // }
+    /// <summary> 立即設置當前生命值，並確保在合法範圍內 </summary>
+    public void SetHealth(float value)
+    {
+        data.health.SetBaseValue(value);
+    }
 
-    // /// <summary> 立即設置當前年齡，並確保不超過壽命上限 </summary>
-    // public void SetAge(float value)
-    // {
-    //     age = Mathf.Clamp(value, 0, lifespan);
-    // }
+    /// <summary> 立即設置當前年齡，並確保不超過壽命上限 </summary>
+    public void SetAge(float value)
+    {
+        data.age.SetBaseValue(value);
+    }
 
 
 
-    // /// <summary> 設置是否進入無敵狀態（用於 Debug 或特殊事件，不會死亡） </summary>
-    // public void SetInvincible(bool isInvincible)
-    // {
-    //     data.isInvincible = isInvincible;
-    // }
+    /// <summary> 設置是否進入無敵狀態（用於 Debug 或特殊事件，不會死亡） </summary>
+    public void SetInvincible(bool isInvincible)
+    {
+        data.isInvincible = isInvincible;
+    }
 
 
 
@@ -43,12 +43,12 @@ public partial class Creature : MonoBehaviour
     /// 讓生物進入暈眩狀態
     /// </summary>
     /// <param name="duration">暈眩持續的時間 (單位：Tick)</param>
-    // public void SetStun(float duration)
-    // {
-    //     // 如果已經在暈眩中，可以選擇「取最大值」或「疊加」
-    //     data.stunTimer = Mathf.Max(data.stunTimer, duration);
+    public void SetStun(float duration)
+    {
+        // 如果已經在暈眩中，可以選擇「取最大值」或「疊加」
+        data.stunTimer = Mathf.Max(data.stunTimer, duration);
 
-    // }
+    }
 
     #endregion
 
@@ -72,34 +72,34 @@ public partial class Creature : MonoBehaviour
         data.actionCooldown = 0;
         // 清空字典中的冷卻
         var keys = new List<ActionType>(data.actionCD.Keys);
-        foreach (var key in keys) actionCD[key] = 0;
+        foreach (var key in keys) data.actionCD[key] = 0;
     }
 
     /// <summary> 觸發特定動作的冷卻計時。若 ScriptableObject 沒設定 CD 則會給予警告 </summary>
     public void ResetActionCooldown(ActionType actionType)
     {
-        if (isDead) return;
+        if (data.isDead) return;
 
-        if (actionMaxCD.TryGetValue(actionType, out int maxCD))
+        if (data.actionMaxCD.TryGetValue(actionType, out int maxCD))
         {
-            actionCD[actionType] = maxCD;
+            data.actionCD[actionType] = maxCD;
         }
         else
         {
             // 如果開發者在編輯器沒設定 CD，給予警告並設為預設值 0，程式才不會斷掉
-            Debug.LogWarning($"[Creature] {mySpecies.name} 缺少動作 {actionType} 的 CD 設定！");
-            actionCD[actionType] = 0;
+            Debug.LogWarning($"[Creature] {data.species.name} 缺少動作 {actionType} 的 CD 設定！");
+            data.actionCD[actionType] = 0;
         }
 
-        actionCooldown = constantData.UNIVERSAL_ACTION_COOLDOWN;
+        data.actionCooldown = constantData.UNIVERSAL_ACTION_COOLDOWN;
     }
 
     /// <summary> 查詢特定動作剩餘的冷卻時間（Ticks） </summary>
     public int GetActionCooldown(ActionType actionType)
     {
-        if (actionCD.ContainsKey(actionType))
+        if (data.actionCD.ContainsKey(actionType))
         {
-            return actionCD[actionType];
+            return data.actionCD[actionType];
         }
         return 0;
     }
@@ -107,9 +107,9 @@ public partial class Creature : MonoBehaviour
     /// <summary> 查詢特定動作在該物種設定中的最大冷卻時間 </summary>
     public int GetMaxActionCooldown(ActionType actionType)
     {
-        if (actionMaxCD.ContainsKey(actionType))
+        if (data.actionMaxCD.ContainsKey(actionType))
         {
-            return actionMaxCD[actionType];
+            return data.actionMaxCD[actionType];
         }
         return 0;
     }
@@ -117,34 +117,34 @@ public partial class Creature : MonoBehaviour
     /// <summary> 取得完整的剩餘冷卻字典 </summary>
     public Dictionary<ActionType, int> GetActionCDList()
     {
-        return actionCD;
+        return data.actionCD;
     }
 
     /// <summary> 取得物種預設的最大冷卻字典 </summary>
     public Dictionary<ActionType, int> GetActionMaxCDList()
     {
-        return actionMaxCD;
+        return data.actionMaxCD;
     }
     #endregion
 
 
     #region --- 資料轉換與系統重置 ---
     /// <summary> 將當前個體的遺傳屬性轉換為屬性結構，供繁殖或保存使用 </summary>
-    public CreatureAttributes ToCreatureAttribute()
-    {
-        CreatureAttributes attributes = new CreatureAttributes();
-        attributes.size = data.size;
-        attributes.max_health = data.health.maxHealth;
-        attributes.speed = data.speed;
-        attributes.attack_power = attackPower;
-        attributes.reproduction_rate = data.reproductionRate;
-        attributes.lifespan = data.age.maxAge;
-        attributes.perception_range = data.perceptionRange;
-        attributes.gender = gender;
-        attributes.UUID = data.UUID;
-        attributes.colorGenes = colorGenes;
-        return attributes;
-    }
+    // public CreatureAttributes ToCreatureAttribute()
+    // {
+    //     CreatureAttributes attributes = new CreatureAttributes();
+    //     attributes.size = data.size;
+    //     attributes.max_health = data.health.maxHealth;
+    //     attributes.speed = data.speed;
+    //     attributes.attack_power = attackPower;
+    //     attributes.reproduction_rate = data.reproductionRate;
+    //     attributes.lifespan = data.age.maxAge;
+    //     attributes.perception_range = data.perceptionRange;
+    //     attributes.gender = gender;
+    //     attributes.UUID = data.UUID;
+    //     attributes.colorGenes = colorGenes;
+    //     return attributes;
+    // }
     //TODO: 感覺有點怪怪的，reset不是這樣吧？
     /// <summary> 重置生物狀態（供物件池重用時調用）/// </summary>
     public void ResetState()
@@ -155,7 +155,7 @@ public partial class Creature : MonoBehaviour
 
         // 重置狀態機
         data.actionStateMachine = null;
-        movement = null;
+        data.movement = null;
 
         // 重置冷卻
         ResetAllCooldowns();
@@ -165,14 +165,14 @@ public partial class Creature : MonoBehaviour
 
 
     #region 尚未歸類function 
-    public void SetMotherID(string motherID)
-    {
-        this.motherID = motherID;
-    }
-    public void SetFatherID(string fatherID)
-    {
-        this.fatherID = fatherID;
-    }
+    // public void SetMotherID(string motherID)
+    // {
+    //     this.motherID = motherID;
+    // }
+    // public void SetFatherID(string fatherID)
+    // {
+    //     this.fatherID = fatherID;
+    // }
     //TODO: 優化，不要用Collider2D的半徑來判斷距離，改用size的某種配方，讓設計師可以調整生物之間的互動範圍。
     public bool IsNearby(Creature another)
     {
@@ -237,23 +237,23 @@ public partial class Creature : MonoBehaviour
     /// </summary>
     /// <param name="c">要檢查的生物</param>
     /// <returns></returns>
-    public bool IsInHeatMaleNearby(Creature c)
-    {
-        if (c.gender == Gender.Female) return false;
-        if (!c.IsInHeat()) return false;
-        if (!this.IsNearby(c)) return false;
-        return true;
-    }
-    public bool IsInHeatFemale(Creature c)
-    {
-        if (c.gender == Gender.Male) return false;
-        if (!c.IsInHeat()) return false;
-        return true;
-    }
+    // public bool IsInHeatMaleNearby(Creature c)
+    // {
+    //     if (c.gender == Gender.Female) return false;
+    //     if (!c.IsInHeat()) return false;
+    //     if (!this.IsNearby(c)) return false;
+    //     return true;
+    // }
+    // public bool IsInHeatFemale(Creature c)
+    // {
+    //     if (c.gender == Gender.Male) return false;
+    //     if (!c.IsInHeat()) return false;
+    //     return true;
+    // }
     #endregion
 
 
-    */
+
 }
 
 

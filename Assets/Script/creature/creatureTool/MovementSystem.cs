@@ -10,7 +10,7 @@ public static class MovementSystem
     public static void Initialize(CreatureData data)
     {
 
-        data.movement.movementState = CreatureMovementState.Idle;
+        data.movement.SetStateBySystem(CreatureMovementState.Idle);
         data.movement.destination = Vector2Int.zero;
         data.movement.path.Clear();
         data.movement.currentPathIndex = 0;
@@ -20,7 +20,7 @@ public static class MovementSystem
     {
         if (creature.data.isDead) return;
         creature.data.movement.destination = dest;
-        creature.data.movement.movementState = isRunning ? CreatureMovementState.Run : CreatureMovementState.Walk;
+        creature.data.movement.SetStateBySystem(isRunning ? CreatureMovementState.Run : CreatureMovementState.Walk);
         Navigate(creature.data);
     }
 
@@ -89,7 +89,7 @@ public static class MovementSystem
     //TODO: 之後由data自己管理
     private static float GetCurrentSpeed(CreatureData data)
     {
-        return data.movement.movementState switch
+        return data.movement.state switch
         {
             CreatureMovementState.Run => data.speed * 2f,
             CreatureMovementState.Walk => data.speed * 1f,
@@ -105,6 +105,10 @@ public static class MovementSystem
         //TODO: wait to write something
     }
     public static void SetSleep(Creature creature)
+    {
+        //TODO: wait to write something   
+    }
+    public static void SetIdle(Creature creature)
     {
         //TODO: wait to write something   
     }

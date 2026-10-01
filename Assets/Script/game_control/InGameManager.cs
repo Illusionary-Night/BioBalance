@@ -52,7 +52,7 @@ public class InGameManager
     private void PredatorUpdate(Creature new_creature)
     {
         // 取得新生物的物種定義
-        var newSpecies = new_creature.mySpecies;
+        var newSpecies = new_creature.data.species;
 
         // --- 第一階段：找出誰是這隻新生物的天敵 ---
         foreach (var speciesEntry in Species.Values)
@@ -61,9 +61,9 @@ public class InGameManager
             if (speciesEntry.preyIDList.Contains(newSpecies.speciesID))
             {
                 // 將該物種 ID 加入新生物的天敵清單（如果還沒加過）
-                if (!new_creature.predatorIDList.Contains(speciesEntry.speciesID))
+                if (!new_creature.data.species.predatorIDList.Contains(speciesEntry.speciesID))
                 {
-                    new_creature.predatorIDList.Add(speciesEntry.speciesID);
+                    new_creature.data.species.predatorIDList.Add(speciesEntry.speciesID);
                 }
             }
         }
@@ -78,9 +78,9 @@ public class InGameManager
                 foreach (var preyCreature in preySpecies.creatures.Values)
                 {
                     // 告訴獵物：新生物這個物種是你的天敵
-                    if (!preyCreature.predatorIDList.Contains(newSpecies.speciesID))
+                    if (!preyCreature.data.species.predatorIDList.Contains(newSpecies.speciesID))
                     {
-                        preyCreature.predatorIDList.Add(newSpecies.speciesID);
+                        preyCreature.data.species.predatorIDList.Add(newSpecies.speciesID);
                     }
                 }
             }
@@ -92,13 +92,13 @@ public class InGameManager
     /// </summary>
     public void RegisterCreature(Creature newCreature)
     {
-        int id = newCreature.speciesID;
+        int id = newCreature.data.speciesID;
 
         // 嘗試取得物種資料
         if (!species.TryGetValue(id, out var speciesData))
         {
             // 這是新物種
-            speciesData = newCreature.mySpecies;
+            speciesData = newCreature.data.species;
             species.Add(id, speciesData);
 
             // --- 自動化容器生成 ---
@@ -114,7 +114,7 @@ public class InGameManager
         }
 
         // 加入字典
-        if (!speciesData.creatures.TryAdd(newCreature.UUID, newCreature))
+        if (!speciesData.creatures.TryAdd(newCreature.data.UUID, newCreature))
         {
             return;
         }
@@ -127,11 +127,11 @@ public class InGameManager
     /// </summary>
     public void UnregisterCreature(Creature deadCreature)
     {
-        int id = deadCreature.speciesID;
+        int id = deadCreature.data.speciesID;
 
         if (species.TryGetValue(id, out var speciesData))
         {
-            if (speciesData.creatures.Remove(deadCreature.UUID))
+            if (speciesData.creatures.Remove(deadCreature.data.UUID))
             {
                 // 只有在移除成功後才做清理邏輯
                 // 例如：清理該生物的 CD 字典或狀態，避免物件池回收後殘留舊資料

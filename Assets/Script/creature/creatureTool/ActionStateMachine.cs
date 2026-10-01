@@ -84,7 +84,7 @@ public class ActionStateMachine
                 currentContext.OnCompleted += OnActionCompleted;
 
                 // 執行 Action
-                owner.SetCurrentAction(selectedAction);
+                owner.data.currentAction = selectedAction;
                 ActionSystem.Execute(owner, selectedAction, currentContext);
 
                 return;

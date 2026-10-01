@@ -12,7 +12,9 @@ public class MatingAction : ActionBase
         return new List<Type>
         {
             typeof(ReproductionCdAttr),
-            typeof(GenderAttr)
+            typeof(GenderAttr),
+            typeof(MotherIdAttr),
+            typeof(FatherIdAttr)
         };
     }
     public override bool IsConditionMet(Creature creature)
@@ -175,7 +177,6 @@ public class MatingAction : ActionBase
             }
         }
     }
-    //TODO: 之後Builder會把出生整合在一起
     private void GiveBirth(Creature mother, Creature father)
     {
         Species species = MainManager.inGameManager.Species[mother.data.speciesID];
@@ -186,7 +187,7 @@ public class MatingAction : ActionBase
         //Debug.LogAssertion("mating success!");
         // 使用物件池取得新生物
         Vector3 spawnPosition = mother.transform.position + (Vector3)(UnityEngine.Random.insideUnitCircle * 0.5f);
-        Creature baby = MainManager.inGameManager.CreaturePool.GetCreature(mother.data.species, spawnPosition, mother.ToCreatureAttribute(), father.ToCreatureAttribute());
+        Creature baby = CreatureBuilder.Generate(mother.data.species, spawnPosition, null, mother.data, father.data);
         if (baby == null)
         {
             Debug.LogWarning("Failed to spawn baby creature because the pool is exhausted.");
@@ -196,10 +197,8 @@ public class MatingAction : ActionBase
         MainManager.inGameManager.RegisterCreature(baby);
         if (baby != null)
         {
-            // 2. 紀錄父母的 ID
-            baby.SetFatherID(father.data.UUID);
-            baby.SetMotherID(mother.data.UUID);
-
+            baby.data.GetAttribute<FatherIdAttr>().Set(father.data.UUID);
+            baby.data.GetAttribute<FatherIdAttr>().Set(mother.data.UUID);
         }
     }
 

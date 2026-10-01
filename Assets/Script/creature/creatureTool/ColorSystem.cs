@@ -169,7 +169,6 @@
 //         _spriteRenderer.color = finalColor;
 //         // Debug.Log("Final Color: " + finalColor + " sprite: " + _spriteRenderer.sprite.name);
 //     }
-//     //TODO: Wander這個字要改掉，跟action裡面的一個東西重複了，會讓人誤會。
 //     private void CheckWandering()
 //     {
 //         // 1. 頻率限制 (Timer)

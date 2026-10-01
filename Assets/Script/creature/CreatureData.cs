@@ -51,7 +51,6 @@ public class CreatureData
     // public float healthRegeneration;
 
     // --- 運行時動態狀態 ---
-    //TODO: 邊界處理直接在這邊做
     public HungerAttr hunger;
     public HealthAttr health;
     public AgeAttr age;
