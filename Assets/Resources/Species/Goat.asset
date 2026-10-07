@@ -26,7 +26,8 @@ MonoBehaviour:
   baseReproductionRate: 1.5
   baseAttackPower: 7
   baseLifespan: 1000
-  basePerceptionRange: 27.7
+  basePerceptionRange: 25.9
   reproductionType: 1
+  visualTemplate: {fileID: 0}
   _cdKeys: 0000000005000000020000000100000006000000070000000800000009000000
   _cdValues: 140000003c00000032000000c800000028000000140000001f0000001e000000
