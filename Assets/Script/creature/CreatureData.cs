@@ -7,7 +7,7 @@ using System;
 public class CreatureData
 {
     private readonly Dictionary<Type, IAttribute> _attributes = new();
-
+    //TODO: 預設不用null檢查，順便寫一下summary
     public T GetAttribute<T>() where T : class, IAttribute
     {
         return _attributes.TryGetValue(typeof(T), out IAttribute attribute) ? attribute as T : null;
@@ -15,6 +15,7 @@ public class CreatureData
 
     public IAttribute GetAttribute(Type attributeType)
     {
+        //TODO: 加上DEBUG ERROR
         return _attributes.TryGetValue(attributeType, out IAttribute attribute) ? attribute : null;
     }
 
